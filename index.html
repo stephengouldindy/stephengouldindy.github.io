@@ -3,13 +3,54 @@
 
 <head>
   <title>jQuery Demo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <style type="text/css">
+  .jumbotron {text-align: center;}
+  </style>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href='fullcalendar/core/main.css' rel='stylesheet' />
+    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
+
+    <script src='fullcalendar/core/main.js'></script>
+    <script src='fullcalendar/daygrid/main.js'></script>
+  <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          plugins: [ 'dayGrid' ]
+        });
+
+        calendar.render();
+      });
+
+    </script>
 </head>
 
 <body>
-<p id = "demo">Not working</p>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div class ="container">
+	<p id = "demo">Not working</p>
+	<div class="col-lg-12">
+	  <div id="panel1" class="panel panel-primary">
+		  <div class="panel-heading">#panel1</div>
+		  <div class="panel-body"> Content! </div>
+	  </div>
+	</div>  
+	  <div class="col-xs-3">
+	  <div id="panel2" class="panel panel-primary">
+	  <div class="panel-heading">
+	   #panel2
+	  </div>
+	  <div class="panel-body"> Content?</div>
+	</div>
+</div>
+</div>
 <script src="js/scripts.js"></script>
+<div id = "calendar"> </div>
 </body>
 
 </html>
