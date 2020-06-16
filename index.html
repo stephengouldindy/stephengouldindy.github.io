@@ -39,11 +39,13 @@
     		// change the day's background color just for fun
     		//info.dayEl.style.backgroundColor = 'red';
     		var eventStr = prompt('Enter an event name');
+    		if (eventStr) {
     		calendar.addEvent({
               title: eventStr,
               start: info.date,
               allDay: true
             });
+    	}
   			}
   			/*,
   			select: function(info) {
