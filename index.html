@@ -76,6 +76,10 @@
   	//unwrapping data...
  	var startTime = $("#startTime").val();
  	var endTime = $("#endTime").val();
+ 	var startHour = startTime.split(":")[0];
+ 	var startMinute = startTime.split(":")[1];
+ 	var endHour = endTime.split(":")[0];
+ 	var endMinute = endTime.split(":")[1];
  	var date = $("#dateAlert").html();
  	var customerName = $("#customerBox").val();
 	var vendorName = $("#vendorBox").val();
@@ -92,8 +96,8 @@
  	//packing data into object
 	var newEvent = {
               title: vendorName,
-              start: new Date (curYear,curMonth - 1, curDay, 13),
-              end: new Date (curYear, curMonth - 1, curDay, 15, 30),
+              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
+              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
               allDay: false,
               editable: true
 

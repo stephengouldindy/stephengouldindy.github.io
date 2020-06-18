@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $("#demo").html("jQuery working - v0.1");
+  $("#demo").html("prerelease v0.15");
   //hide the event form on pageload
   $("#formcontainer").hide();
 });
