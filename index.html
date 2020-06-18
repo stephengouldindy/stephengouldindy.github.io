@@ -17,50 +17,101 @@
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
     <script src='fullcalendar/interaction/main.js'></script>
-  <script>
-
-      document.addEventListener('DOMContentLoaded', function() {
+  <script>  	
+  		/*
+  		 * PRIMARY CALENDAR MANAGEMENT SCRIPT
+  		 */
+  		var _DEBUG = false;
+  		var curMinute;
+  		var curHour;
+  		var curDay;
+  		var curMonth;
+  		var curYear;
+      	document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-          plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
-          defaultView: 'dayGridWeek',
-          selectable: false,
-          header: {
+        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
+            defaultView: 'dayGridWeek',
+          	selectable: false,
+          	header: {
       		left: 'prev,next, today',
      		center: 'title',
       		right: 'timeGridDay, timeGridWeek, dayGridMonth'
-    },
-          dateClick: function(info) {
-    		//alert('Clicked on: ' + info.dateStr);
-    		//.alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-    		//alert('Current view: ' + info.view.type);
-    		// change the day's background color just for fun
-    		//info.dayEl.style.backgroundColor = 'red';
+    	},
+        dateClick: function(info) {
+        	curDay = info.date.getDate();
+    		curMonth = info.date.getMonth() + 1;
+    		curYear = info.date.getFullYear();
+          	//display new shipment form
     		$("#formcontainer").slideDown(0); 
-    		$("#datealert").html(`Selected date: <b>${info.date.getMonth() + 1}/${info.date.getDate()}/${info.date.getFullYear()}</b>`);
+
+    		$("#dateAlert").html(`${curMonth}/${curDay}/${curYear}`);
     		window.scrollTo({
-    			top: 800,
+    			top: 1000,
     			behavior: 'smooth',
-    			//create a notes section
     		});
-    		//var eventStr = prompt('Enter an event name');
-    		var eventStr = "";
-    		if (!eventStr) {
+    		curDay = info.date.getDate();
+    		curMonth = info.date.getMonth() + 1;
+    		curYear = info.date.getFullYear();
+    		/*f (eventStr) {
     		calendar.addEvent({
               title: eventStr,
               start: info.date,
               allDay: true
             });
-    	}
-  			}
-  			/*,
-  			select: function(info) {
-      		alert('selected ' + info.startStr + ' to ' + info.endStr);
-    		}*/
-        });
 
+            
+    	}*/
+        
+  		}
+        });
         calendar.render();
+        
+/*
+ * Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
+ */
+ 
+  $("#submitTruckBtn").click(function() {
+  	//unwrapping data...
+ 	var startTime = $("#startTime").val();
+ 	var endTime = $("#endTime").val();
+ 	var date = $("#dateAlert").html();
+ 	var customerName = $("#customerBox").val();
+	var vendorName = $("#vendorBox").val();
+ 	var destination = $("#destinationBox").val();
+ 	if (_DEBUG) {
+	 	console.log(startTime);
+	 	console.log(endTime);
+	 	console.log(date);
+	 	console.log(customerName);
+	 	console.log(`vendorName: ${vendorName}`);
+	 	console.log(destination);
+ 	}
+
+ 	//packing data into object
+	var newEvent = {
+              title: vendorName,
+              start: new Date (curYear,curMonth - 1, curDay, 13),
+              end: new Date (curYear, curMonth - 1, curDay, 15, 30),
+              allDay: false,
+              editable: true
+
+    };
+ 	//insert new object into calendar as event 
+ 	calendar.addEvent(newEvent);
+
+
+ 	//hide form
+ 	$("#formcontainer").slideUp(300);
+ 	//scroll to top
+ 	window.scrollTo({
+ 		top: 0,
+ 		behavior: 'smooth',
+ 	});
+ });
+
+
       });
 
     </script>
@@ -91,49 +142,59 @@
 	<div id = "calendar"> </div>
 </div>
 <div class = "container" id = "formcontainer">
-	<div id = "datealert" class="alert alert-primary" role="alert">
+	<div id = "dateAlert" class="alert alert-primary" role="alert">
 	If you see this, tell Spencer!
 	</div>
 		<form>
+            <div class="form-group">
 			 <div class="btn-group" role="group" aria-label="Basic example">
  				 <button type="button" class="btn btn-primary" id = "outgoingbtn">Outgoing Shipment</button> 
   				 <button type="button" class="btn btn-outline-primary" id = "incomingbtn">Incoming Delivery</button>
 			 </div>
+			</div>
 		  <!-- -->
-		  <div class="form-group">
-		    <label for="vendorbox">Vendor</label>
-		    <input type="text" class="form-control" id="vendorbox" placeholder="Vendor Name">
+		  <div class = "form-group">
+		  	<label for="appt">Delivery Window (leave blank if none):</label>
+			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00">
+			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00">
+			<button type="button" class="btn btn-danger" id = "clearTimeBtn">Reset</button>
 		  </div>
 		  <div class="form-group">
-		    <label for="vendorbox">Customer</label>
-		    <input type="text" class="form-control" id="vendorbox" placeholder="Customer Name">
+		    <label for="vendorBox">Vendor</label>
+		    <input type="text" class="form-control" id="vendorBox" placeholder="Vendor Name">
 		  </div>
 		  <div class="form-group">
-		    <label for="vendorbox">Destination</label>
-		    <input type="text" class="form-control" id="vendorbox" placeholder="123 Easy St, Whitestown, IN 46075">
+		    <label for="customerBox">Customer</label>
+		    <input type="text" class="form-control" id="customerBox" placeholder="Customer Name">
+		  </div>
+		  <div class="form-group">
+		    <label for="destinationBox">Destination</label>
+		    <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
 		  </div>
 		  <!-- -->
 		  <!-- -->
 		  <div class="form-group">
-		    <label for="freightlist">Freight List</label>
-		    <select multiple class="form-control" id="freightlist">
+		    <label for="freightList">Freight List</label>
+		    <select multiple class="form-control" id="freightList">
 		      <option>No freight yet.</option>
 		    </select>
 		  </div>
 		  <!-- -->
 		  <div class="form-group">
-		    <label for="notesarea">Comments/Notes</label>
-		    <textarea class="form-control" id="notesarea" rows="3"></textarea>
+		    <label for="notesArea">Comments/Notes</label>
+		    <textarea class="form-control" id="notesArea" rows="3"></textarea>
 		  </div>
 		  <!--SHIP TICKET FILE SELECTION-->
 		  <div class="form-group">
-    		<label for="exampleFormControlFile1">Ship Ticket</label>
-    		<input type="file" class="form-control-file" id="exampleFormControlFile1">
+    		<label for="shipTicketFileArea">Ship Ticket</label>
+    		<input type="file" class="form-control-file" id="shipTicketFileArea">
   		  </div>
   		  <!--END FILE SELECTION-->
-		  <button type="submit" class="btn btn-primary">Schedule Truck</button>
+		  <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Truck</button>
 		</form>
-		
+		<script>
+
+		</script>
 	</div>
 
 
