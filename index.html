@@ -28,95 +28,106 @@
   		var curMonth;
   		var curYear;
       	document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+	        var calendarEl = document.getElementById('calendar');
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
-            defaultView: 'dayGridWeek',
-          	selectable: false,
-          	header: {
-      		left: 'prev,next, today',
-     		center: 'title',
-      		right: 'timeGridDay, timeGridWeek, dayGridMonth'
-    	},
-        dateClick: function(info) {
-        	curDay = info.date.getDate();
-    		curMonth = info.date.getMonth() + 1;
-    		curYear = info.date.getFullYear();
-          	//display new shipment form
-    		$("#formcontainer").slideDown(0); 
+	        var calendar = new FullCalendar.Calendar(calendarEl, {
+	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
+	            defaultView: 'dayGridWeek',
+	          	selectable: false,
+	          	header: {
+	      			left: 'prev,next, today',
+	     			center: 'title',
+	      			right: 'timeGridDay, timeGridWeek, dayGridMonth'
+	    		},
+	        	dateClick: function(info) {
+	        		curDay = info.date.getDate();
+	    			curMonth = info.date.getMonth() + 1;
+		    		curYear = info.date.getFullYear();
+		          	//display new shipment form
+		    		$("#formcontainer").slideDown(0); 
 
-    		$("#dateAlert").html(`${curMonth}/${curDay}/${curYear}`);
-    		window.scrollTo({
-    			top: 1000,
-    			behavior: 'smooth',
-    		});
-    		curDay = info.date.getDate();
-    		curMonth = info.date.getMonth() + 1;
-    		curYear = info.date.getFullYear();
-    		/*f (eventStr) {
-    		calendar.addEvent({
-              title: eventStr,
-              start: info.date,
-              allDay: true
-            });
+		    		$("#dateAlert").html(`${curMonth}/${curDay}/${curYear}`);
+		    		window.scrollTo({
+		    			top: 1000,
+		    			behavior: 'smooth',
+		    		});
+		    		curDay = info.date.getDate();
+		    		curMonth = info.date.getMonth() + 1;
+		    		curYear = info.date.getFullYear();
+	    		
+	            
+	    		}
+	        
 
-            
-    	}*/
-        
-  		}
-        });
-        calendar.render();
-        
-/*
- * Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
- */
- 
-  $("#submitTruckBtn").click(function() {
-  	//unwrapping data...
- 	var startTime = $("#startTime").val();
- 	var endTime = $("#endTime").val();
- 	var startHour = startTime.split(":")[0];
- 	var startMinute = startTime.split(":")[1];
- 	var endHour = endTime.split(":")[0];
- 	var endMinute = endTime.split(":")[1];
- 	var date = $("#dateAlert").html();
- 	var customerName = $("#customerBox").val();
-	var vendorName = $("#vendorBox").val();
- 	var destination = $("#destinationBox").val();
- 	if (_DEBUG) {
-	 	console.log(startTime);
-	 	console.log(endTime);
-	 	console.log(date);
-	 	console.log(customerName);
-	 	console.log(`vendorName: ${vendorName}`);
-	 	console.log(destination);
- 	}
+	        });
+	       	calendar.render();
+	       	/*
+ 			* Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
+ 			*/
+ 			$("#submitTruckBtn").click(function() {
+	 	  		//unwrapping data...
+			 	var startTime = $("#startTime").val();
+			 	var endTime = $("#endTime").val();
+			 	//FIXME DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
+			 	console.log("here: " + startTime + ".");
+			 	var allDay = (startTime === "");
+			 	var startHour;
+			 	var startMinute;
+			 	var endHour;
+			 	var endMinute;
+			 	if (!allDay) { 
+			 		startHour = startTime.split(":")[0];
+			 		startMinute = startTime.split(":")[1];
+			 		endHour = endTime.split(":")[0];
+			 		endMinute = endTime.split(":")[1];
+			 	}
+			 	var date = $("#dateAlert").html();
+			 	var customerName = $("#customerBox").val();
+				var vendorName = $("#vendorBox").val();
+			 	var destination = $("#destinationBox").val();
+			 	if (_DEBUG) {
+				 	console.log(startTime);
+				 	console.log(endTime);
+				 	console.log(date);
+				 	console.log(customerName);
+				 	console.log(`vendorName: ${vendorName}`);
+				 	console.log(destination);
+			 	}
 
- 	//packing data into object
-	var newEvent = {
-              title: vendorName,
-              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
-              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
-              allDay: false,
-              editable: true
+			 	//packing data into object
+			 	var newEvent;
+				if (!allDay) {
+					newEvent = {
+			              title: vendorName,
+			              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
+			              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
+			              allDay: allDay,
+			              editable: true
 
-    };
- 	//insert new object into calendar as event 
- 	calendar.addEvent(newEvent);
+				    };
+				} else {
+					newEvent = {
+						title: vendorName,
+						start: new Date(curYear, curMonth - 1, curDay),
+						allDay: allDay,
+						editable: true
+					};
+				}
+			 	//insert new object into calendar as event 
+			 	calendar.addEvent(newEvent);
+			 	//hide form
+			 	$("#formcontainer").slideUp(300);
+			 	//scroll to top
+			 	window.scrollTo({
+			 		top: 0,
+			 		behavior: 'smooth'
+			 	});
+			 });
+   		});     
 
 
- 	//hide form
- 	$("#formcontainer").slideUp(300);
- 	//scroll to top
- 	window.scrollTo({
- 		top: 0,
- 		behavior: 'smooth',
- 	});
- });
 
-
-      });
+      
 
     </script>
 </head>
@@ -144,7 +155,7 @@
 </div>
 -->
 	<div id = "calendar"> </div>
-</div>
+	</div>
 <div class = "container" id = "formcontainer">
 	<div id = "dateAlert" class="alert alert-primary" role="alert">
 	If you see this, tell Spencer!
