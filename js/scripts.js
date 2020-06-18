@@ -12,11 +12,11 @@ $("#incomingbtn").click(function() {
 		//if button not selected, switch
 		if (origValue === "btn btn-outline-primary") {
 			//flip other button
-			$("#outgoingbtn").attr("class", "btn btn-outline-primary");
+			$("#outgoingbtn").attr("class", "btn btn-outline-danger");
 			//toggle button states for good practice
-			return "btn btn-primary";
+			return "btn btn-danger";
 		}
-		else return "btn btn-primary";
+		else return "btn btn-danger";
 	});
 }); 
 
@@ -26,7 +26,7 @@ $("#incomingbtn").click(function() {
 
 $("#outgoingbtn").click(function() {
 	$("#outgoingbtn").attr("class", function(i, origValue){
-		if (origValue === "btn btn-outline-primary") {
+		if (origValue === "btn btn-outline-danger") {
 			//flip other button
 			$("#incomingbtn").attr("class", "btn btn-outline-primary");
 			return "btn btn-primary";

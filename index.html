@@ -17,10 +17,10 @@
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
     <script src='fullcalendar/interaction/main.js'></script>
+ 
+  <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
   <script>  	
-  		/*
-  		 * PRIMARY CALENDAR MANAGEMENT SCRIPT
-  		 */
+
   		var _DEBUG = false;
   		var curMinute;
   		var curHour;
@@ -75,6 +75,8 @@
 			 	var startMinute;
 			 	var endHour;
 			 	var endMinute;
+			 	var isOutgoing = ($("#outgoingbtn").attr("class") === "btn btn-primary");
+			 	console.log(`Outgoing: ${isOutgoing}`);
 			 	if (!allDay) { 
 			 		startHour = startTime.split(":")[0];
 			 		startMinute = startTime.split(":")[1];
@@ -102,7 +104,8 @@
 			              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
 			              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
 			              allDay: allDay,
-			              editable: true
+			              editable: false,
+			              backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E')
 
 				    };
 				} else {
@@ -110,7 +113,8 @@
 						title: vendorName,
 						start: new Date(curYear, curMonth - 1, curDay),
 						allDay: allDay,
-						editable: true
+						editable: true,
+						backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E')
 					};
 				}
 			 	//insert new object into calendar as event 
@@ -169,10 +173,12 @@
 			</div>
 		  <!-- -->
 		  <div class = "form-group">
-		  	<label for="appt">Delivery Window (leave blank if none):</label>
-			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00">
-			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00">
+		  	<label for="appt">Delivery Window:</label>
+			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
+			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
 			<button type="button" class="btn btn-danger" id = "clearTimeBtn">Reset</button>
+			<small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
+			
 		  </div>
 		  <div class="form-group">
 		    <label for="vendorBox">Vendor</label>
