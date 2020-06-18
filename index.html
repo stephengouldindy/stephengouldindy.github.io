@@ -137,6 +137,7 @@
 </head>
 
 <body>
+	
 <div class ="container">
 	<p id = "demo">Not working</p>
 	<br>
@@ -193,14 +194,39 @@
 		    <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
 		  </div>
 		  <!-- -->
-		  <!-- -->
+		  <!--FREIGHT CHARTER-->
 		  <div class="form-group">
 		    <label for="freightList">Freight List</label>
 		    <select multiple class="form-control" id="freightList">
 		      <option>No freight yet.</option>
 		    </select>
+		    <button type="button" class="btn btn-warning" id = "freightManageBtn">Manage Freight</button>
 		  </div>
-		  <!-- -->
+		  <!--FREIGHT MANAGEMENT FORM-->
+		  <div class = "container" id = "freightContainer">
+		  		<form >
+<div class="form-group">
+  <div class="row">
+    <div class="col-sm">
+      Pallet Count:
+      <input type = "text" id = "palletBox">
+    </div>
+    <div class="col-sm">
+      QTY/Pallet:
+      <input type = "text" id = "qtyBox">
+    </div>
+    <div class="col-sm">
+      Weight:
+      <input type = "text" id = "weightBox">
+    </div>
+    <div class="col-sm">
+      <button type = "button" class = "btn btn-primary" id = "addNewFreightBtn">Add Freight Item</button>
+    </div>
+  </div>
+</div>
+		  		</form>
+		  </div>
+		  <!--COMMENTS TEXT AREA-->
 		  <div class="form-group">
 		    <label for="notesArea">Comments/Notes</label>
 		    <textarea class="form-control" id="notesArea" rows="3"></textarea>

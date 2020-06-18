@@ -1,7 +1,10 @@
 $(document).ready(function() {
-  $("#demo").html("prerelease v0.15");
+	//update status tag
+  $("#demo").html("prerelease v0.17 | Database Status: NONEXISTENT");
   //hide the event form on pageload
   $("#formcontainer").hide();
+  //hide its child freight container
+  $("#freightContainer").hide();
 });
 
 /*
@@ -52,6 +55,29 @@ $("#outgoingbtn").click(function() {
  	$("#startTime").attr("value", "--:--");
  	$("#endTime").attr("value", "--:--");
  });
+
+
+
+
+/*
+ * Show/Hide freight form, and update button accordingly
+ */
+ $("#freightManageBtn").click(function() {
+ 	//show the form if hidden; hide if shown
+ 	if ($("#freightManageBtn").html() === "Manage Freight") {
+ 		$("#freightManageBtn").html("Hide Freight Menu");
+ 		$("#freightContainer").slideDown(300);
+
+ 	}
+ 	else {
+ 		$("#freightManageBtn").html("Manage Freight");
+ 		$("#freightContainer").slideUp(300);
+ 	}
+ 	
+ 	//update the button with the proper label
+ });
+
+
 
 /*
  * Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
