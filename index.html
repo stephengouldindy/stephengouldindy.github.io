@@ -105,7 +105,8 @@
 			              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
 			              allDay: allDay,
 			              editable: false,
-			              backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E')
+			              backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E'),
+			              displayEventEnd: true
 
 				    };
 				} else {
@@ -114,7 +115,8 @@
 						start: new Date(curYear, curMonth - 1, curDay),
 						allDay: allDay,
 						editable: true,
-						backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E')
+						backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E'),
+						displayEventEnd: true
 					};
 				}
 			 	//insert new object into calendar as event 
@@ -207,21 +209,24 @@
 		  		<form >
 <div class="form-group">
   <div class="row">
-    <div class="col-sm">
+  	<div class="freight-col">
+      Total QTY:
+      <input type = "text" id = "qtyBox">
+    </div>
+    <div class="freight-col">
       Pallet Count:
       <input type = "text" id = "palletBox">
     </div>
-    <div class="col-sm">
+    <div class="freight-col">
       QTY/Pallet:
-      <input type = "text" id = "qtyBox">
+      <input type = "text" id = "palletQtyBox">
     </div>
-    <div class="col-sm">
-      Weight:
+    <div class="freight-col">
+      Net Weight:
       <input type = "text" id = "weightBox">
     </div>
-    <div class="col-sm">
       <button type = "button" class = "btn btn-primary" id = "addNewFreightBtn">Add Freight Item</button>
-    </div>
+    
   </div>
 </div>
 		  		</form>

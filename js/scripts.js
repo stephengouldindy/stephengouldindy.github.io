@@ -42,18 +42,9 @@ $("#outgoingbtn").click(function() {
  * Clear delivery window time boxes
  */
 
-
-
- //FIXME: RESET BUTTON DOES NOT WORK
-
-
-
-
  $("#clearTimeBtn").click(function() {
- 	console.log($("#startTime").val());
- 	console.log($("#endTime").val());
- 	$("#startTime").attr("value", "--:--");
- 	$("#endTime").attr("value", "--:--");
+ 	$("#startTime").val("");
+ 	$("#endTime").val("");
  });
 
 
