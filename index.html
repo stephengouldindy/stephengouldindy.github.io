@@ -10,7 +10,7 @@
   <script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   
@@ -23,7 +23,7 @@
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
     <script src='fullcalendar/interaction/main.js'></script>
-	<script src="js/scripts.js"></script>
+	
   <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
   <script>  	
 
@@ -37,8 +37,9 @@
 	        var calendarEl = document.getElementById('calendar');
 
 	        var calendar = new FullCalendar.Calendar(calendarEl, {
+	        	weekends: false,
 	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
-	            defaultView: 'dayGridWeek',
+	            defaultView: 'timeGridWeek',
 	          	selectable: false,
 	          	header: {
 	      			left: 'prev,next, today',
@@ -53,21 +54,25 @@
 		          	//display new shipment form
 		    		$("#formcontainer").slideDown(0); 
 
-		    		$("#dateAlert").html(`${curMonth}/${curDay}/${curYear}`);
+		    		$("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
+		    		info.dayEl.style.backgroundColor = '#4287f5';
+
+		    		setTimeout(function() {info.dayEl.style.backgroundColor = 'white';}, 100);
 		    		window.scrollTo({
 		    			top: 1000,
 		    			behavior: 'smooth',
 		    		});
 		    		curDay = info.date.getDate();
 		    		curMonth = info.date.getMonth() + 1;
-		    		curYear = info.date.getFullYear();
-	    		//Event rendering handling
-	            
-	    		},
+		    		curYear = info.date.getFullYear();	            
+	    		}, //end dateClick
 	    		eventClick: function(info) {
-	    			console.log(`showing ${info.event.title}`);
+	    			var time = (info.event.allDay) ? "" : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
 	    			console.log($("#eventTitle").html(info.event.title));
+	    			$("#eventData").html(`<b>Date:</b> ${info.event.extendedProps.eventDate}<br><b>Delivery Window:</b> <br><b>Customer Name:</b> ${info.event.extendedProps.customerName}<br><b>Destination:</b> ${info.event.extendedProps.destination}<br>`)
 	    			$("#myModal").modal("show");
+	    			
+	    			//PDFObject.embed("pdf/sample-3pp.pdf", "#pdfContainer");
 	    			
 	            }
 	        
@@ -89,6 +94,7 @@
 			 	var endHour;
 			 	var endMinute;
 			 	var isOutgoing = ($("#outgoingbtn").attr("class") === "btn btn-primary");
+			 	var bkgColor = (isOutgoing ?  '#1a75ff' : '#EF2E2E');
 			 	console.log(`Outgoing: ${isOutgoing}`);
 			 	if (!allDay) { 
 			 		startHour = startTime.split(":")[0];
@@ -96,7 +102,7 @@
 			 		endHour = endTime.split(":")[0];
 			 		endMinute = endTime.split(":")[1];
 			 	}
-			 	var date = $("#dateAlert").html();
+			 	var date = $("#dateAlert").text().split(":")[1];
 			 	var customerName = $("#customerBox").val();
 				var vendorName = $("#vendorBox").val();
 			 	var destination = $("#destinationBox").val();
@@ -118,9 +124,14 @@
 			              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
 			              allDay: allDay,
 			              editable: false,
-			              backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E'),
+			              backgroundColor: bkgColor,
 			              displayEventEnd: true,
-			              gaming: "yes please"
+			              customerName: customerName,
+			              eventDate: date,
+			              destination: destination,
+			              eventStartTime: startTime,
+			              eventEndTime: endTime
+
 			              
 
 				    };
@@ -130,9 +141,13 @@
 						start: new Date(curYear, curMonth - 1, curDay),
 						allDay: allDay,
 						editable: true,
-						backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E'),
+						backgroundColor: bkgColor,
 						displayEventEnd: true,
-						gaming: "yes please"
+						customerName: customerName,
+			            eventDate: date,
+			            destination: destination,
+			            eventStartTime: startTime,
+			            eventEndTime: endTime
 						
 					};
 				}
@@ -156,9 +171,9 @@
 </head>
 
 <body>
-<!-- The Modal -->
+<!-- EVENT DATA MODAL -->
 <div class="modal" tabindex="-1" role="dialog" id= "myModal">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Modal title</h5>
@@ -167,15 +182,23 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>If you're seeing this, something went wrong! Take note of what happened and let Spencer know.</p>
+        <p id="eventData">If you're seeing this, something went wrong! Take note of what happened and let Spencer know.</p>
+        <div class = "row"><b id="modalDate"></b>Date:</div>
+        <div class = "row"><b id="modalTime"></b>Arrival Window</div>
+        <div class = "row"><b id="modalCustomer"></b></div>
+        <div class = "row"><b id="modalDestinaion"></b></div>
+        <div class = "row"><b id="modalComments">Comments/Notes:</b></div>
+        <div class = "row"><b id="modalComments">Comments/Notes:</b></div>
+        <div id = "pdfContainer"></div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary">Edit</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
+<!--END MODAL-->
 <div class ="container">
 	<p id = "demo">Not working</p>
 	<br>
@@ -212,7 +235,7 @@
 			</div>
 		  <!-- -->
 		  <div class = "form-group">
-		  	<label for="appt">Delivery Window:</label>
+		  	<label for="appt">Arrival Window:</label>
 			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
 			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
 			<button type="button" class="btn btn-danger" id = "clearTimeBtn">Reset</button>
@@ -232,52 +255,63 @@
 		    <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
 		  </div>
 		  <!-- -->
+		  <!--SHIP TICKET FILE SELECTION-->
+		  <div class="form-group">
+    		<label for="shipTicketFileArea">Ship Ticket</label>
+    		<script>
+    		var loadFile = function(event) {
+					uploadedFile = URL.createObjectURL(event.target.files[0]);
+					console.log("the file is " + uploadedFile);
+					PDFObject.embed(uploadedFile, "#pdfContainer");
+					};
+			</script>
+    		<input type="file" class="form-control-file" id="shipTicketFileArea" onchange="loadFile(event)">
+
+  		  </div>
+  		  <!--END FILE SELECTION-->
 		  <!--FREIGHT CHARTER-->
 		  <div class="form-group">
 		    <label for="freightList">Freight List</label>
 		    <select multiple class="form-control" id="freightList">
 		      <option>No freight yet.</option>
 		    </select>
-		    <button type="button" class="btn btn-warning" id = "freightManageBtn">Manage Freight</button>
+		    <button type="button" class="btn btn-warning" id="freightManageBtn">Manage Freight</button>
 		  </div>
 		  <!--FREIGHT MANAGEMENT FORM-->
 		  <div class = "container" id = "freightContainer">
 		  		<form >
-<div class="form-group">
-  <div class="row">
-  	<div class="freight-col">
-      Total QTY:
-      <input type = "text" id = "qtyBox">
-    </div>
-    <div class="freight-col">
-      Pallet Count:
-      <input type = "text" id = "palletBox">
-    </div>
-    <div class="freight-col">
-      QTY/Pallet:
-      <input type = "text" id = "palletQtyBox">
-    </div>
-    <div class="freight-col">
-      Net Weight:
-      <input type = "text" id = "weightBox">
-    </div>
-      <button type = "button" class = "btn btn-primary" id = "addNewFreightBtn">Add Freight Item</button>
-    
-  </div>
-</div>
+			<div class="form-group">
+			  <div class="row">
+			  	<div class="freight-col">
+			      Total QTY:
+			      <input type = "text" id = "qtyBox">
+			    </div>
+			    <div class="freight-col">
+			      Pallet Count:
+			      <input type = "text" id = "palletBox">
+			    </div>
+			    <div class="freight-col">
+			      QTY/Pallet:
+			      <input type = "text" id = "palletQtyBox">
+			    </div>
+			    <div class="freight-col">
+			      Net Weight:
+			      <input type = "text" id = "weightBox">
+			    </div>
+			      <button type = "button" class = "btn btn-primary" id = "addNewFreightBtn">Add Freight Item</button>
+			    
+			  </div>
+			</div>
 		  		</form>
 		  </div>
-		  <!--COMMENTS TEXT AREA-->
+		  
+
+  		  <!--COMMENTS TEXT AREA-->
 		  <div class="form-group">
 		    <label for="notesArea">Comments/Notes</label>
 		    <textarea class="form-control" id="notesArea" rows="3"></textarea>
 		  </div>
-		  <!--SHIP TICKET FILE SELECTION-->
-		  <div class="form-group">
-    		<label for="shipTicketFileArea">Ship Ticket</label>
-    		<input type="file" class="form-control-file" id="shipTicketFileArea">
-  		  </div>
-  		  <!--END FILE SELECTION-->
+  		  
 		  <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Truck</button>
 		</form>
 		<script>
@@ -289,5 +323,5 @@
 
 
 </body>
-
+<script src="js/scripts.js"></script>
 </html>

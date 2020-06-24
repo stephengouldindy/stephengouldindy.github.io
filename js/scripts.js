@@ -56,17 +56,14 @@ $("#outgoingbtn").click(function() {
  */
  $("#freightManageBtn").click(function() {
  	//show the form if hidden; hide if shown
- 	console.log("yes");
  	if ($("#freightManageBtn").html() === "Manage Freight") {
- 		console.log("yes");
  		$("#freightManageBtn").html("Hide Freight Menu");
- 		$("#freightContainer").slideDown(300);
+ 		$("#freightContainer").slideDown(150);
 
  	}
  	else {
- 		console.log("n ");
  		$("#freightManageBtn").html("Manage Freight");
- 		$("#freightContainer").slideUp(300);
+ 		$("#freightContainer").slideUp(150);
  	}
  	
  	//update the button with the proper label
