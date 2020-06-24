@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
 	//update status tag
   $("#demo").html("prerelease v0.18 | Database Status: NONEXISTENT");
@@ -55,12 +56,15 @@ $("#outgoingbtn").click(function() {
  */
  $("#freightManageBtn").click(function() {
  	//show the form if hidden; hide if shown
+ 	console.log("yes");
  	if ($("#freightManageBtn").html() === "Manage Freight") {
+ 		console.log("yes");
  		$("#freightManageBtn").html("Hide Freight Menu");
  		$("#freightContainer").slideDown(300);
 
  	}
  	else {
+ 		console.log("n ");
  		$("#freightManageBtn").html("Manage Freight");
  		$("#freightContainer").slideUp(300);
  	}

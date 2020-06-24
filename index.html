@@ -3,9 +3,15 @@
 
 <head>
   <title>SGCI Shipping Calendar</title>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+  <script>console.log(window.Popper); </script>
+  <script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  
+  
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -17,7 +23,7 @@
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
     <script src='fullcalendar/interaction/main.js'></script>
- 
+	<script src="js/scripts.js"></script>
   <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
   <script>  	
 
@@ -39,6 +45,7 @@
 	     			center: 'title',
 	      			right: 'timeGridDay, timeGridWeek, dayGridMonth'
 	    		},
+	    		//Date clicking handling 
 	        	dateClick: function(info) {
 	        		curDay = info.date.getDate();
 	    			curMonth = info.date.getMonth() + 1;
@@ -54,9 +61,15 @@
 		    		curDay = info.date.getDate();
 		    		curMonth = info.date.getMonth() + 1;
 		    		curYear = info.date.getFullYear();
-	    		
+	    		//Event rendering handling
 	            
-	    		}
+	    		},
+	    		eventClick: function(info) {
+	    			console.log(`showing ${info.event.title}`);
+	    			console.log($("#eventTitle").html(info.event.title));
+	    			$("#myModal").modal("show");
+	    			
+	            }
 	        
 
 	        });
@@ -106,7 +119,9 @@
 			              allDay: allDay,
 			              editable: false,
 			              backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E'),
-			              displayEventEnd: true
+			              displayEventEnd: true,
+			              gaming: "yes please"
+			              
 
 				    };
 				} else {
@@ -116,7 +131,9 @@
 						allDay: allDay,
 						editable: true,
 						backgroundColor: (isOutgoing ?  '#1a75ff' : '#EF2E2E'),
-						displayEventEnd: true
+						displayEventEnd: true,
+						gaming: "yes please"
+						
 					};
 				}
 			 	//insert new object into calendar as event 
@@ -139,7 +156,26 @@
 </head>
 
 <body>
-	
+<!-- The Modal -->
+<div class="modal" tabindex="-1" role="dialog" id= "myModal">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>If you're seeing this, something went wrong! Take note of what happened and let Spencer know.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class ="container">
 	<p id = "demo">Not working</p>
 	<br>
@@ -250,7 +286,7 @@
 	</div>
 
 
-<script src="js/scripts.js"></script>
+
 
 </body>
 
