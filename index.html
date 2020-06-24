@@ -59,7 +59,7 @@
 
 		    		setTimeout(function() {info.dayEl.style.backgroundColor = 'white';}, 100);
 		    		window.scrollTo({
-		    			top: 1000,
+		    			top: 2000,
 		    			behavior: 'smooth',
 		    		});
 		    		curDay = info.date.getDate();
@@ -70,13 +70,13 @@
 	    			var time = (info.event.allDay) ? "" : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
 	    			console.log($("#eventTitle").html(info.event.title));
 	    			$("#eventData").html(`<b>Date:</b> ${info.event.extendedProps.eventDate}<br><b>Delivery Window:</b> <br><b>Customer Name:</b> ${info.event.extendedProps.customerName}<br><b>Destination:</b> ${info.event.extendedProps.destination}<br>`)
+	    			PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
 	    			$("#myModal").modal("show");
 	    			
 	    			//PDFObject.embed("pdf/sample-3pp.pdf", "#pdfContainer");
 	    			
 	            }
 	        
-
 	        });
 	       	calendar.render();
 	       	/*
@@ -118,6 +118,7 @@
 			 	//packing data into object
 			 	var newEvent;
 				if (!allDay) {
+					console.log("file is " + $("#shipTicketFileArea").val())
 					newEvent = {
 			              title: vendorName,
 			              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
@@ -130,24 +131,27 @@
 			              eventDate: date,
 			              destination: destination,
 			              eventStartTime: startTime,
-			              eventEndTime: endTime
+			              eventEndTime: endTime,
+			              shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0])
 
 			              
 
 				    };
 				} else {
+					console.log("file is " + $("#shipTicketFileArea").val());
 					newEvent = {
 						title: vendorName,
 						start: new Date(curYear, curMonth - 1, curDay),
 						allDay: allDay,
-						editable: true,
+						editable: false,
 						backgroundColor: bkgColor,
 						displayEventEnd: true,
 						customerName: customerName,
 			            eventDate: date,
 			            destination: destination,
 			            eventStartTime: startTime,
-			            eventEndTime: endTime
+			            eventEndTime: endTime,
+			            shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0])
 						
 					};
 				}
@@ -261,8 +265,7 @@
     		<script>
     		var loadFile = function(event) {
 					uploadedFile = URL.createObjectURL(event.target.files[0]);
-					console.log("the file is " + uploadedFile);
-					PDFObject.embed(uploadedFile, "#pdfContainer");
+					//PDFObject.embed(uploadedFile, "#pdfContainer");
 					};
 			</script>
     		<input type="file" class="form-control-file" id="shipTicketFileArea" onchange="loadFile(event)">

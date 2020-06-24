@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 	//update status tag
-  $("#demo").html("prerelease v0.18 | Database Status: NONEXISTENT");
+  $("#demo").html("prerelease v0.2 | Database Status: NONEXISTENT");
   //hide the event form on pageload
   $("#formcontainer").hide();
   //hide its child freight container
