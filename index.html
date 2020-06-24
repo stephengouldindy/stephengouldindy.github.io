@@ -67,9 +67,19 @@
 		    		curYear = info.date.getFullYear();	            
 	    		}, //end dateClick
 	    		eventClick: function(info) {
-	    			var time = (info.event.allDay) ? "" : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
-	    			console.log($("#eventTitle").html(info.event.title));
-	    			$("#eventData").html(`<b>Date:</b> ${info.event.extendedProps.eventDate}<br><b>Delivery Window:</b> <br><b>Customer Name:</b> ${info.event.extendedProps.customerName}<br><b>Destination:</b> ${info.event.extendedProps.destination}<br>`)
+	    			var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
+					$("#modalVendor").html(info.event.title);
+	    			$("#modalCustomer").html(` ${info.event.extendedProps.customerName}`);
+	    			$("#modalDate").html(` ${info.event.extendedProps.eventDate}`);
+	    			if (!info.event.allDay) {
+		    			$("#modalTime").html(` ${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`);
+		    		}
+	    			else {
+	    				$("#modalTime").html(" No time specified.");
+	    			}
+	    			$("#modalDestination").html(` ${info.event.extendedProps.destination}`);
+	    			$("#modalComments").html(` ${info.event.extendedProps.comments}`);
+
 	    			PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
 	    			$("#myModal").modal("show");
 	    			
@@ -106,6 +116,7 @@
 			 	var customerName = $("#customerBox").val();
 				var vendorName = $("#vendorBox").val();
 			 	var destination = $("#destinationBox").val();
+			 	var comments = $("#notesArea").val();
 			 	if (_DEBUG) {
 				 	console.log(startTime);
 				 	console.log(endTime);
@@ -118,7 +129,7 @@
 			 	//packing data into object
 			 	var newEvent;
 				if (!allDay) {
-					console.log("file is " + $("#shipTicketFileArea").val())
+
 					newEvent = {
 			              title: vendorName,
 			              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
@@ -132,13 +143,13 @@
 			              destination: destination,
 			              eventStartTime: startTime,
 			              eventEndTime: endTime,
-			              shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0])
+			              shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0]),
+			              comments: comments
 
 			              
 
 				    };
 				} else {
-					console.log("file is " + $("#shipTicketFileArea").val());
 					newEvent = {
 						title: vendorName,
 						start: new Date(curYear, curMonth - 1, curDay),
@@ -151,7 +162,8 @@
 			            destination: destination,
 			            eventStartTime: startTime,
 			            eventEndTime: endTime,
-			            shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0])
+			            shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0]),
+			            comments: comments
 						
 					};
 				}
@@ -180,23 +192,27 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
+        <h3 class="display-4" id = "modalVendor">Modal title</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true" id = "closeModal">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p id="eventData">If you're seeing this, something went wrong! Take note of what happened and let Spencer know.</p>
-        <div class = "row"><b id="modalDate"></b>Date:</div>
-        <div class = "row"><b id="modalTime"></b>Arrival Window</div>
-        <div class = "row"><b id="modalCustomer"></b></div>
-        <div class = "row"><b id="modalDestinaion"></b></div>
-        <div class = "row"><b id="modalComments">Comments/Notes:</b></div>
-        <div class = "row"><b id="modalComments">Comments/Notes:</b></div>
-        <div id = "pdfContainer"></div>
+      <div class = "container" id = "modalContainer">
+        <div class = "row"><h5>Date: </h5><h5 id="modalDate" style ="font-weight: normal;"></h5></div>
+        <div class = "row"><h5>Arrival Window: </h5><h5 id="modalTime" style ="font-weight: normal;"></h5></div>
+        <div class = "row"><h5>Customer Name: </h5><h5 id="modalCustomer" style ="font-weight: normal;"></h5></div>
+        <div class = "row"><h5>Destination: </h5><h5 id="modalDestination" style ="font-weight: normal;"></h5></div>
+        <div class = "row"><h5>Comments/Notes: </h5><h5 id="modalComments" style ="font-weight: normal;"></h5></div>
       </div>
+      	<h4>Ship Ticket</h4>
+      	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download.</small>		
+        <div id = "pdfContainer"  aria-describedby="pdfHelp"></div>
+      
+  	  </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Edit</button>
+      	<button type="button" class="btn btn-danger" id = "clearTimeBtn">Delete Shipment</button>
+        <button type="button" class="btn btn-primary">Edit Info</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -239,7 +255,7 @@
 			</div>
 		  <!-- -->
 		  <div class = "form-group">
-		  	<label for="appt">Arrival Window:</label>
+		  	<label for="startTime">Arrival Window:</label>
 			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
 			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
 			<button type="button" class="btn btn-danger" id = "clearTimeBtn">Reset</button>
@@ -268,7 +284,7 @@
 					//PDFObject.embed(uploadedFile, "#pdfContainer");
 					};
 			</script>
-    		<input type="file" class="form-control-file" id="shipTicketFileArea" onchange="loadFile(event)">
+    		<input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf">
 
   		  </div>
   		  <!--END FILE SELECTION-->
