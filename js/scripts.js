@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 	//update status tag
-  $("#demo").html("prerelease v0.25 | Database Status: NONEXISTENT");
+  $("#demo").html("prerelease v0.27 | Database Status: NONEXISTENT");
   //hide the event form on pageload
   $("#formcontainer").hide();
   //hide its child freight container
@@ -30,6 +30,7 @@ $("#incomingbtn").click(function() {
 
 $("#outgoingbtn").click(function() {
 	$("#outgoingbtn").attr("class", function(i, origValue){
+
 		if (origValue === "btn btn-outline-danger") {
 			//flip other button
 			$("#incomingbtn").attr("class", "btn btn-outline-primary");

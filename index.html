@@ -38,6 +38,9 @@
 
 	        var calendar = new FullCalendar.Calendar(calendarEl, {
 	        	weekends: false,
+	        	height: 600,
+	        	minTime: "07:00:00",
+	        	maxTime: "22:00:00",
 	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
 	            defaultView: 'timeGridWeek',
 	          	selectable: false,
@@ -55,8 +58,8 @@
 		    		$("#formcontainer").slideDown(0); 
 
 		    		$("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
-		    		info.dayEl.style.backgroundColor = '#4287f5';
-
+		    		//flash selection colour
+		    		info.dayEl.style.backgroundColor = '#c7c7c7';
 		    		setTimeout(function() {info.dayEl.style.backgroundColor = 'white';}, 100);
 		    		window.scrollTo({
 		    			top: 2000,
@@ -67,8 +70,10 @@
 		    		curYear = info.date.getFullYear();	            
 	    		}, //end dateClick
 	    		eventClick: function(info) {
+	    			//populate event info modal with event data
 	    			var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
-					$("#modalVendor").html(info.event.title);
+	    			var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
+					$("#modalVendor").html(`${info.event.title} - ${type}`);
 	    			$("#modalCustomer").html(` ${info.event.extendedProps.customerName}`);
 	    			$("#modalDate").html(` ${info.event.extendedProps.eventDate}`);
 	    			if (!info.event.allDay) {
@@ -82,9 +87,6 @@
 
 	    			PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
 	    			$("#myModal").modal("show");
-	    			
-	    			//PDFObject.embed("pdf/sample-3pp.pdf", "#pdfContainer");
-	    			
 	            }
 	        
 	        });
@@ -138,6 +140,7 @@
 			              editable: false,
 			              backgroundColor: bkgColor,
 			              displayEventEnd: true,
+			              isOutgoing: isOutgoing,
 			              customerName: customerName,
 			              eventDate: date,
 			              destination: destination,
@@ -157,6 +160,7 @@
 						editable: false,
 						backgroundColor: bkgColor,
 						displayEventEnd: true,
+						isOutgoing: isOutgoing,
 						customerName: customerName,
 			            eventDate: date,
 			            destination: destination,
@@ -211,7 +215,8 @@
       
   	  </div>
       <div class="modal-footer">
-      	<button type="button" class="btn btn-danger" id = "clearTimeBtn">Delete Shipment</button>
+      	<small id= "eventId" style="float: left;"> Event ID: not implemented</small>
+      	<button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
         <button type="button" class="btn btn-primary">Edit Info</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
@@ -258,7 +263,7 @@
 		  	<label for="startTime">Arrival Window:</label>
 			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
 			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
-			<button type="button" class="btn btn-danger" id = "clearTimeBtn">Reset</button>
+			<button type="button" class="btn btn-danger" id ="clearTimeBtn">Reset</button>
 			<small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
 			
 		  </div>
