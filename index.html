@@ -187,9 +187,10 @@
     				customerName: customerName,
     				destination: destination,
     				isOutgoing: isOutgoing,
+    				startTime: startTime,
+    				endTime: endTime,
     				notes: comments,
-    				title: vendorName,
-    				nonconforming: "you betcha"
+    				title: vendorName
 				})
 				.then(function(docRef) {
     				console.log(`Document ${docRef.id} successfully written`);
@@ -299,11 +300,9 @@
 				} //end else
 				//let calendar = document.getElementById("calendar");
 				calendar.addEvent(newEvent);
-				console.log(calendar.getEvents())
   			
   		} //end added type
   	});
-  	//calendar.render();
   });
 
   //test add
