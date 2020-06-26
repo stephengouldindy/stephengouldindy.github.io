@@ -339,6 +339,7 @@
 		  		console.log("Document deleted.");
 		  		//hide the modal
 		  		$("#myModal").modal("hide");
+		  		location.reload();
 		  		calendar.render();
 		  	}).catch(function(error) {
 		  		console.error(`Error removing document (${error})`);
