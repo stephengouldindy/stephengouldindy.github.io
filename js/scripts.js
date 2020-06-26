@@ -45,6 +45,8 @@ $("#outgoingbtn").click(function() {
  */
 
  $("#clearTimeBtn").click(function() {
+ 	console.log($("#startTime").val());
+ 	console.log($("#endTime").val());
  	$("#startTime").val("");
  	$("#endTime").val("");
  });

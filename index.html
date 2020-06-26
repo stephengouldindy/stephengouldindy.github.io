@@ -2,30 +2,33 @@
 <html lang="en">
 
 <head>
-  <title>SGCI Shipping Calendar</title>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-  <script>console.log(window.Popper); </script>
-  <script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
+	<title>SGCI Shipping Calendar</title>
+  	<!--change vendor to carrier, add second thing for bill of lading, colors, late/issues, mark as complete-->
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
+  	<link rel="stylesheet" href="css/style.css">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  	<script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href='fullcalendar/core/main.css' rel='stylesheet' />
+  	<link href="css/bootstrap.min.css" rel="stylesheet">
+  	<link href='fullcalendar/core/main.css' rel='stylesheet' />
     <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
     <link href='fullcalendar/timegrid/main.css' rel='stylesheet' />
 
-    <script src='fullcalendar/core/main.js'></script>
+  	<script src='fullcalendar/core/main.js'></script>
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
     <script src='fullcalendar/interaction/main.js'></script>
-	
-  <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
-  <script>  	
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
+
+	<!--Firestore and fire analytics-->
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+  	<!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
+  	<script>  	
 
   		var _DEBUG = false;
   		var curMinute;
@@ -33,10 +36,12 @@
   		var curDay;
   		var curMonth;
   		var curYear;
+  		var calendar;
+
       	document.addEventListener('DOMContentLoaded', function() {
 	        var calendarEl = document.getElementById('calendar');
 
-	        var calendar = new FullCalendar.Calendar(calendarEl, {
+	        calendar = new FullCalendar.Calendar(calendarEl, {
 	        	weekends: false,
 	        	height: 600,
 	        	minTime: "07:00:00",
@@ -85,12 +90,14 @@
 	    			$("#modalDestination").html(` ${info.event.extendedProps.destination}`);
 	    			$("#modalComments").html(` ${info.event.extendedProps.comments}`);
 
-	    			PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
+	    			//PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
+	    			PDFObject.embed('/pdf/sample-3pp.pdf', "#pdfContainer");
 	    			$("#myModal").modal("show");
 	            }
 	        
 	        });
 	       	calendar.render();
+	       	console.log(calendar);
 	       	/*
  			* Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
  			*/
@@ -172,7 +179,28 @@
 					};
 				}
 			 	//insert new object into calendar as event 
-			 	calendar.addEvent(newEvent);
+			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
+
+				db.collection("events").add({
+    				allDay: allDay,
+    				date: date,
+    				customerName: customerName,
+    				destination: destination,
+    				startTime: startTime,
+    				endTime: endTime,
+    				isOutgoing: isOutgoing,
+    				notes: comments,
+    				title: vendorName,
+    				nonconforming: "you betcha"
+				})
+				.then(function(docRef) {
+    				console.log(`Document ${docRef.id} successfully written`);
+				})
+				.catch(function(error) {
+    				console.error("Error writing document: ", error);
+				});
+
+			 	//calendar.addEvent(newEvent);
 			 	//hide form
 			 	$("#formcontainer").slideUp(300);
 			 	//scroll to top
@@ -186,6 +214,116 @@
 
 
       
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
+    authDomain: "sgci-rds.firebaseapp.com",
+    databaseURL: "https://sgci-rds.firebaseio.com",
+    projectId: "sgci-rds",
+    storageBucket: "sgci-rds.appspot.com",
+    messagingSenderId: "184884483557",
+    appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
+    measurementId: "G-WVCBC8FL46"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  var db = firebase.firestore();
+  //query for events
+  /*
+  db.collection('events').get().then((snapshot) => {
+  	snapshot.docs.forEach(doc => {
+  		console.log(doc.data());
+
+  	})
+  })
+  */
+  /*
+   * PRIMARY EVENT UPDATE LISTENER
+   */
+  db.collection("events").onSnapshot(snapshot => {
+  	let changes = snapshot.docChanges();
+  	console.log(changes);
+  	changes.forEach(change => {
+  		if (change.type === "added") {
+  			
+  			let data = change.doc.data();
+  			let day = data.date.split('/')[1];
+  			let month = data.date.split('/')[0] - 1;
+  			let year = data.date.split('/')[2];
+  			console.log(month,day,year);
+  			let dateObj = new Date(year, month, day);
+  			//console.log(data);
+  			var newEvent;
+  			if (!data.allDay) {
+  					
+  					let startHour = data.startTime.split(':')[0];
+  					let startMinute = data.startTime.split(':')[1];
+  					let endHour = data.endTime.split(':')[0];
+  					let endMinute = data.endTime.split(':')[1];
+  					let startDate = new Date(year, month, day, startHour, startMinute);
+  					let endDate = new Date(year, month, day, endHour, endMinute);
+					newEvent = {
+			              title: data.title,
+			              start: dateObj,
+			              end: dateObj,
+			              allDay: data.allDay,
+			              editable: false,
+			              backgroundColor: 'blue',
+			              displayEventEnd: true,
+			              isOutgoing: data.isOutgoing,
+			              customerName: data.customerName,
+			              eventDate: data.date,
+			              destination: data.destination,
+			              eventStartTime: data.startTime,
+			              eventEndTime: data.endTime,
+			              comments: data.notes
+
+  					};
+				} else {
+					let dateObj = new Date(year, month - 2, day);
+					newEvent = {
+						title: data.title,
+						start: dateObj,
+						allDay: data.allDay,
+						editable: false,
+						backgroundColor: 'blue',
+						displayEventEnd: true,
+						isOutgoing: data.isOutgoing,
+						customerName: data.customerName,
+			            eventDate: data.date,
+			            destination: data.destination,
+			            eventStartTime: data.startTime,
+			            eventEndTime: data.endTime,
+			            comments: data.notes
+						
+					};
+				} //end else
+				//let calendar = document.getElementById("calendar");
+				calendar.addEvent(newEvent);
+				console.log(calendar.getEvents())
+  			
+  		} //end added type
+  	});
+  	//calendar.render();
+  });
+
+  //test add
+  /*
+  db.collection("users").add({
+    username: "Gamer",
+    password: "gaming1sC00l",
+    name: "Spencer Douglas"
+});*/
+
+  //test print
+  /*
+  db.collection("users").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+    });
+}); */
+
 
     </script>
 </head>
@@ -268,7 +406,7 @@
 			
 		  </div>
 		  <div class="form-group">
-		    <label for="vendorBox">Vendor</label>
+		    <label for="vendorBox">Carrier</label>
 		    <input type="text" class="form-control" id="vendorBox" placeholder="Vendor Name">
 		  </div>
 		  <div class="form-group">
@@ -293,41 +431,7 @@
 
   		  </div>
   		  <!--END FILE SELECTION-->
-		  <!--FREIGHT CHARTER-->
-		  <div class="form-group">
-		    <label for="freightList">Freight List</label>
-		    <select multiple class="form-control" id="freightList">
-		      <option>No freight yet.</option>
-		    </select>
-		    <button type="button" class="btn btn-warning" id="freightManageBtn">Manage Freight</button>
-		  </div>
-		  <!--FREIGHT MANAGEMENT FORM-->
-		  <div class = "container" id = "freightContainer">
-		  		<form >
-			<div class="form-group">
-			  <div class="row">
-			  	<div class="freight-col">
-			      Total QTY:
-			      <input type = "text" id = "qtyBox">
-			    </div>
-			    <div class="freight-col">
-			      Pallet Count:
-			      <input type = "text" id = "palletBox">
-			    </div>
-			    <div class="freight-col">
-			      QTY/Pallet:
-			      <input type = "text" id = "palletQtyBox">
-			    </div>
-			    <div class="freight-col">
-			      Net Weight:
-			      <input type = "text" id = "weightBox">
-			    </div>
-			      <button type = "button" class = "btn btn-primary" id = "addNewFreightBtn">Add Freight Item</button>
-			    
-			  </div>
-			</div>
-		  		</form>
-		  </div>
+		  
 		  
 
   		  <!--COMMENTS TEXT AREA-->
@@ -345,6 +449,10 @@
 
 
 
+
+<script>
+
+</script>
 
 </body>
 <script src="js/scripts.js"></script>
