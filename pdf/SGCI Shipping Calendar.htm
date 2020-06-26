@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)file:///Users/spencerdouglas/Desktop/spencerdouglas7.github.io/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<title>SGCI Shipping Calendar</title>
+  	<!--change vendor to carrier, add second thing for bill of lading, colors, late/issues, mark as complete-->
+  	<script type="text/javascript" async="" src="./SGCI Shipping Calendar_files/js"></script><script src="./SGCI Shipping Calendar_files/jquery.min.js"></script>
+  	<script src="./SGCI Shipping Calendar_files/tooltip.min.js"></script>
+  	<link rel="stylesheet" href="./SGCI Shipping Calendar_files/style.css">
+  	<link rel="stylesheet" href="./SGCI Shipping Calendar_files/bootstrap.min.css">
+  	<script src="./SGCI Shipping Calendar_files/pdfobject.min.js"></script>
+  
+  	<script src="./SGCI Shipping Calendar_files/bootstrap.min.js"></script>
+  
+  	<link href="./SGCI Shipping Calendar_files/bootstrap.min(1).css" rel="stylesheet">
+  	<link href="./SGCI Shipping Calendar_files/main.css" rel="stylesheet">
+    <link href="./SGCI Shipping Calendar_files/main(1).css" rel="stylesheet">
+    <link href="./SGCI Shipping Calendar_files/main(2).css" rel="stylesheet">
+
+  	<script src="./SGCI Shipping Calendar_files/main.js"></script>
+    <script src="./SGCI Shipping Calendar_files/main(3).js"></script>
+	<script src="./SGCI Shipping Calendar_files/main(4).js"></script>
+    <script src="./SGCI Shipping Calendar_files/main(5).js"></script>
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="./SGCI Shipping Calendar_files/firebase-app.js"></script>
+
+	<!--Firestore and fire analytics-->
+	<script src="./SGCI Shipping Calendar_files/firebase-firestore.js"></script>
+	<script src="./SGCI Shipping Calendar_files/firebase-analytics.js"></script>
+  	<!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
+  	<script>  	
+
+  		var _DEBUG = false;
+  		var curMinute;
+  		var curHour;
+  		var curDay;
+  		var curMonth;
+  		var curYear;
+  		var calendar;
+
+      	document.addEventListener('DOMContentLoaded', function() {
+	        var calendarEl = document.getElementById('calendar');
+
+	        calendar = new FullCalendar.Calendar(calendarEl, {
+	        	weekends: false,
+	        	height: 600,
+	        	minTime: "07:00:00",
+	        	maxTime: "22:00:00",
+	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
+	            defaultView: 'timeGridWeek',
+	          	selectable: false,
+	          	header: {
+	      			left: 'prev,next, today',
+	     			center: 'title',
+	      			right: 'timeGridDay, timeGridWeek, dayGridMonth'
+	    		},
+	    		//Date clicking handling 
+	        	dateClick: function(info) {
+	        		curDay = info.date.getDate();
+	    			curMonth = info.date.getMonth() + 1;
+		    		curYear = info.date.getFullYear();
+		          	//display new shipment form
+		    		$("#formcontainer").slideDown(0); 
+
+		    		$("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
+		    		//flash selection colour
+		    		info.dayEl.style.backgroundColor = '#c7c7c7';
+		    		setTimeout(function() {info.dayEl.style.backgroundColor = 'white';}, 100);
+		    		window.scrollTo({
+		    			top: 2000,
+		    			behavior: 'smooth',
+		    		});
+		    		curDay = info.date.getDate();
+		    		curMonth = info.date.getMonth() + 1;
+		    		curYear = info.date.getFullYear();	            
+	    		}, //end dateClick
+	    		eventClick: function(info) {
+	    			//populate event info modal with event data
+	    			var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
+	    			var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
+					$("#modalVendor").html(`${info.event.title} - ${type}`);
+	    			$("#modalCustomer").html(` ${info.event.extendedProps.customerName}`);
+	    			$("#modalDate").html(` ${info.event.extendedProps.eventDate}`);
+	    			if (!info.event.allDay) {
+		    			$("#modalTime").html(` ${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`);
+		    		}
+	    			else {
+	    				$("#modalTime").html(" No time specified.");
+	    			}
+	    			$("#modalDestination").html(` ${info.event.extendedProps.destination}`);
+	    			$("#modalComments").html(` ${info.event.extendedProps.comments}`);
+	    			$("#eventId").html(info.event.extendedProps.docId);
+
+	    			//PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
+	    			PDFObject.embed('/pdf/sample-3pp.pdf', "#pdfContainer");
+	    			$("#myModal").modal("show");
+	            }
+	        
+	        });
+	       	calendar.render();
+	       	console.log(calendar);
+	       	/*
+ 			* Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
+ 			*/
+ 			$("#submitTruckBtn").click(function() {
+	 	  		//unwrapping data...
+			 	var startTime = $("#startTime").val();
+			 	var endTime = $("#endTime").val();
+			 	//FIXME DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
+			 	console.log("here: " + startTime + ".");
+			 	var allDay = (startTime === "");
+			 	var startHour;
+			 	var startMinute;
+			 	var endHour;
+			 	var endMinute;
+			 	var isOutgoing = ($("#outgoingbtn").attr("class") === "btn btn-primary");
+			 	var bkgColor = (isOutgoing ?  '#1a75ff' : '#EF2E2E');
+			 	console.log(`Outgoing: ${isOutgoing}`);
+			 	if (!allDay) { 
+			 		startHour = startTime.split(":")[0];
+			 		startMinute = startTime.split(":")[1];
+			 		endHour = endTime.split(":")[0];
+			 		endMinute = endTime.split(":")[1];
+			 	}
+			 	var date = $("#dateAlert").text().split(":")[1];
+			 	var customerName = $("#customerBox").val();
+				var vendorName = $("#vendorBox").val();
+			 	var destination = $("#destinationBox").val();
+			 	var comments = $("#notesArea").val();
+			 	if (_DEBUG) {
+				 	console.log(startTime);
+				 	console.log(endTime);
+				 	console.log(date);
+				 	console.log(customerName);
+				 	console.log(`vendorName: ${vendorName}`);
+				 	console.log(destination);
+			 	}
+
+			 	//packing data into object
+			 	/*
+			 	var newEvent;
+				
+				if (!allDay) {
+
+					newEvent = {
+			              title: vendorName,
+			              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
+			              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
+			              allDay: allDay,
+			              editable: false,
+			              backgroundColor: bkgColor,
+			              displayEventEnd: true,
+			              isOutgoing: isOutgoing,
+			              customerName: customerName,
+			              eventDate: date,
+			              destination: destination,
+			              eventStartTime: startTime,
+			              eventEndTime: endTime,
+			              shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0]),
+			              comments: comments
+
+			              
+
+				    };
+				} else {
+					newEvent = {
+						title: vendorName,
+						start: new Date(curYear, curMonth - 1, curDay),
+						allDay: allDay,
+						editable: false,
+						backgroundColor: bkgColor,
+						displayEventEnd: true,
+						isOutgoing: isOutgoing,
+						customerName: customerName,
+			            eventDate: date,
+			            destination: destination,
+			            eventStartTime: startTime,
+			            eventEndTime: endTime,
+			            shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0]),
+			            comments: comments
+						
+					};
+				}
+				*/
+			 	//insert new object into calendar as event 
+			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
+
+				db.collection("events").add({
+    				allDay: allDay,
+    				date: date,
+    				customerName: customerName,
+    				destination: destination,
+    				isOutgoing: isOutgoing,
+    				startTime: startTime,
+    				endTime: endTime,
+    				notes: comments,
+    				title: vendorName
+				})
+				.then(function(docRef) {
+    				console.log(`Document ${docRef.id} successfully written`);
+				})
+				.catch(function(error) {
+    				console.error("Error writing document: ", error);
+				});
+
+			 	//calendar.addEvent(newEvent);
+			 	//hide form
+			 	$("#formcontainer").slideUp(300);
+			 	//scroll to top
+			 	window.scrollTo({
+			 		top: 0,
+			 		behavior: 'smooth'
+			 	});
+			 });
+   		});     
+
+
+
+      
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
+    authDomain: "sgci-rds.firebaseapp.com",
+    databaseURL: "https://sgci-rds.firebaseio.com",
+    projectId: "sgci-rds",
+    storageBucket: "sgci-rds.appspot.com",
+    messagingSenderId: "184884483557",
+    appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
+    measurementId: "G-WVCBC8FL46"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+  var db = firebase.firestore();
+  //query for events
+  /*
+  db.collection('events').get().then((snapshot) => {
+  	snapshot.docs.forEach(doc => {
+  		console.log(doc.data());
+
+  	})
+  })
+  */
+  /*
+   * PRIMARY EVENT POPULATION LISTENER
+   */
+  db.collection("events").onSnapshot(snapshot => {
+  	let changes = snapshot.docChanges();
+  	console.log(changes);
+  	changes.forEach(change => {
+  		if (change.type === "added") {
+  			let data = change.doc.data();
+  			let day = data.date.split('/')[1];
+  			let month = data.date.split('/')[0] - 1;
+  			let year = data.date.split('/')[2];
+  			let dateObj = new Date(year, month, day);
+  			var newEvent;
+
+  			if (!data.allDay) {
+  					let startHour = data.startTime.split(':')[0];
+  					let startMinute = data.startTime.split(':')[1];
+  					let endHour = data.endTime.split(':')[0];
+  					let endMinute = data.endTime.split(':')[1];
+  					let startDate = new Date(year, month, day, startHour, startMinute);
+  					let endDate = new Date(year, month, day, endHour, endMinute);
+					newEvent = {
+			              title: data.title,
+			              start: startDate,
+			              end: endDate,
+			              allDay: data.allDay,
+			              editable: false,
+			              backgroundColor: 'grey',
+			              displayEventEnd: true,
+			              isOutgoing: data.isOutgoing,
+			              customerName: data.customerName,
+			              eventDate: data.date,
+			              destination: data.destination,
+			              eventStartTime: data.startTime,
+			              eventEndTime: data.endTime,
+			              comments: data.notes,
+			              docId: change.doc.id
+
+  					}; //newEvent
+				} else {
+					let dateObj = new Date(year, month, day);
+					newEvent = {
+						title: data.title,
+						start: dateObj,
+						allDay: data.allDay,
+						editable: false,
+						backgroundColor: 'grey',
+						displayEventEnd: true,
+						isOutgoing: data.isOutgoing,
+						customerName: data.customerName,
+			            eventDate: data.date,
+			            destination: data.destination,
+			            eventStartTime: data.startTime,
+			            eventEndTime: data.endTime,
+			            comments: data.notes,
+			            docId: change.doc.id
+						
+					}; //newEvent
+				} //end else
+				console.log("event does have " + newEvent.docId);
+				calendar.addEvent(newEvent);
+  			
+  		} //end added type
+  		//TODO: HANDLE DELETE AND UPDATE
+  	});
+  }); //END FIRESTORE EVENT CHANGE LISTENER
+    </script><script src="./SGCI Shipping Calendar_files/js(1)" async=""></script>
+</head>
+
+<body class="">
+<!-- EVENT DATA MODAL -->
+<div class="modal" tabindex="-1" role="dialog" id="myModal" style="display: none;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="display-4" id="modalVendor">Carrier - OUTGOING SHIPMENT</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" id="closeModal">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <div class="container" id="modalContainer">
+        <div class="row"><h5>Date: </h5><h5 id="modalDate" style="font-weight: normal;">  6/25/2020</h5></div>
+        <div class="row"><h5>Arrival Window: </h5><h5 id="modalTime" style="font-weight: normal;"> 12:03-15:30</h5></div>
+        <div class="row"><h5>Customer Name: </h5><h5 id="modalCustomer" style="font-weight: normal;"> Customer</h5></div>
+        <div class="row"><h5>Destination: </h5><h5 id="modalDestination" style="font-weight: normal;"> Destination</h5></div>
+        <div class="row"><h5>Comments/Notes: </h5><h5 id="modalComments" style="font-weight: normal;"> Take note</h5></div>
+      </div>
+      	<h4>Ship Ticket</h4>
+      	<small id="pdfHelp" class="form-text text-muted&gt;">Hover over pdf to print or download.</small>		
+        <div id="pdfContainer" aria-describedby="pdfHelp" class=" pdfobject-container"><embed class="pdfobject" src="/pdf/sample-3pp.pdf" type="application/pdf" style="overflow: auto; width: 100%; height: 100%;"></div>
+      
+  	  </div>
+      <div class="modal-footer">
+      	<small id="eventId">RAbOpEDr3SN6Ny7qFkFo</small>
+      	<button type="button" class="btn btn-danger" id="deleteShipmentBtn">Delete Shipment</button>
+        <button type="button" class="btn btn-primary">Edit Info</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--END MODAL-->
+<div class="container">
+	<p id="demo">prerelease v0.35 | Database Status: Add/View Events</p>
+	<br>
+	<h2 id="instructions">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
+
+	<!--
+	<div class="col-lg-12">
+	  <div id="panel1" class="panel panel-primary">
+		  <div class="panel-heading">#panel1</div>
+		  <div class="panel-body"> Content! </div>
+	  </div>
+	</div>  
+	  <div class="col-xs-3">
+	  <div id="panel2" class="panel panel-primary">
+	  <div class="panel-heading">
+	   #panel2
+	  </div>
+	  <div class="panel-body"> Content?</div>
+	</div>
+</div>
+-->
+	<div id="calendar" class="fc fc-ltr fc-unthemed" style=""><div class="fc-toolbar fc-header-toolbar"><div class="fc-left"><div class="fc-button-group"><button type="button" class="fc-prev-button fc-button fc-button-primary" aria-label="prev"><span class="fc-icon fc-icon-chevron-left"></span></button><button type="button" class="fc-next-button fc-button fc-button-primary" aria-label="next"><span class="fc-icon fc-icon-chevron-right"></span></button></div><button type="button" class="fc-today-button fc-button fc-button-primary" disabled="">today</button></div><div class="fc-center"><h2>Jun 22 – 26, 2020</h2></div><div class="fc-right"><button type="button" class="fc-timeGridDay-button fc-button fc-button-primary">day</button><button type="button" class="fc-timeGridWeek-button fc-button fc-button-primary fc-button-active">week</button><button type="button" class="fc-dayGridMonth-button fc-button fc-button-primary">month</button></div></div><div class="fc-view-container"><div class="fc-view fc-timeGridWeek-view fc-timeGrid-view" style=""><table class=""><thead class="fc-head"><tr><td class="fc-head-container fc-widget-header"><div class="fc-row fc-widget-header"><table class=""><thead><tr><th class="fc-axis fc-widget-header" style="width: 34px;"></th><th class="fc-day-header fc-widget-header fc-mon fc-past" data-date="2020-06-22"><span>Mon 6/22</span></th><th class="fc-day-header fc-widget-header fc-tue fc-past" data-date="2020-06-23"><span>Tue 6/23</span></th><th class="fc-day-header fc-widget-header fc-wed fc-past" data-date="2020-06-24"><span>Wed 6/24</span></th><th class="fc-day-header fc-widget-header fc-thu fc-past" data-date="2020-06-25"><span>Thu 6/25</span></th><th class="fc-day-header fc-widget-header fc-fri fc-today" data-date="2020-06-26"><span>Fri 6/26</span></th></tr></thead></table></div></td></tr></thead><tbody class="fc-body"><tr><td class="fc-widget-content"><div class="fc-day-grid"><div class="fc-row fc-week fc-widget-content"><div class="fc-bg"><table class=""><tbody><tr><td class="fc-axis fc-widget-content" style="width: 34px;"><span>all-day</span></td><td class="fc-day fc-widget-content fc-mon fc-past" data-date="2020-06-22"></td><td class="fc-day fc-widget-content fc-tue fc-past" data-date="2020-06-23"></td><td class="fc-day fc-widget-content fc-wed fc-past" data-date="2020-06-24"></td><td class="fc-day fc-widget-content fc-thu fc-past" data-date="2020-06-25"></td><td class="fc-day fc-widget-content fc-fri fc-today " data-date="2020-06-26"></td></tr></tbody></table></div><div class="fc-content-skeleton"><table><tbody><tr><td class="fc-axis" style="width: 34px;"></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div></div></div><hr class="fc-divider fc-widget-header"><div class="fc-scroller fc-time-grid-container" style="overflow: hidden; height: 507.109px;"><div class="fc-time-grid"><div class="fc-bg"><table class=""><tbody><tr><td class="fc-axis fc-widget-content" style="width: 34px;"></td><td class="fc-day fc-widget-content fc-mon fc-past" data-date="2020-06-22"></td><td class="fc-day fc-widget-content fc-tue fc-past" data-date="2020-06-23"></td><td class="fc-day fc-widget-content fc-wed fc-past" data-date="2020-06-24"></td><td class="fc-day fc-widget-content fc-thu fc-past" data-date="2020-06-25" style="background-color: white;"></td><td class="fc-day fc-widget-content fc-fri fc-today " data-date="2020-06-26"></td></tr></tbody></table></div><div class="fc-slats"><table class=""><tbody><tr data-time="07:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>7am</span></td><td class="fc-widget-content"></td></tr><tr data-time="07:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="08:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>8am</span></td><td class="fc-widget-content"></td></tr><tr data-time="08:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="09:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>9am</span></td><td class="fc-widget-content"></td></tr><tr data-time="09:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="10:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>10am</span></td><td class="fc-widget-content"></td></tr><tr data-time="10:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="11:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>11am</span></td><td class="fc-widget-content"></td></tr><tr data-time="11:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="12:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>12pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="12:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="13:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>1pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="13:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="14:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>2pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="14:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="15:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>3pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="15:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="16:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>4pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="16:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="17:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>5pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="17:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="18:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>6pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="18:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="19:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>7pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="19:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="20:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>8pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="20:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr><tr data-time="21:00:00"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"><span>9pm</span></td><td class="fc-widget-content"></td></tr><tr data-time="21:30:00" class="fc-minor"><td class="fc-axis fc-time fc-widget-content" style="width: 34px;"></td><td class="fc-widget-content"></td></tr></tbody></table></div><hr class="fc-divider fc-widget-header" style=""><div class="fc-content-skeleton"><table><tbody><tr><td class="fc-axis" style="width: 34px;"></td><td><div class="fc-content-col"><div class="fc-event-container fc-mirror-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-mirror-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-mirror-container"></div><div class="fc-event-container"><a class="fc-time-grid-event fc-event fc-start fc-end" style="background-color: grey; top: 233.667px; bottom: -303px; z-index: 1; left: 0%; right: 0%;"><div class="fc-content"><div class="fc-time" data-start="2:20" data-full="2:20 PM - 4:30 PM"><span>2:20 - 4:30</span></div><div class="fc-title">Tradewinds</div></div></a></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-mirror-container"></div><div class="fc-event-container"><a class="fc-time-grid-event fc-event fc-start fc-end" style="background-color: grey; top: 160.6px; bottom: -271px; z-index: 1; left: 0%; right: 0%;"><div class="fc-content"><div class="fc-time" data-start="12:03" data-full="12:03 PM - 3:30 PM"><span>12:03 - 3:30</span></div><div class="fc-title">Carrier</div></div></a></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td><td><div class="fc-content-col"><div class="fc-event-container fc-mirror-container"></div><div class="fc-event-container"></div><div class="fc-highlight-container"></div><div class="fc-bgevent-container"></div><div class="fc-business-container"></div></div></td></tr></tbody></table></div></div></div></td></tr></tbody></table></div></div> </div>
+	</div>
+<div class="container" id="formcontainer" style="">
+	<div id="dateAlert" class="alert alert-primary" role="alert">Selected Date: <b>6/25/2020</b></div>
+		<form>
+            <div class="form-group">
+			 <div class="btn-group" role="group" aria-label="Basic example">
+ 				 <button type="button" class="btn btn-primary" id="outgoingbtn">Outgoing Shipment</button> 
+  				 <button type="button" class="btn btn-outline-primary" id="incomingbtn">Incoming Delivery</button>
+			 </div>
+			</div>
+		  <!-- -->
+		  <div class="form-group">
+		  	<label for="startTime">Arrival Window:</label>
+			<input type="time" id="startTime" name="startTime" min="06:30" max="23:00" aria-describedby="timeHelpBlock">
+			<input type="time" id="endTime" name="endTime" min="06:30" max="23:00" aria-describedby="timeHelpBlock">
+			<button type="button" class="btn btn-danger" id="clearTimeBtn">Reset</button>
+			<small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
+			
+		  </div>
+		  <div class="form-group">
+		    <label for="vendorBox">Carrier</label>
+		    <input type="text" class="form-control" id="vendorBox" placeholder="Vendor Name">
+		  </div>
+		  <div class="form-group">
+		    <label for="customerBox">Customer</label>
+		    <input type="text" class="form-control" id="customerBox" placeholder="Customer Name">
+		  </div>
+		  <div class="form-group">
+		    <label for="destinationBox">Destination</label>
+		    <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
+		  </div>
+		  <!-- -->
+		  <!--SHIP TICKET FILE SELECTION-->
+		  <div class="form-group">
+    		<label for="shipTicketFileArea">Ship Ticket</label>
+    		<script>
+    		var loadFile = function(event) {
+					uploadedFile = URL.createObjectURL(event.target.files[0]);
+					//PDFObject.embed(uploadedFile, "#pdfContainer");
+					};
+			</script>
+    		<input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf">
+
+  		  </div>
+  		  <!--END FILE SELECTION-->
+		  
+		  
+
+  		  <!--COMMENTS TEXT AREA-->
+		  <div class="form-group">
+		    <label for="notesArea">Comments/Notes</label>
+		    <textarea class="form-control" id="notesArea" rows="3"></textarea>
+		  </div>
+  		  
+		  <button type="button" class="btn btn-primary" id="submitTruckBtn">Schedule Truck</button>
+		</form>
+		<script>
+
+		</script>
+	</div>
+
+
+
+
+<script>
+
+</script>
+
+
+<script src="./SGCI Shipping Calendar_files/scripts.js"></script>
+
+</body></html>

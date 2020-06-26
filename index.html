@@ -89,15 +89,18 @@
 	    			}
 	    			$("#modalDestination").html(` ${info.event.extendedProps.destination}`);
 	    			$("#modalComments").html(` ${info.event.extendedProps.comments}`);
+	    			$("#eventId").html(info.event.extendedProps.docId);
 
 	    			//PDFObject.embed(info.event.extendedProps.shipTicketURL, "#pdfContainer");
-	    			PDFObject.embed('/pdf/sample-3pp.pdf', "#pdfContainer");
+	    			//PDFObject.embed('/pdf/sample-3pp.pdf', "#pdfContainer");
 	    			$("#myModal").modal("show");
 	            }
 	        
 	        });
 	       	calendar.render();
 	       	console.log(calendar);
+
+
 	       	/*
  			* Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
  			*/
@@ -136,7 +139,9 @@
 			 	}
 
 			 	//packing data into object
+			 	/*
 			 	var newEvent;
+				
 				if (!allDay) {
 
 					newEvent = {
@@ -178,6 +183,7 @@
 						
 					};
 				}
+				*/
 			 	//insert new object into calendar as event 
 			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
 
@@ -207,8 +213,8 @@
 			 		top: 0,
 			 		behavior: 'smooth'
 			 	});
-			 });
-   		});     
+			 }); //end submit truck button handling
+   		}); //end DOM content loaded event listener
 
 
 
@@ -228,34 +234,22 @@
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
   var db = firebase.firestore();
-  //query for events
   /*
-  db.collection('events').get().then((snapshot) => {
-  	snapshot.docs.forEach(doc => {
-  		console.log(doc.data());
-
-  	})
-  })
-  */
-  /*
-   * PRIMARY EVENT UPDATE LISTENER
+   * PRIMARY EVENT POPULATION LISTENER
    */
   db.collection("events").onSnapshot(snapshot => {
   	let changes = snapshot.docChanges();
   	console.log(changes);
   	changes.forEach(change => {
   		if (change.type === "added") {
-  			
   			let data = change.doc.data();
   			let day = data.date.split('/')[1];
   			let month = data.date.split('/')[0] - 1;
   			let year = data.date.split('/')[2];
-  			console.log(month,day,year);
   			let dateObj = new Date(year, month, day);
-  			//console.log(data);
   			var newEvent;
+
   			if (!data.allDay) {
-  					
   					let startHour = data.startTime.split(':')[0];
   					let startMinute = data.startTime.split(':')[1];
   					let endHour = data.endTime.split(':')[0];
@@ -276,9 +270,10 @@
 			              destination: data.destination,
 			              eventStartTime: data.startTime,
 			              eventEndTime: data.endTime,
-			              comments: data.notes
+			              comments: data.notes,
+			              docId: change.doc.id
 
-  					};
+  					}; //newEvent
 				} else {
 					let dateObj = new Date(year, month, day);
 					newEvent = {
@@ -294,40 +289,24 @@
 			            destination: data.destination,
 			            eventStartTime: data.startTime,
 			            eventEndTime: data.endTime,
-			            comments: data.notes
+			            comments: data.notes,
+			            docId: change.doc.id
 						
-					};
+					}; //newEvent
 				} //end else
-				//let calendar = document.getElementById("calendar");
 				calendar.addEvent(newEvent);
   			
   		} //end added type
+  		//TODO: HANDLE DELETE AND UPDATE
   	});
-  });
-
-  //test add
-  /*
-  db.collection("users").add({
-    username: "Gamer",
-    password: "gaming1sC00l",
-    name: "Spencer Douglas"
-});*/
-
-  //test print
-  /*
-  db.collection("users").get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`);
-    });
-}); */
-
-
+  }); //END FIRESTORE EVENT CHANGE LISTENER
     </script>
 </head>
 
 <body>
 <!-- EVENT DATA MODAL -->
 <div class="modal" tabindex="-1" role="dialog" id= "myModal">
+
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -346,12 +325,26 @@
       </div>
       	<h4>Ship Ticket</h4>
       	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download.</small>		
-        <div id = "pdfContainer"  aria-describedby="pdfHelp"></div>
+        <!--<div id = "pdfContainer"  aria-describedby="pdfHelp"></div>-->
       
   	  </div>
       <div class="modal-footer">
-      	<small id= "eventId" style="float: left;"> Event ID: not implemented</small>
+      	<small id="eventId"> Event ID: not implemented</small>
       	<button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
+      	<script>
+      		//delete file on click
+			$("#deleteShipmentBtn").click(function() {
+		  	console.log("Clicked Delete!");
+		  	db.collection("events").doc($("#eventId").html()).delete().then(function() {
+		  		console.log("Document deleted.");
+		  		//hide the modal
+		  		$("#myModal").modal("hide");
+		  		calendar.render();
+		  	}).catch(function(error) {
+		  		console.error(`Error removing document (${error})`);
+		  	}); 
+		  });
+		</script>
         <button type="button" class="btn btn-primary">Edit Info</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
@@ -447,9 +440,7 @@
 
 
 
-<script>
 
-</script>
 
 </body>
 <script src="js/scripts.js"></script>
