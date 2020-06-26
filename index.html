@@ -186,8 +186,6 @@
     				date: date,
     				customerName: customerName,
     				destination: destination,
-    				startTime: startTime,
-    				endTime: endTime,
     				isOutgoing: isOutgoing,
     				notes: comments,
     				title: vendorName,
@@ -269,7 +267,7 @@
 			              end: endDate,
 			              allDay: data.allDay,
 			              editable: false,
-			              backgroundColor: 'blue',
+			              backgroundColor: 'grey',
 			              displayEventEnd: true,
 			              isOutgoing: data.isOutgoing,
 			              customerName: data.customerName,
@@ -281,13 +279,13 @@
 
   					};
 				} else {
-					let dateObj = new Date(year, month - 2, day);
+					let dateObj = new Date(year, month, day);
 					newEvent = {
 						title: data.title,
 						start: dateObj,
 						allDay: data.allDay,
 						editable: false,
-						backgroundColor: 'blue',
+						backgroundColor: 'grey',
 						displayEventEnd: true,
 						isOutgoing: data.isOutgoing,
 						customerName: data.customerName,
