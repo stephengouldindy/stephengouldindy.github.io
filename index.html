@@ -5,9 +5,11 @@
 	<title>SGCI Shipping Calendar</title>
   	<!--change vendor to carrier, add second thing for bill of lading, colors, late/issues, mark as complete-->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   	<script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
   	<link rel="stylesheet" href="css/style.css">
-  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  	
   	<script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -43,7 +45,7 @@
 
 	        calendar = new FullCalendar.Calendar(calendarEl, {
 	        	weekends: false,
-	        	height: 600,
+	        	height: 700,
 	        	minTime: "07:00:00",
 	        	maxTime: "22:00:00",
 	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
@@ -305,7 +307,7 @@
 
 <body>
 <!-- EVENT DATA MODAL -->
-<div class="modal" tabindex="-1" role="dialog" id= "myModal">
+<div class="modal fade show" tabindex="-1" role="dialog" id= "myModal">
 
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -339,7 +341,6 @@
 		  		console.log("Document deleted.");
 		  		//hide the modal
 		  		$("#myModal").modal("hide");
-		  		location.reload();
 		  		calendar.render();
 		  	}).catch(function(error) {
 		  		console.error(`Error removing document (${error})`);

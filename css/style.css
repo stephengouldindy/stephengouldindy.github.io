@@ -8,6 +8,7 @@
  	padding-left: 20px;
  	overflow: auto;
 }	
+
 #modalContainer {
 	max-height: 200px;
 	border-top: 1px solid rgba(0,0,0,.25);
@@ -24,11 +25,18 @@ div {
 */
 .modal-content {
 	width: 700px;
-	height: 650px;
+	height: 80%;
 	margin: auto;
 }
 #pdfSection {
 	height: 600px;
+}
+.carousel-inner {
+	width: 95%;
+	height: 27.5rem;
+	bottom: 15px;
+}
+.carousel-inner > .item >img{
 
 }
 .pdfobject-container { 

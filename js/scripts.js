@@ -91,7 +91,6 @@ $("#outgoingbtn").click(function() {
  	console.log(customerName);
  	console.log(vendorName);
  	console.log(destination);
-
  	//packing data into object
 	var newEvent = {
               title: vendorName,
@@ -99,7 +98,6 @@ $("#outgoingbtn").click(function() {
               end: endTime,
               allDay: false,
               editable: true
-
     };
  	//insert new object into calendar as event 
 	calendar.addEvent({
@@ -108,10 +106,7 @@ $("#outgoingbtn").click(function() {
 	              end: new Date(2020,5,18,16,30,0),
 	              allDay: false
 	    	})
-
-
  	//hide form
-
  	//scroll to top
  });
  */
