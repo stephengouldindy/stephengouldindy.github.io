@@ -5,8 +5,8 @@
 	<title>SGCI Shipping Calendar</title>
   	<!--change vendor to carrier, add second thing for bill of lading, colors, late/issues, mark as complete-->
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   	<script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
   	
   	
@@ -28,6 +28,8 @@
 
 	<!--Firestore and fire analytics-->
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-storage.js"></script>
+
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
   	<!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
   	<script>  	
@@ -188,8 +190,11 @@
 				*/
 			 	//insert new object into calendar as event 
 			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
-
-				db.collection("events").add({
+			 	var shipTicketFile = document.getElementById('shipTicketFileArea').files[0];
+				var testRef = storageRef.child('test.pdf');
+				testRef.put(shipTicketFile).then(function(snapshot) {
+  					console.log('Uploaded file successfully!');
+  					db.collection("events").add({
     				allDay: allDay,
     				date: date,
     				customerName: customerName,
@@ -198,7 +203,8 @@
     				startTime: startTime,
     				endTime: endTime,
     				notes: comments,
-    				title: vendorName
+    				title: vendorName,
+    				shipTicketFile: testRef
 				})
 				.then(function(docRef) {
     				console.log(`Document ${docRef.id} successfully written`);
@@ -206,6 +212,13 @@
 				.catch(function(error) {
     				console.error("Error writing document: ", error);
 				});
+				});
+				
+
+				
+
+
+
 
 			 	//calendar.addEvent(newEvent);
 			 	//hide form
@@ -236,6 +249,7 @@
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
   var db = firebase.firestore();
+  var storageRef = firebase.storage().ref();
   /*
    * PRIMARY EVENT POPULATION LISTENER
    */
@@ -249,6 +263,9 @@
   			let month = data.date.split('/')[0] - 1;
   			let year = data.date.split('/')[2];
   			let dateObj = new Date(year, month, day);
+  			//let bkgColor = (data.isOutgoing) ? ''
+  			//TODO: 
+
   			var newEvent;
 
   			if (!data.allDay) {
@@ -299,6 +316,9 @@
 				calendar.addEvent(newEvent);
   			
   		} //end added type
+  		else if (change.type === "removed") {
+  			location.reload();
+  		}
   		//TODO: HANDLE DELETE AND UPDATE
   	});
   }); //END FIRESTORE EVENT CHANGE LISTENER
@@ -312,7 +332,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="display-4" id = "modalVendor">Modal title</h3>
+        <h3 id = "modalVendor">Modal title</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" id = "closeModal">&times;</span>
         </button>
@@ -325,8 +345,8 @@
         <div class = "row"><h5>Destination: </h5><h5 id="modalDestination" style ="font-weight: normal;"></h5></div>
         <div class = "row"><h5>Comments/Notes: </h5><h5 id="modalComments" style ="font-weight: normal;"></h5></div>
       </div>
-      	<h4>Ship Ticket</h4>
-      	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download.</small>		
+      	<h4>Shipment Paperwork</h4>
+      	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>		
         <!--<div id = "pdfContainer"  aria-describedby="pdfHelp"></div>-->
       
   	  </div>
@@ -340,8 +360,9 @@
 		  	db.collection("events").doc($("#eventId").html()).delete().then(function() {
 		  		console.log("Document deleted.");
 		  		//hide the modal
+		  		location.reload();
 		  		$("#myModal").modal("hide");
-		  		calendar.render();
+		  		//location.reload();
 		  	}).catch(function(error) {
 		  		console.error(`Error removing document (${error})`);
 		  	}); 
@@ -359,22 +380,7 @@
 	<br>
 	<h2 id = "instructions">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
 
-	<!--
-	<div class="col-lg-12">
-	  <div id="panel1" class="panel panel-primary">
-		  <div class="panel-heading">#panel1</div>
-		  <div class="panel-body"> Content! </div>
-	  </div>
-	</div>  
-	  <div class="col-xs-3">
-	  <div id="panel2" class="panel panel-primary">
-	  <div class="panel-heading">
-	   #panel2
-	  </div>
-	  <div class="panel-body"> Content?</div>
-	</div>
-</div>
--->
+
 	<div id = "calendar"> </div>
 	</div>
 <div class = "container" id = "formcontainer">
@@ -413,12 +419,7 @@
 		  <!--SHIP TICKET FILE SELECTION-->
 		  <div class="form-group">
     		<label for="shipTicketFileArea">Ship Ticket</label>
-    		<script>
-    		var loadFile = function(event) {
-					uploadedFile = URL.createObjectURL(event.target.files[0]);
-					//PDFObject.embed(uploadedFile, "#pdfContainer");
-					};
-			</script>
+    		
     		<input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf">
 
   		  </div>

@@ -8,10 +8,10 @@
  	padding-left: 20px;
  	overflow: auto;
 }	
+
 #calendar {
 	padding: 20px;
-	border: solid rgba (0,0,0,.2);
-	border-width: 20px;
+	
 }
 #modalContainer {
 	max-height: 200px;
