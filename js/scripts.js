@@ -6,6 +6,9 @@ $(document).ready(function() {
   $("#formcontainer").hide();
   //hide its child freight container
   $("#freightContainer").hide();
+  //$("#pdfCarousel").hide();
+  PDFObject.embed('pdf/sample-3pp.pdf', "#pdfContainer");
+  PDFObject.embed('pdf/sample-3pp.pdf', "#pdfContainer2");
 });
 
 /*
