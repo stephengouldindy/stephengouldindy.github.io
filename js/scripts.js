@@ -54,23 +54,7 @@ $("#outgoingbtn").click(function() {
 
 
 
-/*
- * Show/Hide freight form, and update button accordingly
- */
- $("#freightManageBtn").click(function() {
- 	//show the form if hidden; hide if shown
- 	if ($("#freightManageBtn").html() === "Manage Freight") {
- 		$("#freightManageBtn").html("Hide Freight Menu");
- 		$("#freightContainer").slideDown(150);
 
- 	}
- 	else {
- 		$("#freightManageBtn").html("Manage Freight");
- 		$("#freightContainer").slideUp(150);
- 	}
- 	
- 	//update the button with the proper label
- });
 
 
 

@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   	<script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
-  	<link rel="stylesheet" href="css/style.css">
+  	
   	
   	<script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
@@ -46,8 +46,8 @@
 	        calendar = new FullCalendar.Calendar(calendarEl, {
 	        	weekends: false,
 	        	height: 700,
-	        	minTime: "07:00:00",
-	        	maxTime: "22:00:00",
+	        	minTime: "06:00:00",
+	        	maxTime: "16:00:00",
 	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
 	            defaultView: 'timeGridWeek',
 	          	selectable: false,
@@ -307,7 +307,7 @@
 
 <body>
 <!-- EVENT DATA MODAL -->
-<div class="modal fade show" tabindex="-1" role="dialog" id= "myModal">
+<div class="modal" tabindex="-1" role="dialog" id= "myModal">
 
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -445,5 +445,6 @@
 
 
 </body>
+<link rel="stylesheet" href="css/style.css">
 <script src="js/scripts.js"></script>
 </html>
