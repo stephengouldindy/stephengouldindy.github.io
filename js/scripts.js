@@ -7,7 +7,7 @@ $(document).ready(function() {
   //hide its child freight container
   $("#freightContainer").hide();
   //$("#pdfCarousel").hide();
-  PDFObject.embed('pdf/sample-3pp.pdf', "#pdfContainer");
+  PDFObject.embed('https://firebasestorage.googleapis.com/v0/b/sgci-rds.appspot.com/o/Team14Charter.pdf?alt=media&token=a4d08e4e-65b4-4785-9746-aca04d69db87', "#pdfContainer");
   PDFObject.embed('pdf/sample-3pp.pdf', "#pdfContainer2");
 });
 
@@ -19,11 +19,11 @@ $("#incomingbtn").click(function() {
 		//if button not selected, switch
 		if (origValue === "btn btn-outline-primary") {
 			//flip other button
-			$("#outgoingbtn").attr("class", "btn btn-outline-danger");
+			$("#outgoingbtn").attr("class", "btn btn-outline-warning");
 			//toggle button states for good practice
-			return "btn btn-danger";
+			return "btn btn-warning";
 		}
-		else return "btn btn-danger";
+		else return "btn btn-warning";
 	});
 }); 
 
@@ -34,7 +34,7 @@ $("#incomingbtn").click(function() {
 $("#outgoingbtn").click(function() {
 	$("#outgoingbtn").attr("class", function(i, origValue){
 
-		if (origValue === "btn btn-outline-danger") {
+		if (origValue === "btn btn-outline-warning") {
 			//flip other button
 			$("#incomingbtn").attr("class", "btn btn-outline-primary");
 			return "btn btn-primary";
