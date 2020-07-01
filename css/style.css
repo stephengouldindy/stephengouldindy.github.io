@@ -81,6 +81,40 @@ small {
 	color: rgba(0,0,0,.2);
 }
 
+.btn-outline-warning {
+    color: #f58142; 
+    border-color: #f58142;
+}
+
+.btn-outline-warning:hover {
+	color: #000000; 
+	background-color: #f58142;
+    border-color: #f58142;
+}
+.btn-warning {
+	background-color: #f58142;
+    border-color: #f58142;
+}
+.btn-warning:hover {
+	background-color: #f57842;
+    border-color: #f57842;
+}
+.btn-warning:foc {
+	background-color: #f57842;
+    border-color: #f57842;
+}
+.centered-container {
+margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px;
+}
+.form-group {
+	bottom: 10px;
+}
+
 /*#pdfContainer {
 	position: absolute;
 	height: 200px;

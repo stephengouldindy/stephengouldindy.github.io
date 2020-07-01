@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel = "stylesheet">
+
+    </head>
+
+    <body>
+        
+
+        <div class = "container centered-container">
+            <nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Log In</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Create New Account</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <!---->
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"><form>
+                        <h3>Login</h3>
+
+                        <div className="form-group">
+                            <label for ="email">Email Address</label>
+                            <input type="email" class="form-control" placeholder="name@stephengould.com" />
+                        </div>
+
+                        <div className="form-group">
+                            <label for = "password">Password</label>
+                            <input type="password" class="form-control" placeholder = "Password" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                        <p className="forgot-password text-right">
+                            Forgot <a href="#">password?</a>
+                        </p>
+            </form></div>
+  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"><form>
+                        <h3>New User</h3>
+
+                        <div className="form-group">
+                            <label for ="email">Email Address</label>
+                            <input type="email" class="form-control" placeholder="name@stephengould.com" />
+                        </div>
+                        <div className="form-group">
+                            <label for ="displayName">Name</label>
+                            <input type="text" class="form-control" placeholder="First and Last Name" />
+                        </div>
+                        <div className="form-group">
+                            <label for = "password">Password</label>
+                            <input type="password" class="form-control" placeholder="Must be at least 6 characters" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                        
+            </form></div>
+  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+</div>
+            
+        </div>
+    </body>
+</html>
