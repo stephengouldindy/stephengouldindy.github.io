@@ -302,8 +302,13 @@
    */
   db.collection("events").onSnapshot(snapshot => {
   	let changes = snapshot.docChanges();
+  	console.log(changes);
   	changes.forEach(change => {
-  		if (change.type === "added") {
+  		if (change.type === "removed") {
+  			//FIXME: find a better solution to this
+  			setTimeout(function() { location.reload(); }, 500);
+  		}
+  		else if (change.type === "added") {
   			let data = change.doc.data();
   			let day = data.date.split('/')[1];
   			let month = data.date.split('/')[0] - 1;
@@ -373,9 +378,7 @@
 				calendar.addEvent(newEvent);
   			
   		} //end added type
-  		else if (change.type === "removed") {
-  			location.reload();
-  		}
+  		
   		//TODO: HANDLE DELETE AND UPDATE
   	});
   }); //END FIRESTORE EVENT CHANGE LISTENER
@@ -449,9 +452,8 @@
 			  	db.collection("events").doc($("#eventId").html()).delete().then(function() {
 			  		console.log("Document deleted.");
 			  		//hide the modal
-			  		location.reload();
-			  		$("#myModal").modal("hide");
 			  		//location.reload();
+			  		$("#myModal").modal("hide");
 			  	}).catch(function(error) {
 			  		console.error(`Error removing document (${error})`);
 			  	});

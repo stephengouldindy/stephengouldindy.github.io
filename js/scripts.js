@@ -7,8 +7,7 @@ $(document).ready(function() {
   //hide its child freight container
   $("#freightContainer").hide();
   //$("#pdfCarousel").hide();
-  PDFObject.embed('https://firebasestorage.googleapis.com/v0/b/sgci-rds.appspot.com/o/Team14Charter.pdf?alt=media&token=a4d08e4e-65b4-4785-9746-aca04d69db87', "#pdfContainer");
-  PDFObject.embed('pdf/sample-3pp.pdf', "#pdfContainer2");
+  
 });
 
 /*
