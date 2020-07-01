@@ -8,7 +8,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   	<script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
-  	
+  	<link rel="icon" type="image/ico" href="img/favicon.ico">
   	
   	<script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
@@ -182,14 +182,14 @@
 							},
 							function error(err) {
 						        console.log('error', err);
-						       	reject()
+						       	reject();
 							},
 							function complete() {
 						        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-							    	resolve(downloadURL)
+							    	resolve(downloadURL);
 								})
-							})
-					})	
+							});
+					});	
 				}
 			
 
@@ -317,58 +317,58 @@
 <!-- EVENT DATA MODAL -->
 <div class="modal" tabindex="-1" role="dialog" id= "myModal">
 
-  <div class="modal-dialog modal-lg" role="document">
+	<div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+    	<div class="modal-header">
         <h3 id = "modalVendor">Modal title</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" id = "closeModal">&times;</span>
+        	<span aria-hidden="true" id = "closeModal">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-      <div class = "container" id = "modalContainer">
-        <div class = "row"><h5>Date: </h5><h5 id="modalDate" style ="font-weight: normal;"></h5></div>
-        <div class = "row"><h5>Arrival Window: </h5><h5 id="modalTime" style ="font-weight: normal;"></h5></div>
-        <div class = "row"><h5>Customer Name: </h5><h5 id="modalCustomer" style ="font-weight: normal;"></h5></div>
-        <div class = "row"><h5>Destination: </h5><h5 id="modalDestination" style ="font-weight: normal;"></h5></div>
-        <div class = "row"><h5>Comments/Notes: </h5><h5 id="modalComments" style ="font-weight: normal;"></h5></div>
-      </div>
-      	<h4>Shipment Paperwork</h4>
-      	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>		
-        
-      	<div class ="row" style="width: 100%; margin: 0 auto;">
-		<a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: black;">
-			<div class = "container">
-    			<span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
-    			<span class="sr-only">Previous</span>
-    		</div>
-  		</a>
-		<div id="pdfCarousel" class="carousel slide" data-interval = "false" style = "width: 80%;">
-	  		<div class="carousel-inner">
-		    	<div class="carousel-item active">
-		      		<div class = "container">
-		      			<div id = "shipTicketPdfContainer"  aria-describedby="pdfHelp"></div>
-		      		</div>
-		      				      		
-	    		</div>
-		    	<div class="carousel-item">
-		    		<div class = "container">
-		      		<div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
-		      	</div>
-		    	</div>
-    
-  			</div>
-  			
-  </div>
-  		
-			<a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: black;">
-				<div class = "container">
-			    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-			    <span class="sr-only">Next</span>
-			    </div>
-			</a>
+	      <div class = "container" id = "modalContainer">
+	        <div class = "row"><h5>Date: </h5><h5 id="modalDate" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Arrival Window: </h5><h5 id="modalTime" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Customer Name: </h5><h5 id="modalCustomer" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Destination: </h5><h5 id="modalDestination" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Comments/Notes: </h5><h5 id="modalComments" style ="font-weight: normal;"></h5></div>
+	      </div>
+	      	<h4>Shipment Paperwork</h4>
+	      	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>		
+	        
+	      	<div class ="row" style="width: 100%; margin: 0 auto;">
+				<a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: black;">
+					<div class = "container">
+		    			<span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
+		    			<span class="sr-only">Previous</span>
+		    		</div>
+		  		</a>
+				<div id="pdfCarousel" class="carousel slide" data-interval = "false" style = "width: 80%;">
+			  		<div class="carousel-inner">
+				    	<div class="carousel-item active">
+				      		<div class = "container">
+				      			<div id = "shipTicketPdfContainer"  aria-describedby="pdfHelp"></div>
+				      		</div>
+				      				      		
+			    		</div>
+				    	<div class="carousel-item">
+				    		<div class = "container">
+				      		<div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
+				      	</div>
+				    	</div>
+		    
+		  			</div>
+	  			
+	  			</div>
+	  		
+				<a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: black;">
+					<div class = "container">
+				    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+				    <span class="sr-only">Next</span>
+				    </div>
+				</a>
 				
-</div>
+			</div>
   	  </div>
       <div class="modal-footer">
       	<small id="eventId"> Event ID: not implemented</small>
@@ -426,7 +426,7 @@
 		  </div>
 		  <div class="form-group">
 		    <label for="vendorBox">Carrier</label>
-		    <input type="text" class="form-control" id="vendorBox" placeholder="Vendor Name">
+		    <input type="text" class="form-control" id="vendorBox" placeholder="Carrier/Vendor Name">
 		  </div>
 		  <div class="form-group">
 		    <label for="customerBox">Customer</label>
@@ -439,7 +439,7 @@
 		  <!-- -->
 		  <!--SHIP TICKET FILE SELECTION-->
 		  <div class="form-group">
-    		<label for="shipTicketFileArea">Ship Ticket</label>
+    		<label for="shipTicketFileArea">Ship Ticket (must be .pdf)</label>
     		
     		<input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf">
 
@@ -447,7 +447,7 @@
   		  <!--END FILE SELECTION-->
   		  <!--BILL OF LADING FILE SELECTION-->
 		  <div class="form-group">
-    		<label for="ladingBillFileArea">Bill of Lading</label>
+    		<label for="ladingBillFileArea">Bill of Lading (must be .pdf)</label>
     		
     		<input type="file" class="form-control-file" id="ladingBillFileArea" accept=".pdf">
 
