@@ -22,14 +22,14 @@
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
     <script src='fullcalendar/interaction/main.js'></script>
+
 	<!-- The core Firebase JS SDK is always required and must be listed first -->
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
-
 	<!--Firestore and fire analytics-->
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-storage.js"></script>
-
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+
   	<!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
   	<script>  	
 
@@ -108,7 +108,7 @@
 	       	/*
  			* Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
  			*/
- 			$("#submitTruckBtn").click(function() {
+ 			$("#submitTruckBtn").click(async function() {
 	 	  		//unwrapping data...
 			 	var startTime = $("#startTime").val();
 			 	var endTime = $("#endTime").val();
@@ -139,71 +139,68 @@
 				 	console.log(`vendorName: ${vendorName}`);
 				 	console.log(destination);
 			 	}
-
-			 	//packing data into object
-			 	/*
-			 	var newEvent;
-				
-				if (!allDay) {
-
-					newEvent = {
-			              title: vendorName,
-			              start: new Date (curYear,curMonth - 1, curDay, startHour, startMinute),
-			              end: new Date (curYear, curMonth - 1, curDay, endHour, endMinute),
-			              allDay: allDay,
-			              editable: false,
-			              backgroundColor: bkgColor,
-			              displayEventEnd: true,
-			              isOutgoing: isOutgoing,
-			              customerName: customerName,
-			              eventDate: date,
-			              destination: destination,
-			              eventStartTime: startTime,
-			              eventEndTime: endTime,
-			              shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0]),
-			              comments: comments
-
-			              
-
-				    };
-				} else {
-					newEvent = {
-						title: vendorName,
-						start: new Date(curYear, curMonth - 1, curDay),
-						allDay: allDay,
-						editable: false,
-						backgroundColor: bkgColor,
-						displayEventEnd: true,
-						isOutgoing: isOutgoing,
-						customerName: customerName,
-			            eventDate: date,
-			            destination: destination,
-			            eventStartTime: startTime,
-			            eventEndTime: endTime,
-			            shipTicketURL: URL.createObjectURL(document.getElementById('shipTicketFileArea').files[0]),
-			            comments: comments
-						
-					};
-				}
-				*/
 			 	//insert new object into calendar as event 
 			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
 			 	let shipTicketFile = document.getElementById('shipTicketFileArea').files[0];
-				let shipTicketRef = storageRef.child(shipTicketFile.name);
-				var uploadTicketTask = shipTicketRef.put(shipTicketFile);
-				let shipTicketURL;
+				let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
+				let shipTicketURL = await uploadTaskPromise(shipTicketFile);
+				let ladingBillURL = await uploadTaskPromise(ladingBillFile);
+				console.log(`shipTicketURL: ${shipTicketURL}`);
+				console.log(`ladingBillURL: ${ladingBillURL}`);
+				db.collection("events").add({
+	    			allDay: allDay,
+	    			date: date,
+	    			customerName: customerName,
+	    			destination: destination,
+	    			isOutgoing: isOutgoing,
+	    			startTime: startTime,
+	    			endTime: endTime,
+	    			notes: comments,
+	    			title: vendorName,
+	    			shipTicketURL: shipTicketURL,
+	    			ladingURL: ladingBillURL
+				}).then(function(docRef) {
+		    		console.log(`Document ${docRef.id} successfully written`);
+				}).catch(function(error) {
+		    		console.error("Error writing document: ", error);
+				});
+					
+				async function uploadTaskPromise(file) {
+							  return new Promise(function(resolve, reject) {
+							    let fileRef = storageRef.child(file.name);
+								uploadTask = fileRef.put(file);
+							    uploadTask.on('state_changed',
+							      function(snapshot) {
+							        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+							        console.log('Upload is ' + progress + '% done')
+							      },
+							      function error(err) {
+							        console.log('error', err)
+							        reject()
+							      },
+							      function complete() {
+							        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+							          resolve(downloadURL)
+							        })
+							      }
+							    )
+							  })
+							}
+
+
+				/*
 				// Listen for state changes, errors, and completion of the upload.
 				uploadTicketTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
 				  function(snapshot) {
 				    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
 				    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-				    console.log('Upload is ' + progress + '% done');
+				    console.log('Ticket Upload is ' + progress + '% done');
 				    switch (snapshot.state) {
 				      case firebase.storage.TaskState.PAUSED: // or 'paused'
-				        console.log('Upload is paused');
+				        console.log('Ticket Upload is paused');
 				        break;
 				      case firebase.storage.TaskState.RUNNING: // or 'running'
-				        console.log('Upload is running');
+				        console.log('Ticket Upload is running');
 				        break;
 				    }
 				  }, function(error) {
@@ -224,41 +221,49 @@
 				      break;
 				  }
 				}, function() {
-					let shipTicketFile = document.getElementById('shipTicketFileArea').files[0];
+
+
+
 					let shipTicketRef = storageRef.child(shipTicketFile.name);
-					var uploadTask = shipTicketRef.put(shipTicketFile);
+					var uploadTicketTask = shipTicketRef.put(shipTicketFile);
+					
 				  // Upload completed successfully, now we can get the download URL and proceed with next upload
 				  
-				  uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-				  	shipTicketURL = downloadURL;
-				  	//FIXME
-				//add event to db with both urls
-				  	db.collection("events").add({
-    				allDay: allDay,
-    				date: date,
-    				customerName: customerName,
-    				destination: destination,
-    				isOutgoing: isOutgoing,
-    				startTime: startTime,
-    				endTime: endTime,
-    				notes: comments,
-    				title: vendorName,
-    				shipTicketURL: shipTicketURL,
-    				ladingURL: shipTicketURL
-				})
-				.then(function(docRef) {
-    				console.log(`Document ${docRef.id} successfully written`);
-				})
-				.catch(function(error) {
-    				console.error("Error writing document: ", error);
-				});
-
+					  uploadTicketTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+					  	shipTicketURL = downloadURL;
+					  	//FIXME
+					//add event to db with both urls
+					console.log(`ladingBillURL is ${ladingBillURL}`);
+					if (ladingBillURL != undefined) {
+					  	db.collection("events").add({
+	    				allDay: allDay,
+	    				date: date,
+	    				customerName: customerName,
+	    				destination: destination,
+	    				isOutgoing: isOutgoing,
+	    				startTime: startTime,
+	    				endTime: endTime,
+	    				notes: comments,
+	    				title: vendorName,
+	    				shipTicketURL: shipTicketURL,
+	    				ladingURL: ladingBillURL
+					})
+					.then(function(docRef) {
+	    				console.log(`Document ${docRef.id} successfully written`);
+					})
+					.catch(function(error) {
+	    				console.error("Error writing document: ", error);
+					});
+				}
 				//FIXME
 				  });
 				}); //end of upload ship ticket task listener
 
+*/
 				
 
+				//given a file, uploads it to the bucket, and returns its url
+			
 
 
 
