@@ -145,6 +145,10 @@
 			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
 			 	let shipTicketFile = document.getElementById('shipTicketFileArea').files[0];
 				let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
+				if (shipTicketFile == undefined || ladingBillFile == undefined) {
+					alert("Please upload all necessary paperwork!");
+					return;
+				}
 				let shipTicketURL = await uploadTaskPromise(shipTicketFile);
 				let ladingBillURL = await uploadTaskPromise(ladingBillFile);
 				console.log(`shipTicketURL: ${shipTicketURL}`);
@@ -168,103 +172,25 @@
 				});
 					
 				async function uploadTaskPromise(file) {
-							  return new Promise(function(resolve, reject) {
-							    let fileRef = storageRef.child(file.name);
-								uploadTask = fileRef.put(file);
-							    uploadTask.on('state_changed',
-							      function(snapshot) {
-							        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-							        console.log('Upload is ' + progress + '% done')
-							      },
-							      function error(err) {
-							        console.log('error', err)
-							        reject()
-							      },
-							      function complete() {
-							        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-							          resolve(downloadURL)
-							        })
-							      }
-							    )
-							  })
-							}
-
-
-				/*
-				// Listen for state changes, errors, and completion of the upload.
-				uploadTicketTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
-				  function(snapshot) {
-				    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-				    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-				    console.log('Ticket Upload is ' + progress + '% done');
-				    switch (snapshot.state) {
-				      case firebase.storage.TaskState.PAUSED: // or 'paused'
-				        console.log('Ticket Upload is paused');
-				        break;
-				      case firebase.storage.TaskState.RUNNING: // or 'running'
-				        console.log('Ticket Upload is running');
-				        break;
-				    }
-				  }, function(error) {
-
-				  // A full list of error codes is available at
-				  // https://firebase.google.com/docs/storage/web/handle-errors
-				  switch (error.code) {
-				    case 'storage/unauthorized':
-				      // User doesn't have permission to access the object
-				      break;
-
-				    case 'storage/canceled':
-				      // User canceled the upload
-				      break;
-
-				    case 'storage/unknown':
-				      // Unknown error occurred, inspect error.serverResponse
-				      break;
-				  }
-				}, function() {
-
-
-
-					let shipTicketRef = storageRef.child(shipTicketFile.name);
-					var uploadTicketTask = shipTicketRef.put(shipTicketFile);
-					
-				  // Upload completed successfully, now we can get the download URL and proceed with next upload
-				  
-					  uploadTicketTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-					  	shipTicketURL = downloadURL;
-					  	//FIXME
-					//add event to db with both urls
-					console.log(`ladingBillURL is ${ladingBillURL}`);
-					if (ladingBillURL != undefined) {
-					  	db.collection("events").add({
-	    				allDay: allDay,
-	    				date: date,
-	    				customerName: customerName,
-	    				destination: destination,
-	    				isOutgoing: isOutgoing,
-	    				startTime: startTime,
-	    				endTime: endTime,
-	    				notes: comments,
-	    				title: vendorName,
-	    				shipTicketURL: shipTicketURL,
-	    				ladingURL: ladingBillURL
-					})
-					.then(function(docRef) {
-	    				console.log(`Document ${docRef.id} successfully written`);
-					})
-					.catch(function(error) {
-	    				console.error("Error writing document: ", error);
-					});
+					return new Promise(function(resolve, reject) {
+					    let fileRef = storageRef.child(file.name);
+					    uploadTask = fileRef.put(file);
+						uploadTask.on('state_changed',
+					        function(snapshot) {
+					        	var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+								console.log('Upload is ' + progress + '% done');
+							},
+							function error(err) {
+						        console.log('error', err);
+						       	reject()
+							},
+							function complete() {
+						        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+							    	resolve(downloadURL)
+								})
+							})
+					})	
 				}
-				//FIXME
-				  });
-				}); //end of upload ship ticket task listener
-
-*/
-				
-
-				//given a file, uploads it to the bucket, and returns its url
 			
 
 
@@ -417,7 +343,7 @@
     			<span class="sr-only">Previous</span>
     		</div>
   		</a>
-		<div id="pdfCarousel" class="carousel slide" data-interval = "false" data-wrap = "false" style = "width: 80%;">
+		<div id="pdfCarousel" class="carousel slide" data-interval = "false" style = "width: 80%;">
 	  		<div class="carousel-inner">
 		    	<div class="carousel-item active">
 		      		<div class = "container">

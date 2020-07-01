@@ -17,6 +17,8 @@
 	max-height: 200px;
 	border-top: 1px solid rgba(0,0,0,.25);
 	border-bottom: 1px solid rgba(0,0,0,.25);
+	padding-top: 5px !important;
+	padding-bottom: 5px !important; 
 }
 .fc-event-container:hover {
 	cursor: pointer;
@@ -30,13 +32,13 @@ div {
 
 #formcontainer {
 	padding: 20px;
-background-color: rgba(0,0,0,.1);
-border: rgba (0,0,0,0.2);
+	background-color: rgba(0,0,0,.1);
+	border: rgba (0,0,0,0.2);
 	border-width: 20px;
 }
 .modal-content {
-	width: 700px;
-	height: 800px;
+	width: 900px;
+	height: 840px;
 	margin: auto;
 }
 .modal-backdrop
@@ -44,15 +46,20 @@ border: rgba (0,0,0,0.2);
     opacity:0.5 !important;
 
 }
-#pdfContainer {
+#closeModal {
+	font-size: 40px;
+}
+.modal-header {
+	height: 60px;
+}
+#shipTicketPdfContainer {
 	height: 25rem;
 	margin: 0 auto;
 }
-#pdfContainer2 {
+#ladingPdfContainer {
 	height: 25rem;
 	margin: 0 auto;
 }
-
 .carousel-inner {
 
 	height: 27.5rem;
@@ -66,9 +73,7 @@ border: rgba (0,0,0,0.2);
 .pdfobject-container { 
 	height: 25rem; 
 }
-#closeModal {
-	font-size: 40px;
-}
+
 small {
 	color: rgba(0,0,0,.2);
 }
