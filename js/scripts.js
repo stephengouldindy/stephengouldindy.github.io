@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 	//update status tag
-  $("#demo").html("prerelease v0.37 | Database Status: Add, View, Delete Events");
+  $("#demo").html("prerelease v0.5 | Database Status: Add, View, Delete Events; Upload/View Shipment Paperwork");
   //hide the event form on pageload
   $("#formcontainer").hide();
   //hide its child freight container
