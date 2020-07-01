@@ -73,7 +73,10 @@ div {
 .pdfobject-container { 
 	height: 25rem; 
 }
-
+form {
+	border-radius: 2px;
+	border-color: black;
+}
 small {
 	color: rgba(0,0,0,.2);
 }
