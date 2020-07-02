@@ -52,7 +52,7 @@ $("#signInBtn").click(async function() {
 		signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
 		console.log(signInAttempt);
 		if (signInAttempt.user) {
-			window.location.href = '/calendar.html';
+			
 		}
 	}
 	catch(error) {
@@ -67,4 +67,13 @@ $("#signInBtn").click(async function() {
   		}
 	}
 	
+});
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    window.location.href = '/calendar.html';
+    // ...
+  } else {
+    // User is signed out.
+    // ...
+  }
 });
