@@ -215,7 +215,18 @@
 
       
   // Your web app's Firebase configuration
-  2
+  var firebaseConfig = {
+    apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
+    authDomain: "sgci-rds.firebaseapp.com",
+    databaseURL: "https://sgci-rds.firebaseio.com",
+    projectId: "sgci-rds",
+    storageBucket: "sgci-rds.appspot.com",
+    messagingSenderId: "184884483557",
+    appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
+    measurementId: "G-WVCBC8FL46"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
   firebase.analytics();
   var db = firebase.firestore();
   var storageRef = firebase.storage().ref();
