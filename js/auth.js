@@ -14,7 +14,18 @@ $(document).ready(function() {
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
   $("#version").html("prerelease v0.7");
+  firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+  	console.log(user.email);
+    window.location = 'calendar.html';
+    // ...
+  } else {
+    // User is signed out.
+    // ...
+  }
+});
 });
 
 //creates an account using the provided information and associate the display name with it
@@ -67,13 +78,4 @@ $("#signInBtn").click(async function() {
   		}
 	}
 	
-});
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    window.location.href = '/calendar.html';
-    // ...
-  } else {
-    // User is signed out.
-    // ...
-  }
 });
