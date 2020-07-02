@@ -7,7 +7,7 @@ $(document).ready(function() {
   //hide its child freight container
   $("#freightContainer").hide();
   //$("#pdfCarousel").hide();
-  
+  console.log(firebase.auth().currentUser);
 });
 
 /*

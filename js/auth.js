@@ -46,8 +46,17 @@ $("#signInBtn").click(async function() {
 	var email = $("#loginEmail").val();
 	var password = $("#loginPass").val();
 	console.log(`email: ${email} pass: ${password}`);
-	await firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+	var signInAttempt; 
+	try {
+		signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
+		console.log(signInAttempt);
+		if (signInAttempt.user) {
+			window.location.href = '/calendar.html';
+		}
+	}
+	catch(error) {
   		// Handle Errors here.
+  		console.log('caught err');
   		var errorCode = error.code;
   		var errorMessage = error.message;
   		if (errorCode === 'auth/wrong-password') {
@@ -55,6 +64,6 @@ $("#signInBtn").click(async function() {
   		} else {
     		alert(errorMessage);
   		}
-	});
-	window.location.href = '/calendar.html';
+	}
+	
 });
