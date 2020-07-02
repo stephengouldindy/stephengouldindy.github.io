@@ -17,7 +17,7 @@
   	<link href='fullcalendar/core/main.css' rel='stylesheet' />
     <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
     <link href='fullcalendar/timegrid/main.css' rel='stylesheet' />
-
+	
   	<script src='fullcalendar/core/main.js'></script>
     <script src='fullcalendar/daygrid/main.js'></script>
 	<script src='fullcalendar/timegrid/main.js'></script>
@@ -26,6 +26,7 @@
 	<!-- The core Firebase JS SDK is always required and must be listed first -->
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
 	<!--Firestore and fire analytics-->
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-storage.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
@@ -47,6 +48,7 @@
 	        var calendarEl = document.getElementById('calendar');
 
 	        calendar = new FullCalendar.Calendar(calendarEl, {
+	        	themeSystem: 'standard',
 	        	weekends: false,
 	        	nowIndicator: true,
 	        	height: 640,
@@ -70,8 +72,9 @@
 
 		    		$("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
 		    		//flash selection colour
+		    		let oldColor = info.dayEl.style.backgroundColor;
 		    		info.dayEl.style.backgroundColor = '#c7c7c7';
-		    		setTimeout(function() {info.dayEl.style.backgroundColor = 'white';}, 100);
+		    		setTimeout(function() {info.dayEl.style.backgroundColor = oldColor;}, 100);
 		    		window.scrollTo({
 		    			top: 2000,
 		    			behavior: 'smooth',
@@ -122,7 +125,7 @@
 			 	var endHour;
 			 	var endMinute;
 			 	var isOutgoing = ($("#outgoingbtn").attr("class") === "btn btn-primary");
-			 	var bkgColor = (isOutgoing ?  '#1a75ff' : '#EF2E2E');
+			 	var bkgColor = (isOutgoing ?  '#1a75ff' : '#F24E1B');F24E1B
 			 	if (!allDay) { 
 			 		startHour = startTime.split(":")[0];
 			 		startMinute = startTime.split(":")[1];
@@ -212,18 +215,7 @@
 
       
   // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
-    authDomain: "sgci-rds.firebaseapp.com",
-    databaseURL: "https://sgci-rds.firebaseio.com",
-    projectId: "sgci-rds",
-    storageBucket: "sgci-rds.appspot.com",
-    messagingSenderId: "184884483557",
-    appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
-    measurementId: "G-WVCBC8FL46"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  2
   firebase.analytics();
   var db = firebase.firestore();
   var storageRef = firebase.storage().ref();
