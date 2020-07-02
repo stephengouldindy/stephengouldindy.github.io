@@ -105,12 +105,16 @@ small {
     border-color: #f57842;
 }
 .centered-container {
-margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 450px;
+
+	margin: 0;
+  	position: absolute;
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	width: 450px;
+	border-radius: 25px;
+	border: solid lightgrey;
+  	background-color: white;
 }
 .form-group {
 	bottom: 10px;
@@ -123,6 +127,9 @@ margin: 0;
 .forgot-password {
 	margin-top: 30px;
 }
+#forgotPassLink {
+	color: #F24E1B;
+}
 .tab-pane {
 	height: 340px;
 }
@@ -130,6 +137,7 @@ margin: 0;
 	text-align: center;
 	margin-top: 5px;
 	margin-bottom: 0px;
+	color: #082a40;
 }
 #logo {
 	width: 80%;
@@ -153,7 +161,7 @@ margin: 0;
 	margin-right: auto;
 	width: 60px;
 	height: 60px;
-	background-image: url('../img/logo.jpeg');
+	background-image: url('../img/logo.svg');
 	background-position: center;
 	background-size: contain;
 }
@@ -187,6 +195,32 @@ footer > * {
 	color: lightgrey;
 	font-size: 12px;
 
+}
+
+
+#signInBtn, #createAccountBtn {
+	background-color: #082a40;
+}
+.nav-item {
+	color: #082a40;
+	border-top-color: lightgrey !important;
+	border-left-color: lightgrey !important;
+	border-right-color: lightgrey !important;
+}
+.nav-item:hover {
+	color: #F24E1B !important;
+	border-top-color: #F24E1B !important;
+	border-left-color: #F24E1B !important;
+	border-right-color: #F24E1B !important;
+}
+
+
+
+.nav-link.active {
+	color: #F24E1B !important;
+	border-top-color: #F24E1B !important;
+	border-left-color: #F24E1B !important;
+	border-right-color: #F24E1B !important;
 }
 
 /*#pdfContainer {

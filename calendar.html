@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>SGCI Shipping Calendar</title>
+  	<!--change vendor to carrier, add second thing for bill of lading, colors, late/issues, mark as complete-->
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  	<script src = "https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
+  	<link rel="icon" type="image/ico" href="img/favicon.ico">
+  	
+  	<script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
+  
+  
+  	<link href="css/bootstrap.min.css" rel="stylesheet">
+  	<link href='fullcalendar/core/main.css' rel='stylesheet' />
+    <link href='fullcalendar/daygrid/main.css' rel='stylesheet' />
+    <link href='fullcalendar/timegrid/main.css' rel='stylesheet' />
+	
+  	<script src='fullcalendar/core/main.js'></script>
+    <script src='fullcalendar/daygrid/main.js'></script>
+	<script src='fullcalendar/timegrid/main.js'></script>
+    <script src='fullcalendar/interaction/main.js'></script>
+
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
+	<!--Firestore and fire analytics-->
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-storage.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+	<script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+	<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+  	<!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT--> 		  
+  	<script>  	
+
+  		var _DEBUG = false;
+  		var curMinute;
+  		var curHour;
+  		var curDay;
+  		var curMonth;
+  		var curYear;
+  		var calendar;
+
+      	document.addEventListener('DOMContentLoaded', function() {
+	        var calendarEl = document.getElementById('calendar');
+
+	        calendar = new FullCalendar.Calendar(calendarEl, {
+	        	themeSystem: 'standard',
+	        	weekends: false,
+	        	nowIndicator: true,
+	        	height: 640,
+	        	minTime: "06:00:00",
+	        	maxTime: "16:00:00",
+	        	plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
+	            defaultView: 'timeGridWeek',
+	          	selectable: false,
+	          	header: {
+	      			left: 'prev,next, today',
+	     			center: 'title',
+	      			right: 'timeGridDay, timeGridWeek, dayGridMonth'
+	    		},
+	    		//Date clicking handling 
+	        	dateClick: function(info) {
+	        		curDay = info.date.getDate();
+	    			curMonth = info.date.getMonth() + 1;
+		    		curYear = info.date.getFullYear();
+		          	//display new shipment form
+		    		$("#formcontainer").slideDown(0); 
+
+		    		$("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
+		    		//flash selection colour
+		    		let oldColor = info.dayEl.style.backgroundColor;
+		    		info.dayEl.style.backgroundColor = '#c7c7c7';
+		    		setTimeout(function() {info.dayEl.style.backgroundColor = oldColor;}, 100);
+		    		window.scrollTo({
+		    			top: 2000,
+		    			behavior: 'smooth',
+		    		});
+		    		curDay = info.date.getDate();
+		    		curMonth = info.date.getMonth() + 1;
+		    		curYear = info.date.getFullYear();	            
+	    		}, //end dateClick
+	    		eventClick: function(info) {
+	    			//populate event info modal with event data
+	    			var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
+	    			var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
+					$("#modalVendor").html(`${info.event.title} - ${type}`);
+	    			$("#modalCustomer").html(` ${info.event.extendedProps.customerName}`);
+	    			$("#modalDate").html(` ${info.event.extendedProps.eventDate}`);
+	    			if (!info.event.allDay) {
+		    			$("#modalTime").html(` ${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`);
+		    		}
+	    			else {
+	    				$("#modalTime").html(" No time specified.");
+	    			}
+	    			$("#modalDestination").html(` ${info.event.extendedProps.destination}`);
+	    			$("#modalComments").html(` ${info.event.extendedProps.comments}`);
+	    			$("#eventId").html(info.event.extendedProps.docId);
+
+	    			PDFObject.embed(info.event.extendedProps.shipTicketURL, "#shipTicketPdfContainer");
+	    			PDFObject.embed(info.event.extendedProps.ladingURL, "#ladingPdfContainer");
+	    			
+	    			$("#myModal").modal("show");
+	            }
+	        
+	        });
+	       	calendar.render();
+	       	
+
+
+	       	/*
+ 			* Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
+ 			*/
+ 			$("#submitTruckBtn").click(async function() {
+	 	  		//unwrapping data...
+			 	var startTime = $("#startTime").val();
+			 	var endTime = $("#endTime").val();
+			 	//FIXME DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
+			 	var allDay = (startTime === "");
+			 	var startHour;
+			 	var startMinute;
+			 	var endHour;
+			 	var endMinute;
+			 	var isOutgoing = ($("#outgoingbtn").attr("class") === "btn btn-primary");
+			 	var bkgColor = (isOutgoing ?  '#1a75ff' : '#F24E1B');F24E1B
+			 	if (!allDay) { 
+			 		startHour = startTime.split(":")[0];
+			 		startMinute = startTime.split(":")[1];
+			 		endHour = endTime.split(":")[0];
+			 		endMinute = endTime.split(":")[1];
+			 	}
+			 	var date = $("#dateAlert").text().split(":")[1];
+			 	var customerName = $("#customerBox").val();
+				var vendorName = $("#vendorBox").val();
+			 	var destination = $("#destinationBox").val();
+			 	var comments = $("#notesArea").val();
+			 	if (_DEBUG) {
+				 	console.log(startTime);
+				 	console.log(endTime);
+				 	console.log(date);
+				 	console.log(customerName);
+				 	console.log(`vendorName: ${vendorName}`);
+				 	console.log(destination);
+			 	}
+			 	//insert new object into calendar as event 
+			 	//TODO: change this to an event source method after we confirm the new event has been entered into the database
+			 	let shipTicketFile = document.getElementById('shipTicketFileArea').files[0];
+				let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
+				if (shipTicketFile == undefined || ladingBillFile == undefined) {
+					alert("Please upload all necessary paperwork!");
+					return;
+				}
+				let shipTicketURL = await uploadTaskPromise(shipTicketFile);
+				let ladingBillURL = await uploadTaskPromise(ladingBillFile);
+				console.log(`shipTicketURL: ${shipTicketURL}`);
+				console.log(`ladingBillURL: ${ladingBillURL}`);
+				db.collection("events").add({
+	    			allDay: allDay,
+	    			date: date,
+	    			customerName: customerName,
+	    			destination: destination,
+	    			isOutgoing: isOutgoing,
+	    			startTime: startTime,
+	    			endTime: endTime,
+	    			notes: comments,
+	    			title: vendorName,
+	    			shipTicketURL: shipTicketURL,
+	    			ladingURL: ladingBillURL
+				}).then(function(docRef) {
+		    		console.log(`Document ${docRef.id} successfully written`);
+				}).catch(function(error) {
+		    		console.error("Error writing document: ", error);
+				});
+					
+				async function uploadTaskPromise(file) {
+					return new Promise(function(resolve, reject) {
+					    let fileRef = storageRef.child(file.name);
+					    uploadTask = fileRef.put(file);
+						uploadTask.on('state_changed',
+					        function(snapshot) {
+					        	var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+								console.log('Upload is ' + progress + '% done');
+							},
+							function error(err) {
+						        console.log('error', err);
+						       	reject();
+							},
+							function complete() {
+						        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+							    	resolve(downloadURL);
+								})
+							});
+					});	
+				}
+			
+
+
+
+			 	//calendar.addEvent(newEvent);
+			 	//hide form
+			 	$("#formcontainer").slideUp(300);
+			 	$("#newTruckForm").
+			 	//scroll to top
+			 	window.scrollTo({
+			 		top: 0,
+			 		behavior: 'smooth'
+			 	});
+			 }); //end submit truck button handling
+   		}); //end DOM content loaded event listener
+
+
+
+      
+  // Your web app's Firebase configuration
+  2
+  firebase.analytics();
+  var db = firebase.firestore();
+  var storageRef = firebase.storage().ref();
+  /*
+   * PRIMARY EVENT POPULATION LISTENER
+   */
+  db.collection("events").onSnapshot(snapshot => {
+  	let changes = snapshot.docChanges();
+  	console.log(changes);
+  	changes.forEach(change => {
+  		if (change.type === "removed") {
+  			//FIXME: find a better solution to this
+  			setTimeout(function() { location.reload(); }, 500);
+  		}
+  		else if (change.type === "added") {
+  			let data = change.doc.data();
+  			let day = data.date.split('/')[1];
+  			let month = data.date.split('/')[0] - 1;
+  			let year = data.date.split('/')[2];
+  			let dateObj = new Date(year, month, day);
+  			let bkgColor = data.isOutgoing ? '#5da4c2' : '#eb8944';
+  			let borderColor = !data.isOutgoing ? '#5da4c2' : '#eb8944';
+  			let shipTicketURL = data.shipTicketURL;
+  			let ladingURL = data.ladingURL;
+  			//TODO: 
+
+  			var newEvent;
+
+  			if (!data.allDay) {
+  					let startHour = data.startTime.split(':')[0];
+  					let startMinute = data.startTime.split(':')[1];
+  					let endHour = data.endTime.split(':')[0];
+  					let endMinute = data.endTime.split(':')[1];
+  					let startDate = new Date(year, month, day, startHour, startMinute);
+  					let endDate = new Date(year, month, day, endHour, endMinute);
+  					
+  					
+					newEvent = {
+			              title: data.title,
+			              start: startDate,
+			              end: endDate,
+			              allDay: data.allDay,
+			              editable: false,
+			              backgroundColor: bkgColor,
+			              borderColor: borderColor,
+			              displayEventEnd: true,
+			              isOutgoing: data.isOutgoing,
+			              customerName: data.customerName,
+			              eventDate: data.date,
+			              destination: data.destination,
+			              eventStartTime: data.startTime,
+			              eventEndTime: data.endTime,
+			              comments: data.notes,
+			              docId: change.doc.id,
+			              ladingURL: ladingURL,
+			              shipTicketURL: shipTicketURL
+
+  					}; //newEvent
+				} else {
+					let dateObj = new Date(year, month, day);
+					newEvent = {
+						title: data.title,
+						start: dateObj,
+						allDay: data.allDay,
+						editable: false,
+						backgroundColor: bkgColor,
+						borderColor: borderColor,
+						displayEventEnd: true,
+						isOutgoing: data.isOutgoing,
+						customerName: data.customerName,
+			            eventDate: data.date,
+			            destination: data.destination,
+			            eventStartTime: data.startTime,
+			            eventEndTime: data.endTime,
+			            comments: data.notes,
+			            docId: change.doc.id,
+			            ladingURL: ladingURL,
+			            shipTicketURL: shipTicketURL
+						
+					}; //newEvent
+				} //end else
+				calendar.addEvent(newEvent);
+  			
+  		} //end added type
+  		
+  		//TODO: HANDLE DELETE AND UPDATE
+  	});
+  }); //END FIRESTORE EVENT CHANGE LISTENER
+    </script>
+</head>
+
+<body>
+<!-- EVENT DATA MODAL -->
+<div class="modal" tabindex="-1" role="dialog" id= "myModal">
+
+	<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    	<div class="modal-header">
+        <h3 id = "modalVendor">Modal title</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        	<span aria-hidden="true" id = "closeModal">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+	      <div class = "container" id = "modalContainer">
+	        <div class = "row"><h5>Date: </h5><h5 id="modalDate" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Arrival Window: </h5><h5 id="modalTime" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Customer Name: </h5><h5 id="modalCustomer" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Destination: </h5><h5 id="modalDestination" style ="font-weight: normal;"></h5></div>
+	        <div class = "row"><h5>Comments/Notes: </h5><h5 id="modalComments" style ="font-weight: normal;"></h5></div>
+	      </div>
+	      	<h4>Shipment Paperwork</h4>
+	      	<small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>		
+	        
+	      	<div class ="row" style="width: 100%; margin: 0 auto;">
+				<a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: black;">
+					<div class = "container">
+		    			<span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
+		    			<span class="sr-only">Previous</span>
+		    		</div>
+		  		</a>
+				<div id="pdfCarousel" class="carousel slide" data-interval = "false" style = "width: 80%;">
+			  		<div class="carousel-inner">
+				    	<div class="carousel-item active">
+				      		<div class = "container">
+				      			<div id = "shipTicketPdfContainer"  aria-describedby="pdfHelp"></div>
+				      		</div>
+				      				      		
+			    		</div>
+				    	<div class="carousel-item">
+				    		<div class = "container">
+				      		<div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
+				      	</div>
+				    	</div>
+		    
+		  			</div>
+	  			
+	  			</div>
+	  		
+				<a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: black;">
+					<div class = "container">
+				    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+				    <span class="sr-only">Next</span>
+				    </div>
+				</a>
+				
+			</div>
+  	  </div>
+      <div class="modal-footer">
+      	<small id="eventId"> Event ID: not implemented</small>
+      	<button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
+      	<script>
+      		//delete file on click
+			$("#deleteShipmentBtn").click(function() {
+				if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
+			  	db.collection("events").doc($("#eventId").html()).delete().then(function() {
+			  		console.log("Document deleted.");
+			  		//hide the modal
+			  		//location.reload();
+			  		$("#myModal").modal("hide");
+			  	}).catch(function(error) {
+			  		console.error(`Error removing document (${error})`);
+			  	});
+		  	} 
+		  });
+
+		</script>
+        <button type="button" class="btn btn-primary">Edit Info</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--END MODAL-->
+<div class ="container">
+	<p id = "demo">Not working</p>
+	<br>
+	<h2 id = "instructions">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
+
+
+	<div id = "calendar"> </div>
+	</div>
+<div class = "container" id = "formcontainer">
+	<div id = "dateAlert" class="alert alert-primary" role="alert">
+	If you see this, tell Spencer!
+	</div>
+		<form id = "newTruckForm">
+            <div class="form-group">
+			 <div class="btn-group" role="group" aria-label="Basic example">
+ 				 <button type="button" class="btn btn-primary" id = "outgoingbtn">Outgoing Shipment</button> 
+  				 <button type="button" class="btn btn-outline-primary" id = "incomingbtn">Incoming Delivery</button>
+			 </div>
+			</div>
+		  <!-- -->
+		  <div class = "form-group">
+		  	<label for="startTime">Arrival Window:</label>
+			<input type="time" id="startTime" name="startTime" min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
+			<input type="time" id="endTime" name="endTime"  min= "06:30" max = "23:00" aria-describedby="timeHelpBlock">
+			<button type="button" class="btn btn-danger" id ="clearTimeBtn">Reset</button>
+			<small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
+			
+		  </div>
+		  <div class="form-group">
+		    <label for="vendorBox">Carrier</label>
+		    <input type="text" class="form-control" id="vendorBox" placeholder="Carrier/Vendor Name">
+		  </div>
+		  <div class="form-group">
+		    <label for="customerBox">Customer</label>
+		    <input type="text" class="form-control" id="customerBox" placeholder="Customer Name">
+		  </div>
+		  <div class="form-group">
+		    <label for="destinationBox">Destination</label>
+		    <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
+		  </div>
+		  <!-- -->
+		  <!--SHIP TICKET FILE SELECTION-->
+		  <div class="form-group">
+    		<label for="shipTicketFileArea">Ship Ticket (must be .pdf)</label>
+    		
+    		<input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf">
+
+  		  </div>
+  		  <!--END FILE SELECTION-->
+  		  <!--BILL OF LADING FILE SELECTION-->
+		  <div class="form-group">
+    		<label for="ladingBillFileArea">Bill of Lading (must be .pdf)</label>
+    		
+    		<input type="file" class="form-control-file" id="ladingBillFileArea" accept=".pdf">
+
+  		  </div>
+  		  <!--END FILE SELECTION-->
+		  
+		  
+
+  		  <!--COMMENTS TEXT AREA-->
+		  <div class="form-group">
+		    <label for="notesArea">Comments/Notes</label>
+		    <textarea class="form-control" id="notesArea" rows="3"></textarea>
+		  </div>
+  		  
+		  <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Truck</button>
+		</form>
+	</div>
+
+
+
+
+
+
+
+
+</body>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/scripts.js"></script>
+</html>

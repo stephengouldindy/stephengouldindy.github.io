@@ -16,17 +16,45 @@ $(document).ready(function() {
   firebase.initializeApp(firebaseConfig);
 });
 
+//creates an account using the provided information and associate the display name with it
+$("#createAccountBtn").click(async function() {
 
-$("#createAccountBtn").click(function() {
-	console.log("click");
 	let email = $("#newUserEmail").val();
 	let password = $("#newUserPass").val();
-	console.log(email,password);
+	let displayName = $("#newUserName").val();
 
-	firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+	await firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
 		// Handle Errors here.
 	    var errorCode = error.code;
 	    var errorMessage = error.message;
 	  // ...
 	});
+	var user = firebase.auth().currentUser;
+	console.log(user);
+	user.updateProfile({
+  	displayName: displayName,
+	}).then(function() {
+  		// Update successful.
+  		console.log("displayName associated");
+  		console.log(user.displayName, user.email);
+	}).catch(function(error) {
+  		// An error happened.
+  		console.log("displayName failed");
+	});
+});
+$("#signInBtn").click(async function() {
+	var email = $("#loginEmail").val();
+	var password = $("#loginPass").val();
+	console.log(`email: ${email} pass: ${password}`);
+	await firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+  		// Handle Errors here.
+  		var errorCode = error.code;
+  		var errorMessage = error.message;
+  		if (errorCode === 'auth/wrong-password') {
+    		alert('Wrong password.');
+  		} else {
+    		alert(errorMessage);
+  		}
+	});
+	window.location.href = '/calendar.html';
 });
