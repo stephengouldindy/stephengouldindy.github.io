@@ -2,24 +2,14 @@
  * auth.js - contains scripts for user management, including signups/signins on login page
  */
 $(document).ready(function() {
-	var firebaseConfig = {
-    apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
-    authDomain: "sgci-rds.firebaseapp.com",
-    databaseURL: "https://sgci-rds.firebaseio.com",
-    projectId: "sgci-rds",
-    storageBucket: "sgci-rds.appspot.com",
-    messagingSenderId: "184884483557",
-    appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
-    measurementId: "G-WVCBC8FL46"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
+
+  $("#calendarApplet").hide();
   $("#version").html("prerelease v0.7");
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
   	console.log(user.email);
-    window.location = 'calendar.html';
+  	$("#loginApplet").hide();
+  	$("#calendarApplet").show();
     // ...
   } else {
     // User is signed out.
@@ -27,6 +17,46 @@ $(document).ready(function() {
   }
 });
 });
+$("#incomingbtn").click(function() {
+	$("#incomingbtn").attr("class", function(i, origValue){
+		//if button not selected, switch
+		if (origValue === "btn btn-outline-primary") {
+			//flip other button
+			$("#outgoingbtn").attr("class", "btn btn-outline-warning");
+			//toggle button states for good practice
+			return "btn btn-warning";
+		}
+		else return "btn btn-warning";
+	});
+}); 
+
+/*
+ * Flip swap outgoing and incoming buttons if the outgoing is pressed and is not enabled
+ */
+
+$("#outgoingbtn").click(function() {
+	$("#outgoingbtn").attr("class", function(i, origValue){
+
+		if (origValue === "btn btn-outline-warning") {
+			//flip other button
+			$("#incomingbtn").attr("class", "btn btn-outline-primary");
+			return "btn btn-primary";
+		}
+		else return "btn btn-primary";
+	});
+}); 
+
+/*
+ * Clear delivery window time boxes
+ */
+
+ $("#clearTimeBtn").click(function() {
+ 	console.log($("#startTime").val());
+ 	console.log($("#endTime").val());
+ 	$("#startTime").val("");
+ 	$("#endTime").val("");
+ });
+
 
 //creates an account using the provided information and associate the display name with it
 $("#createAccountBtn").click(async function() {
