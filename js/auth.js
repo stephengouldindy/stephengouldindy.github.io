@@ -1,5 +1,5 @@
 /*
- * auth.js - contains scripts for user management, including signups/signins
+ * auth.js - contains scripts for user management, including signups/signins on login page
  */
 $(document).ready(function() {
 	var firebaseConfig = {
@@ -14,6 +14,7 @@ $(document).ready(function() {
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
+  $("#version").html("prerelease v0.7");
 });
 
 //creates an account using the provided information and associate the display name with it

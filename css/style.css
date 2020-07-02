@@ -105,6 +105,7 @@ small {
     border-color: #f57842;
 }
 .centered-container {
+	height: 87%;
 	margin: 0;
   	position: absolute;
   	top: 50%;
@@ -167,7 +168,7 @@ small {
 }
 
 header {
-	height: 30px;
+	height: 35px;
   	position: fixed;
 	padding-top: 5px;
 	padding-bottom: 0px;
@@ -180,7 +181,7 @@ header {
 }
 
 footer {
-	height: 30px;
+	height: 35px;
 	position: fixed;
 	padding-top: 0px;
 	padding-bottom: 0px;
@@ -194,7 +195,9 @@ footer {
 footer > * {
 	color: lightgrey;
 	font-size: 12px;
-
+}
+#version {
+	font-size: 9px;
 }
 
 
