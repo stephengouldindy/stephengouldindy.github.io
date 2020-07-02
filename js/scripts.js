@@ -8,6 +8,7 @@ $(document).ready(function() {
   $("#freightContainer").hide();
   //$("#pdfCarousel").hide();
   console.log(firebase.auth().currentUser);
+
 });
 
 /*
