@@ -105,7 +105,7 @@ small {
     border-color: #f57842;
 }
 .centered-container {
-
+	height: 87%;
 	margin: 0;
   	position: absolute;
   	top: 50%;
