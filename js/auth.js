@@ -5,14 +5,25 @@ $(document).ready(function() {
 
   $("#calendarApplet").hide();
   $("#version").html("prerelease v0.7");
+  //hide the event form on pageload
+  $("#formcontainer").hide();
+
+  //$("#pdfCarousel").hide();
+  console.log(firebase.auth().currentUser);
+
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
   	console.log(user.email);
   	$("#loginApplet").hide();
   	$("#calendarApplet").show();
+  	$("#signOutBtn").show();
+
     // ...
   } else {
     // User is signed out.
+    $("#calendarApplet").hide();
+    $("#loginApplet").show();
+  	
     // ...
   }
 });

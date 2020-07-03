@@ -44,11 +44,11 @@
 
             calendar = new FullCalendar.Calendar(calendarEl, {
                 themeSystem: 'standard',
+                height: "auto",
                 weekends: false,
                 nowIndicator: true,
-                height: "40%",
                 minTime: "06:00:00",
-                maxTime: "16:00:00",
+                maxTime: "16:30:00",
                 plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
                 defaultView: 'timeGridWeek',
                 selectable: false,
@@ -70,10 +70,9 @@
                     let oldColor = info.dayEl.style.backgroundColor;
                     info.dayEl.style.backgroundColor = '#c7c7c7';
                     setTimeout(function() {info.dayEl.style.backgroundColor = oldColor;}, 100);
-                    window.scrollTo({
-                        top: 2000,
-                        behavior: 'smooth',
-                    });
+                    //window.scrollTo((document.getElementById('formcontainer').scrollTop));
+                    document.getElementById('formcontainer').scrollIntoView({ behavior: "smooth", block: 'nearest'});
+
                     curDay = info.date.getDate();
                     curMonth = info.date.getMonth() + 1;
                     curYear = info.date.getFullYear();              
@@ -120,7 +119,7 @@
                 var endHour;
                 var endMinute;
                 var isOutgoing = ($("#outgoingbtn").attr("class") === "btn btn-primary");
-                var bkgColor = (isOutgoing ?  '#1a75ff' : '#F24E1B');F24E1B
+                var bkgColor = (isOutgoing ?  '#1a75ff' : '#F24E1B');
                 if (!allDay) { 
                     startHour = startTime.split(":")[0];
                     startMinute = startTime.split(":")[1];
@@ -197,12 +196,13 @@
                 //calendar.addEvent(newEvent);
                 //hide form
                 $("#formcontainer").slideUp(300);
-                $("#newTruckForm").
+                $("#newTruckForm").hide();
                 //scroll to top
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
+                
              }); //end submit truck button handling
         }); //end DOM content loaded event listener
 
@@ -318,8 +318,8 @@
     </head>
 
     <body>
-        <header></header>
-<div id = "loginApplet">
+        <header><img src = "img/bluelogo.svg" id = "blueLogo"> <btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn></header>
+<div id = "loginApplet" >
         <div class = "container centered-container">
             <p class = "sg-font-hdr">Stephen Gould Indianapolis Shipping and Receiving</p>
 
@@ -374,95 +374,13 @@
         </div>
     </div>
         
-        <!-- EVENT DATA MODAL -->
-<div class="modal" tabindex="-1" role="dialog" id= "myModal">
 
-    <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-        <h3 id = "modalVendor">Modal title</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true" id = "closeModal">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-          <div class = "container" id = "modalContainer">
-            <div class = "row"><h5>Date: </h5><h5 id="modalDate" style ="font-weight: normal;"></h5></div>
-            <div class = "row"><h5>Arrival Window: </h5><h5 id="modalTime" style ="font-weight: normal;"></h5></div>
-            <div class = "row"><h5>Customer Name: </h5><h5 id="modalCustomer" style ="font-weight: normal;"></h5></div>
-            <div class = "row"><h5>Destination: </h5><h5 id="modalDestination" style ="font-weight: normal;"></h5></div>
-            <div class = "row"><h5>Comments/Notes: </h5><h5 id="modalComments" style ="font-weight: normal;"></h5></div>
-          </div>
-            <h4>Shipment Paperwork</h4>
-            <small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>        
-            
-            <div class ="row" style="width: 100%; margin: 0 auto;">
-                <a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: black;">
-                    <div class = "container">
-                        <span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
-                        <span class="sr-only">Previous</span>
-                    </div>
-                </a>
-                <div id="pdfCarousel" class="carousel slide" data-interval = "false" style = "width: 80%;">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class = "container">
-                                <div id = "shipTicketPdfContainer"  aria-describedby="pdfHelp"></div>
-                            </div>
-                                                
-                        </div>
-                        <div class="carousel-item">
-                            <div class = "container">
-                            <div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
-                        </div>
-                        </div>
-            
-                    </div>
-                
-                </div>
-            
-                <a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: black;">
-                    <div class = "container">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                    </div>
-                </a>
-                
-            </div>
-      </div>
-      <div class="modal-footer">
-        <small id="eventId"> Event ID: not implemented</small>
-        <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
-        <script>
-            //delete file on click
-            $("#deleteShipmentBtn").click(function() {
-                if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-                db.collection("events").doc($("#eventId").html()).delete().then(function() {
-                    console.log("Document deleted.");
-                    //hide the modal
-                    //location.reload();
-                    $("#myModal").modal("hide");
-                }).catch(function(error) {
-                    console.error(`Error removing document (${error})`);
-                });
-            } 
-          });
-
-        </script>
-        <button type="button" class="btn btn-primary">Edit Info</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!--END MODAL-->
 <div class ="container" id = "calendarApplet">
-    <p id = "demo">Not working</p>
-    <br>
-    <h2 id = "instructions">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
+    <h3 id = "instructions" style="text-align: center;">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
 
 
     <div id = "calendar"> </div>
+
 <div class = "container" id = "formcontainer">
     <div id = "dateAlert" class="alert alert-primary" role="alert">
     If you see this, tell Spencer!
@@ -529,9 +447,90 @@
 
         <footer>
 
-          <text>Developed by Spencer Douglas - <u><a href="mailto:dougla55@purdue.edu" style = "color: #082a40;">dougla55@purdue.edu</a></u></text>
+          <text>Developed by Spencer Douglas - <u><a href="mailto:dougla55@purdue.edu" style = "color: #082a40; font-size: 10px;">dougla55@purdue.edu</a></u></text>
           <p id = "version">Version</p>
         </footer>
     </body>
-    
+            <!-- EVENT DATA MODAL -->
+<div class="modal" tabindex="-1" role="dialog" id= "myModal">
+
+    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h3 id = "modalVendor">Modal title</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" id = "closeModal">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class = "container" id = "modalContainer">
+            <div class = "row"><b>Date: </b><b id="modalDate" style ="font-weight: normal;"></b></div>
+            <div class = "row"><b>Arrival Window: </b><b id="modalTime" style ="font-weight: normal;"></b></div>
+            <div class = "row"><b>Customer Name: </b><b id="modalCustomer" style ="font-weight: normal;"></b></div>
+            <div class = "row"><b>Destination: </b><b id="modalDestination" style ="font-weight: normal;"></b></div>
+            <div class = "row"><b>Comments/Notes: </b><b id="modalComments" style ="font-weight: normal;"></b></div>
+          </div>
+            <h4>Shipment Paperwork</h4>
+            <small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>        
+            
+            <div class ="row" style="width: 100%; margin: 0 auto; height: 100%;">
+                <a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: black;">
+                    <div class = "container">
+                        <span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
+                        <span class="sr-only">Previous</span>
+                    </div>
+                </a>
+                <div id="pdfCarousel" class="carousel slide" data-interval = "false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class = "container">
+                                <div id = "shipTicketPdfContainer"  aria-describedby="pdfHelp"></div>
+                            </div>
+                                                
+                        </div>
+                        <div class="carousel-item">
+                            <div class = "container">
+                            <div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
+                        </div>
+                        </div>
+            
+                    </div>
+                
+                </div>
+            
+                <a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: black;">
+                    <div class = "container">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                    </div>
+                </a>
+                
+            </div>
+      </div>
+      <div class="modal-footer">
+        <small id="eventId"> Event ID Error</small>
+        <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
+        <script>
+            //delete file on click
+            $("#deleteShipmentBtn").click(function() {
+                if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
+                db.collection("events").doc($("#eventId").html()).delete().then(function() {
+                    console.log("Document deleted.");
+                    //hide the modal
+                    //location.reload();
+                    $("#myModal").modal("hide");
+                }).catch(function(error) {
+                    console.error(`Error removing document (${error})`);
+                });
+            } 
+          });
+
+        </script>
+        <button type="button" class="btn btn-primary">Edit Info</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--END MODAL-->
 </html>
