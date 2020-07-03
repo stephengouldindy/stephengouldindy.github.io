@@ -4,8 +4,7 @@ $(document).ready(function() {
   $("#demo").html("prerelease v0.5 | Database Status: Add, View, Delete Events; Upload/View Shipment Paperwork");
   //hide the event form on pageload
   $("#formcontainer").hide();
-  //hide its child freight container
-  $("#freightContainer").hide();
+
   //$("#pdfCarousel").hide();
   console.log(firebase.auth().currentUser);
 
@@ -26,6 +25,7 @@ $("#incomingbtn").click(function() {
 		else return "btn btn-warning";
 	});
 }); 
+
 
 /*
  * Flip swap outgoing and incoming buttons if the outgoing is pressed and is not enabled

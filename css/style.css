@@ -14,9 +14,11 @@
 	left: 50%;
 	transform: translate(200%);
 	padding: 2px;
+	visibility: hidden;
 }
 #signOutBtn {
 	visibility: hidden;
+	right: 10px;
 }
 #calendar > * {
 	z-index: 0;

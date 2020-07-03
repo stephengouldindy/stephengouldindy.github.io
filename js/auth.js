@@ -16,18 +16,31 @@ $(document).ready(function() {
   	console.log(user.email);
   	$("#loginApplet").hide();
   	$("#calendarApplet").show();
+  	$("#signOutBtn").css("visibility", "visible");
+  	$("#blueLogo").css("visibility", "visible");
   	$("#signOutBtn").show();
+  	$("#blueLogo").show();
 
     // ...
   } else {
     // User is signed out.
     $("#calendarApplet").hide();
     $("#loginApplet").show();
-  	
+  	$("#signOutBtn").hide();
+  	$("#blueLogo").hide();
     // ...
   }
 });
 });
+$("#signOutBtn").click(function() {
+	console.log("clicked it");
+	firebase.auth().signOut().then(function() {
+	  console.log("logged out");
+	}).catch(function(error) {
+	  // An error happened.
+	});
+});
+
 $("#incomingbtn").click(function() {
 	$("#incomingbtn").attr("class", function(i, origValue){
 		//if button not selected, switch
