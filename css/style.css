@@ -14,11 +14,15 @@
 	left: 50%;
 	transform: translate(200%);
 	padding: 2px;
-	visibility: hidden;
+	display: none;
 }
 #signOutBtn {
-	visibility: hidden;
-	right: 10px;
+	display: none;
+	margin-right: 20px;
+	float: right;
+	top: 20px;
+	bottom: 20px;
+
 }
 #calendar > * {
 	z-index: 0;
@@ -28,7 +32,10 @@
 	background-color: white;
 	margin-top: 50px;
 	margin-bottom: 50px;
-
+	display: none;
+}
+#loginApplet {
+	display: none;
 }
 
 #modalContainer {

@@ -15,19 +15,17 @@ $(document).ready(function() {
   if (user) {
   	console.log(user.email);
   	$("#loginApplet").hide();
-  	$("#calendarApplet").show();
-  	$("#signOutBtn").css("visibility", "visible");
-  	$("#blueLogo").css("visibility", "visible");
   	$("#signOutBtn").show();
   	$("#blueLogo").show();
+  	$("#calendarApplet").show();
 
     // ...
   } else {
     // User is signed out.
     $("#calendarApplet").hide();
-    $("#loginApplet").show();
   	$("#signOutBtn").hide();
   	$("#blueLogo").hide();
+  	$("#loginApplet").show();
     // ...
   }
 });
