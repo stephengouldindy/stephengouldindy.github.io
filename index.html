@@ -147,10 +147,18 @@
                     alert("Please upload all necessary paperwork!");
                     return;
                 }
-                let shipTicketURL = await uploadTaskPromise(shipTicketFile);
-                let ladingBillURL = await uploadTaskPromise(ladingBillFile);
+                let shipTicketUpload = await uploadTaskPromise(shipTicketFile);
+                let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
+
+                let shipTicketURL = shipTicketUpload.downloadURL;
+                let shipTicketRef = shipTicketUpload.ref;
+                let ladingBillURL = ladingBillUpload.downloadURL;
+                let ladingBillRef = ladingBillUpload.ref;
+
                 console.log(`shipTicketURL: ${shipTicketURL}`);
                 console.log(`ladingBillURL: ${ladingBillURL}`);
+                console.log(`shipTicketRef: ${shipTicketRef}`);
+                console.log(`ladingBillRef: ${ladingBillRef}`);
                 db.collection("events").add({
                     allDay: allDay,
                     date: date,
@@ -162,7 +170,9 @@
                     notes: comments,
                     title: vendorName,
                     shipTicketURL: shipTicketURL,
-                    ladingURL: ladingBillURL
+                    ladingURL: ladingBillURL,
+                    shipTicketRef: shipTicketRef,
+                    ladingBillRef: ladingBillRef
                 }).then(function(docRef) {
                     console.log(`Document ${docRef.id} successfully written`);
                 }).catch(function(error) {
@@ -171,7 +181,8 @@
                     
                 async function uploadTaskPromise(file) {
                     return new Promise(function(resolve, reject) {
-                        let fileRef = storageRef.child(file.name);
+                        let fileName = uuidv4();
+                        let fileRef = storageRef.child(fileName);
                         uploadTask = fileRef.put(file);
                         uploadTask.on('state_changed',
                             function(snapshot) {
@@ -184,7 +195,7 @@
                             },
                             function complete() {
                                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                                    resolve(downloadURL);
+                                    resolve({downloadURL: downloadURL, ref: fileName});
                                 })
                             });
                     }); 
@@ -237,7 +248,7 @@
     changes.forEach(change => {
         if (change.type === "removed") {
             //FIXME: find a better solution to this
-            setTimeout(function() { location.reload(); }, 500);
+            setTimeout(function() { location.reload(); }, 5000);
         }
         else if (change.type === "added") {
             let data = change.doc.data();
@@ -341,7 +352,7 @@
 
                             <div class="form-group">
                                 <label for = "password">Password</label>
-                                <input id = "loginPass" type="password" class="form-control" placeholder = "Password" autocomplete="current-password" />
+                                <input id = "loginPass" type="password" class="form-control" placeholder = "Password" autocomplete="password" />
                             </div>
                             <button type="button" class="btn btn-primary login-btn" id = "signInBtn">Sign In</button>
                             <p class="forgot-password text-center">
@@ -514,14 +525,41 @@
             //delete file on click
             $("#deleteShipmentBtn").click(function() {
                 if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-                db.collection("events").doc($("#eventId").html()).delete().then(function() {
-                    console.log("Document deleted.");
+                    let shipFile;
+                    let billFile; 
+                    let shipRef;
+                    let billRef;
+                    let docRef = db.collection("events").doc($("#eventId").html());
+                    docRef.get().then(function(doc) {
+                        shipFile = doc.data().shipTicketRef;
+                        billFile = doc.data().ladingBillRef;
+                        console.log(shipFile, billFile);
+                        shipRef = storageRef.child(shipFile);
+                        billRef = storageRef.child(billFile);
+                        docRef.delete().then(function() {
+                        console.log("Document deleted.");
+                        shipRef.delete().then(function() {
+                          // File deleted successfully
+                          console.log("ship deleted");
+                        }).catch(function(error) {
+                            console.log("ship failed: " + error);
+                        });
+
+                        billRef.delete().then(function() {
+                            // File deleted successfully
+                            console.log("bill deleted");
+                        }).catch(function(error) {
+                              // Uh-oh, an error occurred!
+                        });
                     //hide the modal
-                    //location.reload();
                     $("#myModal").modal("hide");
+
                 }).catch(function(error) {
                     console.error(`Error removing document (${error})`);
                 });
+                    });
+                    
+                
             } 
           });
 

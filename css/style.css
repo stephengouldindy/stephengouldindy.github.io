@@ -13,22 +13,22 @@
 	width: 20%;
 	left: 50%;
 	transform: translate(200%);
-	padding: 2px;
+	padding: 6px;
 	display: none;
 }
 #signOutBtn {
 	display: none;
 	margin-right: 20px;
 	float: right;
-	top: 20px;
-	bottom: 20px;
-
+	margin-top
+	
 }
 #calendar > * {
 	z-index: 0;
+	border-radius: 25px;
 }
 #calendarApplet {
-
+	border-radius: 25px;
 	background-color: white;
 	margin-top: 50px;
 	margin-bottom: 50px;
@@ -57,8 +57,6 @@ div {
 
 #myModal {
 	margin: 0 auto;
-
-
 }
 
 #formcontainer {
@@ -110,7 +108,6 @@ div {
 	height: 300px; 
 }
 form {
-	border-radius: 2px;
 	border-color: black;
 }
 small {
@@ -205,7 +202,7 @@ small {
 header {
 	z-index: 1;
 	position: fixed;
-	height: 5% !important;
+	height: 5.5%;
 	padding-bottom: 0px;
 	left: 0;
 	top: 0;
@@ -215,7 +212,7 @@ header {
 }
 
 footer {
-	height: 5%;
+	height: 5.5%;
 	z-index: 1;
 	position: fixed;
 	padding-top: 0px;
