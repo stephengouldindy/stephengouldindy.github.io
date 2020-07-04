@@ -4,7 +4,7 @@
 $(document).ready(function() {
 
   $("#calendarApplet").hide();
-  $("#version").html("prerelease v0.7");
+  $("#version").html("prerelease v0.95");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
