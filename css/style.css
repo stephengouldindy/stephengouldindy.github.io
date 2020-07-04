@@ -8,10 +8,34 @@
  	padding-left: 20px;
  	overflow: auto;
 }	
-
-#calendar {
-
+#blueLogo {
+	height: 100%;
+	width: 20%;
+	left: 50%;
+	transform: translate(200%);
+	padding: 6px;
+	display: none;
+}
+#signOutBtn {
+	display: none;
+	margin-right: 20px;
+	float: right;
+	margin-top
 	
+}
+#calendar > * {
+	z-index: 0;
+	border-radius: 25px;
+}
+#calendarApplet {
+	border-radius: 25px;
+	background-color: white;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	display: none;
+}
+#loginApplet {
+	display: none;
 }
 
 #modalContainer {
@@ -31,6 +55,10 @@ div {
 }
 */
 
+#myModal {
+	margin: 0 auto;
+}
+
 #formcontainer {
 	padding: 20px;
 	background-color: rgba(0,0,0,.1);
@@ -38,9 +66,10 @@ div {
 	border-width: 20px;
 }
 .modal-content {
-	width: 900px;
-	height: 840px;
-	margin: auto;
+	width: 800px;
+	height: 100%;
+	margin-left: auto;
+	margin-right: auto;
 }
 .modal-backdrop
 {
@@ -54,28 +83,31 @@ div {
 	height: 60px;
 }
 #shipTicketPdfContainer {
-	height: 25rem;
+	height: 300px;
 	margin: 0 auto;
 }
 #ladingPdfContainer {
-	height: 25rem;
+	height: 300px;
 	margin: 0 auto;
+}
+#pdfCarousel {
+	width: 80%;
+	height: 300px;
 }
 .carousel-inner {
 
-	height: 27.5rem;
+	height: 300px;
 	margin: 0 auto;
 	border: solid black;
 }
 .carousel-item {
-	height: 80%;
+	height: 300px;
 	
 } 
 .pdfobject-container { 
-	height: 25rem; 
+	height: 300px; 
 }
 form {
-	border-radius: 2px;
 	border-color: black;
 }
 small {
@@ -113,7 +145,7 @@ small {
   	transform: translate(-50%, -50%);
   	width: 450px;
 	border-radius: 25px;
-	border: solid lightgrey;
+	border: solid #F24E1B;
   	background-color: white;
 }
 
@@ -168,20 +200,20 @@ small {
 }
 
 header {
-	height: 35px;
-  	position: fixed;
-	padding-top: 5px;
+	z-index: 1;
+	position: fixed;
+	height: 5.5%;
 	padding-bottom: 0px;
 	left: 0;
 	top: 0;
 	width: 100%;
 	background-color: #F24E1B;
 	color: white;
-	text-align: center;
 }
 
 footer {
-	height: 35px;
+	height: 5.5%;
+	z-index: 1;
 	position: fixed;
 	padding-top: 0px;
 	padding-bottom: 0px;
@@ -191,15 +223,14 @@ footer {
 	background-color: #F24E1B;
 	color: white;
 	text-align: center;
-	}
+}
 footer > * {
-	color: lightgrey;
+	color: #082a40;
 	font-size: 12px;
 }
 #version {
 	font-size: 9px;
 }
-
 
 #signInBtn, #createAccountBtn {
 	background-color: #082a40;
@@ -217,6 +248,11 @@ footer > * {
 	border-right-color: #F24E1B !important;
 }
 
+body {
+	height: 100%;
+	background-color: #082a40;
+	overflow: scroll;
+}
 
 
 .nav-link.active {
