@@ -14,17 +14,21 @@ $(document).ready(function() {
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
   	console.log(user.email);
-  	$("#loginApplet").hide();
+  	$("#loginApplet").fadeOut();
   	$("#signOutBtn").show();
   	$("#blueLogo").show();
-  	$("#calendarApplet").show();
+  	$("footer").hide();
+  	$("#calendarApplet").fadeIn();
+
     // ...
   } else {
     // User is signed out.
-    $("#calendarApplet").hide();
+    $("#calendarApplet").fadeOut();
   	$("#signOutBtn").hide();
-  	$("#blueLogo").hide();
-  	$("#loginApplet").show();
+  	$("#blueLogo").fadeOut();
+  	$("footer").show();
+  	$("#loginApplet").fadeIn();
+
     // ...
   }
 });

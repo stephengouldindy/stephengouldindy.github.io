@@ -248,7 +248,7 @@
     changes.forEach(change => {
         if (change.type === "removed") {
             //FIXME: find a better solution to this
-            setTimeout(function() { location.reload(); }, 5000);
+            setTimeout(function() { location.reload(); }, 750);
         }
         else if (change.type === "added") {
             let data = change.doc.data();
