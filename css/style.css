@@ -18,10 +18,9 @@
 }
 #signOutBtn {
 	display: none;
-	background-color: #082a40;
 	margin-right: 20px;
 	float: right;
-	border-radius: 15px !important;
+	margin-top
 	
 }
 #calendar > * {
@@ -29,7 +28,6 @@
 	border-radius: 25px;
 }
 #calendarApplet {
-	border: solid #F24E1B;
 	border-radius: 25px;
 	background-color: white;
 	margin-top: 50px;
