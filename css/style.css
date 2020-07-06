@@ -22,11 +22,9 @@
 	float: right;
 	border-radius: 20px;
 	background-color: #082a40;
-	
 }
 #calendar > * {
 	z-index: 0;
-	border-radius: 25px;
 }
 #calendarApplet {
 	border: solid #F24E1B !important;
@@ -38,8 +36,8 @@
 	margin-right: auto;
 	display: none;
 	height: 80%;
-	width: 90%;
-	
+	width: 95%;
+
 
 }
 #loginApplet {

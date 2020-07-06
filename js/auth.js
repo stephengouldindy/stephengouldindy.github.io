@@ -4,9 +4,10 @@
 $(document).ready(function() {
 
   $("#calendarApplet").hide();
-  $("#version").html("prerelease v0.97");
+  $("#version").html("prerelease v0.98");
   //hide the event form on pageload
   $("#formcontainer").hide();
+
 
   //$("#pdfCarousel").hide();
   console.log(firebase.auth().currentUser);
@@ -18,6 +19,7 @@ $(document).ready(function() {
   	$("#signOutBtn").show();
   	$("#blueLogo").show();
   	$("footer").hide();
+
   	db.collection("events").onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
     console.log(changes);
@@ -32,10 +34,11 @@ $(document).ready(function() {
             let month = data.date.split('/')[0] - 1;
             let year = data.date.split('/')[2];
             let dateObj = new Date(year, month, day);
-            let bkgColor = data.isOutgoing ? '#5da4c2' : '#eb8944';
-            let borderColor = !data.isOutgoing ? '#5da4c2' : '#eb8944';
+            let bkgColor = data.isOutgoing ? '#082a40' : '#F24E1B';
+            let borderColor = !data.isOutgoing ? '#082a40' : '#F24E1B';
             let shipTicketURL = data.shipTicketURL;
             let ladingURL = data.ladingURL;
+            let eventTextColor = 'white';
             //TODO: 
 
             var newEvent;
@@ -49,8 +52,10 @@ $(document).ready(function() {
                     let endDate = new Date(year, month, day, endHour, endMinute);
                     
                     
+                    
                     newEvent = {
                           title: data.title,
+                          eventTextColor: eventTextColor,
                           start: startDate,
                           end: endDate,
                           allDay: data.allDay,
@@ -75,6 +80,7 @@ $(document).ready(function() {
                     newEvent = {
                         title: data.title,
                         start: dateObj,
+                        eventTextColor: eventTextColor,
                         allDay: data.allDay,
                         editable: false,
                         backgroundColor: bkgColor,
@@ -100,8 +106,10 @@ $(document).ready(function() {
         //TODO: HANDLE DELETE AND UPDATE
     });
   }); //END FIRESTORE EVENT CHANGE LISTENER
-  	calendar.render();
+  	
+
   	$("#calendarApplet").fadeIn();
+  	calendar.render();
 
     // ...
   } else {
@@ -204,6 +212,7 @@ $("#signInBtn").click(async function() {
 		if (signInAttempt.user) {
 			
 		}
+
 	}
 	catch(error) {
   		// Handle Errors here.
