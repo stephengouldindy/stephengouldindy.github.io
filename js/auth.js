@@ -13,13 +13,100 @@ $(document).ready(function() {
 
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-  	console.log(user.email);
+  	console.log('it is ' + user.email);
+  	db.collection("events").get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+    });
+});
   	$("#loginApplet").fadeOut();
   	$("#signOutBtn").show();
   	$("#blueLogo").show();
   	$("footer").hide();
-  	$("#calendarApplet").fadeIn();
+  	db.collection("events").onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    console.log(changes);
+    changes.forEach(change => {
+        if (change.type === "removed") {
+            //FIXME: find a better solution to this
+            setTimeout(function() { location.reload(); }, 750);
+        }
+        else if (change.type === "added") {
+            let data = change.doc.data();
+            let month = data.date.split('/')[0] - 1;
+            let day = data.date.split('/')[1];
+            let year = data.date.split('/')[2];
+            let dateObj = new Date(year, month, day);
+            let bkgColor = data.isOutgoing ? '#5da4c2' : '#eb8944';
+            let borderColor = !data.isOutgoing ? '#5da4c2' : '#eb8944';
+            let shipTicketURL = data.shipTicketURL;
+            let ladingURL = data.ladingURL;
+            //TODO: 
 
+            var newEvent;
+
+            if (!data.allDay) {
+                    let startHour = data.startTime.split(':')[0];
+                    let startMinute = data.startTime.split(':')[1];
+                    let endHour = data.endTime.split(':')[0];
+                    let endMinute = data.endTime.split(':')[1];
+                    let startDate = new Date(year, month, day, startHour, startMinute);
+                    let endDate = new Date(year, month, day, endHour, endMinute);
+                    
+                    
+                    newEvent = {
+                          title: data.title,
+                          start: startDate,
+                          end: endDate,
+                          allDay: data.allDay,
+                          editable: false,
+                          backgroundColor: bkgColor,
+                          borderColor: borderColor,
+                          displayEventEnd: true,
+                          isOutgoing: data.isOutgoing,
+                          customerName: data.customerName,
+                          eventDate: data.date,
+                          destination: data.destination,
+                          eventStartTime: data.startTime,
+                          eventEndTime: data.endTime,
+                          comments: data.notes,
+                          docId: change.doc.id,
+                          ladingURL: ladingURL,
+                          shipTicketURL: shipTicketURL
+
+                    }; //newEvent
+                } else {
+                    let dateObj = new Date(year, month, day);
+                    newEvent = {
+                        title: data.title,
+                        start: dateObj,
+                        allDay: data.allDay,
+                        editable: false,
+                        backgroundColor: bkgColor,
+                        borderColor: borderColor,
+                        displayEventEnd: true,
+                        isOutgoing: data.isOutgoing,
+                        customerName: data.customerName,
+                        eventDate: data.date,
+                        destination: data.destination,
+                        eventStartTime: data.startTime,
+                        eventEndTime: data.endTime,
+                        comments: data.notes,
+                        docId: change.doc.id,
+                        ladingURL: ladingURL,
+                        shipTicketURL: shipTicketURL
+                        
+                    }; //newEvent
+                } //end else
+                calendar.addEvent(newEvent);
+            
+        } //end added type
+        
+        //TODO: HANDLE DELETE AND UPDATE
+    });
+  }); //END FIRESTORE EVENT CHANGE LISTENER
+  	$("#calendarApplet").fadeIn();
     // ...
   } else {
     // User is signed out.
@@ -34,7 +121,7 @@ $(document).ready(function() {
 });
 });
 $("#signOutBtn").click(function() {
-	console.log("clicked it");
+	calendar.getEvents().forEach(event => event.remove());
 	firebase.auth().signOut().then(function() {
 	  console.log("logged out");
 	  $("#formcontainer").hide();
@@ -81,6 +168,9 @@ $("#outgoingbtn").click(function() {
  	console.log($("#endTime").val());
  	$("#startTime").val("");
  	$("#endTime").val("");
+ });
+  $("#editEventBtn").click(function() {
+ 	alert("Functionality not supported in this early release.");
  });
 
 
