@@ -108,8 +108,8 @@ $(document).ready(function() {
   }); //END FIRESTORE EVENT CHANGE LISTENER
   	
 
-  	$("#calendarApplet").fadeIn();
-  	calendar.render();
+  $("#calendarApplet").fadeIn();
+  calendar.render();
 
     // ...
   } else {
@@ -117,12 +117,12 @@ $(document).ready(function() {
     $("#calendarApplet").fadeOut();
   	$("#signOutBtn").hide();
   	$("#blueLogo").fadeOut();
-  	$("footer").show();
+  	$("footer").fadeIn();
   	$("#loginApplet").fadeIn();
 
     // ...
-  }
-});
+  	}
+  });
 });
 $("#signOutBtn").click(function() {
 	calendar.getEvents().forEach(event => event.remove());
@@ -177,7 +177,8 @@ $("#outgoingbtn").click(function() {
 
 //creates an account using the provided information and associate the display name with it
 $("#createAccountBtn").click(async function() {
-
+	alert("This function has been temporarily disabled. Contact dougla55@purdue.edu for an account.");
+	/*
 	let email = $("#newUserEmail").val();
 	let password = $("#newUserPass").val();
 	let displayName = $("#newUserName").val();
@@ -199,7 +200,7 @@ $("#createAccountBtn").click(async function() {
 	}).catch(function(error) {
   		// An error happened.
   		console.log("displayName failed");
-	});
+	});*/
 });
 $("#signInBtn").click(async function() {
 	var email = $("#loginEmail").val();

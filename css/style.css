@@ -230,6 +230,7 @@ footer {
 	background-color: #F24E1B;
 	color: white;
 	text-align: center;
+	display: none;
 }
 footer > * {
 	color: #082a40;
