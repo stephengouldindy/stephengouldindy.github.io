@@ -4,7 +4,7 @@
 $(document).ready(function() {
 
   $("#calendarApplet").hide();
-  $("#version").html("prerelease v0.95");
+  $("#version").html("prerelease v0.97");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -13,13 +13,7 @@ $(document).ready(function() {
 
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-  	console.log('it is ' + user.email);
-  	db.collection("events").get().then(function(querySnapshot) {
-    querySnapshot.forEach(function(doc) {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-    });
-});
+  	console.log(user.email);
   	$("#loginApplet").fadeOut();
   	$("#signOutBtn").show();
   	$("#blueLogo").show();
@@ -34,8 +28,8 @@ $(document).ready(function() {
         }
         else if (change.type === "added") {
             let data = change.doc.data();
-            let month = data.date.split('/')[0] - 1;
             let day = data.date.split('/')[1];
+            let month = data.date.split('/')[0] - 1;
             let year = data.date.split('/')[2];
             let dateObj = new Date(year, month, day);
             let bkgColor = data.isOutgoing ? '#5da4c2' : '#eb8944';
@@ -106,7 +100,9 @@ $(document).ready(function() {
         //TODO: HANDLE DELETE AND UPDATE
     });
   }); //END FIRESTORE EVENT CHANGE LISTENER
+  	calendar.render();
   	$("#calendarApplet").fadeIn();
+
     // ...
   } else {
     // User is signed out.
@@ -168,9 +164,6 @@ $("#outgoingbtn").click(function() {
  	console.log($("#endTime").val());
  	$("#startTime").val("");
  	$("#endTime").val("");
- });
-  $("#editEventBtn").click(function() {
- 	alert("Functionality not supported in this early release.");
  });
 
 

@@ -155,6 +155,10 @@
                 let ladingBillURL = ladingBillUpload.downloadURL;
                 let ladingBillRef = ladingBillUpload.ref;
 
+                console.log(`shipTicketURL: ${shipTicketURL}`);
+                console.log(`ladingBillURL: ${ladingBillURL}`);
+                console.log(`shipTicketRef: ${shipTicketRef}`);
+                console.log(`ladingBillRef: ${ladingBillRef}`);
                 db.collection("events").add({
                     allDay: allDay,
                     date: date,
@@ -232,6 +236,7 @@
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
+   console.log(firebase.auth().currentUser);
   var db = firebase.firestore();
   var storageRef = firebase.storage().ref();
   /*
@@ -301,7 +306,7 @@
         
 
 <div class ="container" id = "calendarApplet">
-    <h3 id = "instructions" style="text-align: center;">Click a date to schedule a truck. Click an event to view its information.</h2>
+    <h3 id = "instructions" style="text-align: center;">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
 
 
     <div id = "calendar"> </div>
@@ -447,6 +452,7 @@
                     docRef.get().then(function(doc) {
                         shipFile = doc.data().shipTicketRef;
                         billFile = doc.data().ladingBillRef;
+                        console.log(shipFile, billFile);
                         shipRef = storageRef.child(shipFile);
                         billRef = storageRef.child(billFile);
                         docRef.delete().then(function() {
@@ -477,7 +483,7 @@
           });
 
         </script>
-        <button type="button" class="btn btn-primary" id = "editEventBtn">Edit Info</button>
+        <button type="button" class="btn btn-primary">Edit Info</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
