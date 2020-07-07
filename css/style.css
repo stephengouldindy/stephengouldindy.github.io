@@ -118,7 +118,7 @@ form {
 	border-color: black;
 }
 small {
-	color: rgba(0,0,0,.2);
+	color: rgba(0,0,0,.4);
 }
 
 .btn-outline-warning {
@@ -271,6 +271,27 @@ body {
 	border-left-color: #F24E1B !important;
 	border-right-color: #F24E1B !important;
 }
+/*
+SPINING
+#blueLogo {
+  animation-name: spin;
+  animation-duration: 5000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+
+    }
+    to {
+        transform:rotate(360deg);
+
+    }
+
+}*/
 
 /*#pdfContainer {
 	position: absolute;

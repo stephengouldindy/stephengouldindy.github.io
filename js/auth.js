@@ -173,7 +173,9 @@ $("#outgoingbtn").click(function() {
  	$("#startTime").val("");
  	$("#endTime").val("");
  });
-
+$("#editInfoBtn").click(function() {
+  alert("Function not yet implemented. Sorry, but you'll have to create a new event if you need to make changes.");
+});
 
 //creates an account using the provided information and associate the display name with it
 $("#createAccountBtn").click(async function() {
