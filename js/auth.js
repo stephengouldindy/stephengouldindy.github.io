@@ -4,7 +4,7 @@
 $(document).ready(function() {
 
   $("#calendarApplet").hide();
-  $("#version").html("BETA v1.0.11");
+  $("#version").html("BETA v1.0.13");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -125,13 +125,15 @@ $(document).ready(function() {
   });
 });
 $("#signOutBtn").click(function() {
-	calendar.getEvents().forEach(event => event.remove());
-	firebase.auth().signOut().then(function() {
-	  console.log("logged out");
-	  $("#formcontainer").hide();
-	}).catch(function(error) {
-	  // An error happened.
-	});
+  if (confirm("Are you sure you would like to log out?")) {
+  	calendar.getEvents().forEach(event => event.remove());
+  	firebase.auth().signOut().then(function() {
+  	  console.log("logged out");
+  	  $("#formcontainer").hide();
+  	}).catch(function(error) {
+  	  // An error happened.
+  	});
+  }
 });
 
 $("#incomingbtn").click(function() {
