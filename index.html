@@ -94,7 +94,7 @@
                     $("#modalDestination").html(` ${info.event.extendedProps.destination}`);
                     $("#modalComments").html(` ${info.event.extendedProps.comments}`);
                     $("#eventId").html(info.event.extendedProps.docId);
-
+                    $("#creator").html(`Scheduled by: ${info.event.extendedProps.creator}`);
                     //dynamically add pdf containers and embed accordingly
                     for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
                         addTicketPdfElement(i);
@@ -196,7 +196,8 @@
                     shipTicketUrls: shipTicketUrls,
                     ladingURL: ladingBillURL,
                     shipTicketRefs: shipTicketRefs,
-                    ladingBillRef: ladingBillRef
+                    ladingBillRef: ladingBillRef,
+                    creator: await firebase.auth().currentUser.displayName
                 }).then(function(docRef) {
                     console.log(`Document ${docRef.id} successfully written`);
                 }).catch(function(error) {
@@ -277,9 +278,9 @@
     measurementId: "G-RRY0NKY921"
   };
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(TESTfirebaseConfig);
+  //firebase.initializeApp(firebaseConfig);
   firebase.analytics();
-   console.log(firebase.auth().currentUser);
   var db = firebase.firestore();
   var storageRef = firebase.storage().ref();
   /*
@@ -413,6 +414,7 @@
           </div>
           
           <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Truck</button>
+          <small id = "uploadText" style = "display: none;">Uploading...</small>
         </form>
     </div>
 </div>
@@ -430,7 +432,8 @@
     <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-        <h3 id = "modalVendor">Modal title</h3>
+        <h4 id = "modalVendor">Modal title</h4>
+
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true" id = "closeModal">&times;</span>
         </button>
@@ -442,6 +445,7 @@
             <div class = "row"><b>Customer Name: </b><b id="modalCustomer" style ="font-weight: normal;"></b></div>
             <div class = "row"><b>Destination: </b><b id="modalDestination" style ="font-weight: normal;"></b></div>
             <div class = "row"><b>Comments/Notes: </b><b id="modalComments" style ="font-weight: normal;"></b></div>
+
           </div>
             <h4>Shipment Paperwork</h4>
             <small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>        
@@ -475,7 +479,8 @@
             </div>
       </div>
       <div class="modal-footer">
-        <small id="eventId"> Event ID Error</small>
+        <small id = "creator" style = "text-align: left;">Truck Scheduled by: </small>
+        <small id="eventId" style = "display: none;"> Event ID Error</small>
         <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
         <script>
             //delete file on click

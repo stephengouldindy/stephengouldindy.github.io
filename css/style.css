@@ -179,6 +179,7 @@ small {
 	margin-top: 5px;
 	margin-bottom: 0px;
 	color: #082a40;
+	font-weight: lighter;
 }
 #logo {
 	width: 80%;
@@ -194,6 +195,7 @@ small {
     font-weight: 12;
     text-align: center;
 	word-break: break-word;
+	font-weight: lighter;
 }
 .sg-font-hdr::before {
 	content: "";

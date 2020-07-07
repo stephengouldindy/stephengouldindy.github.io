@@ -73,7 +73,8 @@ $(document).ready(function() {
                           comments: data.notes,
                           docId: change.doc.id,
                           ladingURL: ladingURL,
-                          shipTicketURLs: data.shipTicketUrls
+                          shipTicketURLs: data.shipTicketUrls,
+                          creator: data.creator
 
                     }; //newEvent
                 } else {
@@ -96,7 +97,8 @@ $(document).ready(function() {
                         comments: data.notes,
                         docId: change.doc.id,
                         ladingURL: ladingURL,
-                        shipTicketUrls: data.shipTicketUrls
+                        shipTicketUrls: data.shipTicketUrls,
+                        creator: data.creator
                         
                     }; //newEvent
                 } //end else
