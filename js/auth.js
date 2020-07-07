@@ -72,7 +72,7 @@ $(document).ready(function() {
                           comments: data.notes,
                           docId: change.doc.id,
                           ladingURL: ladingURL,
-                          shipTicketURL: shipTicketURL
+                          shipTicketURLs: data.shipTicketUrls
 
                     }; //newEvent
                 } else {
@@ -95,7 +95,7 @@ $(document).ready(function() {
                         comments: data.notes,
                         docId: change.doc.id,
                         ladingURL: ladingURL,
-                        shipTicketURL: shipTicketURL
+                        shipTicketUrls: data.shipTicketUrls
                         
                     }; //newEvent
                 } //end else
