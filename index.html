@@ -256,7 +256,7 @@
   // Your web app's Firebase configuration
 
   // Initialize Firebase
-    var firebaseConfig = {
+    let firebaseConfig = {
     apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
     authDomain: "sgci-rds.firebaseapp.com",
     databaseURL: "https://sgci-rds.firebaseio.com",
@@ -266,7 +266,7 @@
     appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
     measurementId: "G-WVCBC8FL46"
   };
-    var TESTfirebaseConfig = {
+    let TESTfirebaseConfig = {
     apiKey: "AIzaSyAQbpyy6atOm9Nw6wRokl6dhedyqPFSDg0",
     authDomain: "sgi-testbranch.firebaseapp.com",
     databaseURL: "https://sgi-testbranch.firebaseio.com",
@@ -277,7 +277,7 @@
     measurementId: "G-RRY0NKY921"
   };
   // Initialize Firebase
-  firebase.initializeApp(TESTfirebaseConfig);
+  firebase.initializeApp(firebaseConfig);
   firebase.analytics();
    console.log(firebase.auth().currentUser);
   var db = firebase.firestore();
