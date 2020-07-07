@@ -4,6 +4,7 @@
 $(document).ready(function() {
 
   $("#calendarApplet").hide();
+
   $("#version").html("BETA v1.0.13");
   //hide the event form on pageload
   $("#formcontainer").hide();
@@ -72,7 +73,7 @@ $(document).ready(function() {
                           comments: data.notes,
                           docId: change.doc.id,
                           ladingURL: ladingURL,
-                          shipTicketURL: shipTicketURL
+                          shipTicketURLs: data.shipTicketUrls
 
                     }; //newEvent
                 } else {
@@ -95,7 +96,7 @@ $(document).ready(function() {
                         comments: data.notes,
                         docId: change.doc.id,
                         ladingURL: ladingURL,
-                        shipTicketURL: shipTicketURL
+                        shipTicketUrls: data.shipTicketUrls
                         
                     }; //newEvent
                 } //end else

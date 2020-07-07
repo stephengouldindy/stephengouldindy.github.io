@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <title> SGI Shipping & Receiving</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
         <link rel="icon" type="image/ico" href="img/favicon.ico">
-            <script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
   
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +95,11 @@
                     $("#modalComments").html(` ${info.event.extendedProps.comments}`);
                     $("#eventId").html(info.event.extendedProps.docId);
 
-                    PDFObject.embed(info.event.extendedProps.shipTicketURL, "#shipTicketPdfContainer");
+                    //dynamically add pdf containers and embed accordingly
+                    for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
+                        addTicketPdfElement(i);
+                        PDFObject.embed(info.event.extendedProps.shipTicketUrls[i], `#shipTicketPdfContainer${i}`);
+                    }
                     PDFObject.embed(info.event.extendedProps.ladingURL, "#ladingPdfContainer");
                     
                     $("#myModal").modal("show");
@@ -144,28 +149,39 @@
                 }
                 //insert new object into calendar as event 
                 //TODO: change this to an event source method after we confirm the new event has been entered into the database
-                let shipTicketFile = document.getElementById('shipTicketFileArea').files[0];
+                let shipTicketFiles = document.getElementById('shipTicketFileArea').files;
                 let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
-                if (shipTicketFile == undefined || ladingBillFile == undefined) {
+                if (shipTicketFiles == undefined || ladingBillFile == undefined) {
                     alert("Please upload all necessary paperwork!");
                     return;
                 }
-                else if (shipTicketFile.type != "application/pdf" || ladingBillFile.type != "application/pdf") {
-                    alert (`File types are ${shipTicketFile} ${ladingBillFile}`);
+                else if (ladingBillFile.type != "application/pdf") {
+                    alert('Uploaded files must be saved as PDF.');
                     return;
                 }
-                setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
-                let shipTicketUpload = await uploadTaskPromise(shipTicketFile);
-                let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
+                //confirm all file types are ok before uploading any
+                for (var i = 0; i < shipTicketFiles.length; i++) {
+                    if (shipTicketFiles[i].type != "application/pdf") {
+                        alert('Uploaded files must be saved as PDF.');
+                    }
+                } 
+                var shipTicketUrls = [];
+                var shipTicketRefs = [];
 
-                let shipTicketURL = shipTicketUpload.downloadURL;
-                let shipTicketRef = shipTicketUpload.ref;
+                for (var i = 0; i < shipTicketFiles.length; i++) {
+                     await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
+                        shipTicketUrls[i] = response.downloadURL;
+                        shipTicketRefs[i] = response.ref;
+                        console.log(`${i}: `, response.downloadURL, response.ref);
+                    });
+                } 
+                setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
+                //upload each of the ship ticket files and add their download urls to list
+                let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
                 let ladingBillURL = ladingBillUpload.downloadURL;
                 let ladingBillRef = ladingBillUpload.ref;
 
-                console.log(`shipTicketURL: ${shipTicketURL}`);
                 console.log(`ladingBillURL: ${ladingBillURL}`);
-                console.log(`shipTicketRef: ${shipTicketRef}`);
                 console.log(`ladingBillRef: ${ladingBillRef}`);
                 db.collection("events").add({
                     allDay: allDay,
@@ -177,9 +193,9 @@
                     endTime: endTime,
                     notes: comments,
                     title: vendorName,
-                    shipTicketURL: shipTicketURL,
+                    shipTicketUrls: shipTicketUrls,
                     ladingURL: ladingBillURL,
-                    shipTicketRef: shipTicketRef,
+                    shipTicketRefs: shipTicketRefs,
                     ladingBillRef: ladingBillRef
                 }).then(function(docRef) {
                     console.log(`Document ${docRef.id} successfully written`);
@@ -227,12 +243,20 @@
         }); //end DOM content loaded event listener
 
 
+    // Adds a PDFObject and its containing carousel element to the document
+    function addTicketPdfElement(number) {
+        var p = document.getElementById("pdfCarousel-inner");
+        var newElement = document.createElement('div');
+        newElement.setAttribute('class', "carousel-item");
+        newElement.setAttribute('id', `shipTicketPdfContainer${number}`);
+        p.appendChild(newElement);
 
+    }
       
   // Your web app's Firebase configuration
 
   // Initialize Firebase
-    var firebaseConfig = {
+    let firebaseConfig = {
     apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
     authDomain: "sgci-rds.firebaseapp.com",
     databaseURL: "https://sgci-rds.firebaseio.com",
@@ -241,6 +265,16 @@
     messagingSenderId: "184884483557",
     appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
     measurementId: "G-WVCBC8FL46"
+  };
+    let TESTfirebaseConfig = {
+    apiKey: "AIzaSyAQbpyy6atOm9Nw6wRokl6dhedyqPFSDg0",
+    authDomain: "sgi-testbranch.firebaseapp.com",
+    databaseURL: "https://sgi-testbranch.firebaseio.com",
+    projectId: "sgi-testbranch",
+    storageBucket: "sgi-testbranch.appspot.com",
+    messagingSenderId: "61711519733",
+    appId: "1:61711519733:web:dd9dd75680058d4002dabc",
+    measurementId: "G-RRY0NKY921"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
@@ -353,14 +387,7 @@
             <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
           </div>
           <!-- -->
-          <!--SHIP TICKET FILE SELECTION-->
-          <div class="form-group">
-            <label for="shipTicketFileArea">Ship Ticket (must be .pdf)</label>
-            
-            <input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf">
-
-          </div>
-          <!--END FILE SELECTION-->
+          
           <!--BILL OF LADING FILE SELECTION-->
           <div class="form-group">
             <label for="ladingBillFileArea">Bill of Lading (must be .pdf)</label>
@@ -369,7 +396,14 @@
 
           </div>
           <!--END FILE SELECTION-->
-          
+          <!--SHIP TICKET FILE SELECTION-->
+          <div class="form-group">
+            <label for="shipTicketFileArea">Ship Ticket(s) (must be .pdf)</label>
+            
+            <input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf" multiple = "true">
+
+          </div>
+          <!--END FILE SELECTION-->
           
 
           <!--COMMENTS TEXT AREA-->
@@ -420,14 +454,8 @@
                     </div>
                 </a>
                 <div id="pdfCarousel" class="carousel slide" data-interval = "false">
-                    <div class="carousel-inner">
+                    <div class="carousel-inner" id = "pdfCarousel-inner">
                         <div class="carousel-item active">
-                            <div class = "container">
-                                <div id = "shipTicketPdfContainer"  aria-describedby="pdfHelp"></div>
-                            </div>
-                                                
-                        </div>
-                        <div class="carousel-item">
                             <div class = "container">
                             <div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
                         </div>
@@ -453,32 +481,32 @@
             //delete file on click
             $("#deleteShipmentBtn").click(function() {
                 if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-                    let shipFile;
                     let billFile; 
-                    let shipRef;
                     let billRef;
                     let docRef = db.collection("events").doc($("#eventId").html());
                     docRef.get().then(function(doc) {
-                        shipFile = doc.data().shipTicketRef;
+                        
                         billFile = doc.data().ladingBillRef;
-                        console.log(shipFile, billFile);
-                        shipRef = storageRef.child(shipFile);
                         billRef = storageRef.child(billFile);
                         docRef.delete().then(function() {
                         console.log("Document deleted.");
-                        shipRef.delete().then(function() {
+                        shipFiles = doc.data().shipTicketRefs;
+                        shipFiles.forEach((shipFile) => {
+                            let shipRef = storageRef.child(shipFile);
+                            shipRef.delete().then(function() {
                           // File deleted successfully
                           console.log("ship deleted");
                         }).catch(function(error) {
                             alert(`Something went wrong: ${error}. Please try again.`);
                               return;
                         });
+                        });
+                        
 
                         billRef.delete().then(function() {
                             // File deleted successfully
                             console.log("bill deleted");
                         }).catch(function(error) {
-                              // Uh-oh, an error occurred!
                               alert(`Something went wrong: ${error}. Please try again.`);
                               return;
                         });
@@ -494,7 +522,6 @@
                 
             } 
           });
-
         </script>
         <button type="button" class="btn btn-primary" id = "editInfoBtn">Edit Info</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
