@@ -216,6 +216,7 @@ header {
 	width: 100%;
 	background-color: #F24E1B;
 	color: white;
+	border-bottom: solid white;
 }
 
 footer {
@@ -231,6 +232,7 @@ footer {
 	color: white;
 	text-align: center;
 	display: none;
+	border-top: solid white;
 }
 footer > * {
 	color: #082a40;
