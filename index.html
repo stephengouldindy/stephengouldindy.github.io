@@ -110,9 +110,11 @@
             * Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
             */
             $("#submitTruckBtn").click(async function() {
+                $("#formcontainer").slideUp(300);
                 //unwrapping data...
                 var startTime = $("#startTime").val();
                 var endTime = $("#endTime").val();
+
                 //FIXME DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
                 var allDay = (startTime === "");
                 console.log("allDay:" + allDay);
@@ -178,7 +180,8 @@
                 }).then(function(docRef) {
                     console.log(`Document ${docRef.id} successfully written`);
                 }).catch(function(error) {
-                    console.error("Error writing document: ", error);
+                    alert("Error writing document: ", error);
+                    $("#formcontainer").slideDown(300);
                 });
                     
                 async function uploadTaskPromise(file) {
@@ -192,8 +195,9 @@
                                 console.log('Upload is ' + progress + '% done');
                             },
                             function error(err) {
-                                console.log('error', err);
+                                alert('error', err);
                                 reject();
+                                $("#formcontainer").slideDown(300);
                             },
                             function complete() {
                                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
@@ -208,8 +212,7 @@
 
                 //calendar.addEvent(newEvent);
                 //hide form
-                $("#formcontainer").slideUp(300);
-                $("#newTruckForm").hide();
+                
                 //scroll to top
                 window.scrollTo({
                     top: 0,
