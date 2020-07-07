@@ -116,6 +116,7 @@
             */
             $("#submitTruckBtn").click(async function() {
                 //unwrapping data...
+                $("#uploadText").show();
                 var startTime = $("#startTime").val();
                 var endTime = $("#endTime").val();
 
@@ -153,10 +154,12 @@
                 let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
                 if (shipTicketFiles == undefined || ladingBillFile == undefined) {
                     alert("Please upload all necessary paperwork!");
+                    $("#uploadText").hide();
                     return;
                 }
                 else if (ladingBillFile.type != "application/pdf") {
                     alert('Uploaded files must be saved as PDF.');
+                    $("#uploadText").hide();
                     return;
                 }
                 //confirm all file types are ok before uploading any
@@ -200,6 +203,7 @@
                     creator: await firebase.auth().currentUser.displayName
                 }).then(function(docRef) {
                     console.log(`Document ${docRef.id} successfully written`);
+                    $("#uploadText").hide();
                 }).catch(function(error) {
                     alert("Error writing document: ", error);
                     $("#formcontainer").slideDown(300);
