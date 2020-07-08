@@ -5,7 +5,7 @@ $(document).ready(function() {
 
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.0.15");
+  $("#version").html("BETA v1.0.16");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -210,7 +210,7 @@ $("#createAccountBtn").click(async function() {
 	});*/
 });
 $("#signInBtn").click(async function() {
-	var email = $("#loginEmail").val();
+  var email = $("#loginEmail").val();
 	var password = $("#loginPass").val();
 	console.log(`email: ${email} pass: ${password}`);
 	var signInAttempt; 
@@ -235,6 +235,50 @@ $("#signInBtn").click(async function() {
 	}
 	
 });
+//delete file on click
+            $("#deleteShipmentBtn").click(function() {
+                if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
+                    let billFile; 
+                    let billRef;
+                    let docRef = db.collection("events").doc($("#eventId").html());
+                    docRef.get().then(function(doc) {
+                        
+                        billFile = doc.data().ladingBillRef;
+                        billRef = storageRef.child(billFile);
+                        docRef.delete().then(function() {
+                        console.log("Document deleted.");
+                        shipFiles = doc.data().shipTicketRefs;
+                        shipFiles.forEach((shipFile) => {
+                            let shipRef = storageRef.child(shipFile);
+                            shipRef.delete().then(function() {
+                          // File deleted successfully
+                          console.log("ship deleted");
+                        }).catch(function(error) {
+                            alert(`Something went wrong: ${error}. Please try again.`);
+                              return;
+                        });
+                        });
+                        
+
+                        billRef.delete().then(function() {
+                            // File deleted successfully
+                            console.log("bill deleted");
+                        }).catch(function(error) {
+                              alert(`Something went wrong: ${error}. Please try again.`);
+                              return;
+                        });
+                    //hide the modal
+                    $("#myModal").modal("hide");
+
+                }).catch(function(error) {
+                    alert(`Something went wrong: ${error}. Please try again.`);
+                    return;
+                });
+                    });
+                    
+                
+            } 
+          });
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
