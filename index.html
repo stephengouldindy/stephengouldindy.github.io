@@ -152,7 +152,7 @@
                 //TODO: change this to an event source method after we confirm the new event has been entered into the database
                 let shipTicketFiles = document.getElementById('shipTicketFileArea').files;
                 let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
-                if (shipTicketFiles == undefined || ladingBillFile == undefined) {
+                if (shipTicketFiles.length == 0 || ladingBillFile == undefined) {
                     alert("Please upload all necessary paperwork!");
                     $("#uploadText").hide();
                     return;
@@ -486,52 +486,6 @@
         <small id = "creator" style = "text-align: left;">Truck Scheduled by: </small>
         <small id="eventId" style = "display: none;"> Event ID Error</small>
         <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
-        <script>
-            //delete file on click
-            $("#deleteShipmentBtn").click(function() {
-                if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-                    let billFile; 
-                    let billRef;
-                    let docRef = db.collection("events").doc($("#eventId").html());
-                    docRef.get().then(function(doc) {
-                        
-                        billFile = doc.data().ladingBillRef;
-                        billRef = storageRef.child(billFile);
-                        docRef.delete().then(function() {
-                        console.log("Document deleted.");
-                        shipFiles = doc.data().shipTicketRefs;
-                        shipFiles.forEach((shipFile) => {
-                            let shipRef = storageRef.child(shipFile);
-                            shipRef.delete().then(function() {
-                          // File deleted successfully
-                          console.log("ship deleted");
-                        }).catch(function(error) {
-                            alert(`Something went wrong: ${error}. Please try again.`);
-                              return;
-                        });
-                        });
-                        
-
-                        billRef.delete().then(function() {
-                            // File deleted successfully
-                            console.log("bill deleted");
-                        }).catch(function(error) {
-                              alert(`Something went wrong: ${error}. Please try again.`);
-                              return;
-                        });
-                    //hide the modal
-                    $("#myModal").modal("hide");
-
-                }).catch(function(error) {
-                    alert(`Something went wrong: ${error}. Please try again.`);
-                    return;
-                });
-                    });
-                    
-                
-            } 
-          });
-        </script>
         <button type="button" class="btn btn-primary" id = "editInfoBtn">Edit Info</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>

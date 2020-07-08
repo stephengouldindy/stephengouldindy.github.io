@@ -30,14 +30,13 @@
 	border: solid #F24E1B !important;
 	border-radius: 25px;
 	background-color: white;
-	margin-top: 50px;
-	margin-bottom: 50px;
+	margin-top: 60px;
+	margin-bottom: 60px;
 	margin-left: auto;
 	margin-right: auto;
 	display: none;
 	height: 80%;
 	width: 95%;
-
 
 }
 #loginApplet {
@@ -274,9 +273,9 @@ body {
 	border-left-color: #F24E1B !important;
 	border-right-color: #F24E1B !important;
 }
-/*
-SPINING
-#blueLogo {
+
+
+#spinning{
   animation-name: spin;
   animation-duration: 5000ms;
   animation-iteration-count: infinite;
@@ -294,5 +293,5 @@ SPINING
 
     }
 
-}*/
+}
 
