@@ -4,7 +4,7 @@ $("#incomingbtn").click(function() {
 		if (origValue === "btn btn-outline-primary") {
 			//flip other button
 			$("#outgoingbtn").attr("class", "btn btn-outline-warning");
-			//toggle button states for good practice
+			$("#submitTruckBtn").html("Schedule Incoming Delivery");
 			return "btn btn-warning";
 		}
 		else return "btn btn-warning";
@@ -21,6 +21,7 @@ $("#outgoingbtn").click(function() {
 		if (origValue === "btn btn-outline-warning") {
 			//flip other button
 			$("#incomingbtn").attr("class", "btn btn-outline-primary");
+			$("#submitTruckBtn").html("Schedule Outgoing Shipment");
 			return "btn btn-primary";
 		}
 		else return "btn btn-primary";

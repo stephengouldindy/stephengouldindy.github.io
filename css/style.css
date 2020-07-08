@@ -19,6 +19,11 @@
 #changelog {
 	text-align: center;
 }
+#submitTruckBtn {
+	background-color: #F24E1B;
+	color: white;
+	border-color: #082a40;
+}
 #signOutBtn {
 	display: none;
 	margin-right: 20px;
@@ -124,28 +129,50 @@ small {
 	color: rgba(0,0,0,.4);
 }
 
-.btn-outline-warning {
-    color: #f58142; 
-    border-color: #f58142;
+.btn {
+	z-index: 0 !important;
 }
 
-.btn-outline-warning:hover {
-	color: #000000; 
-	background-color: #f58142;
-    border-color: #f58142;
+.btn:focus,.btn:active:focus,.btn.active:focus,
+.btn.focus,.btn:active.focus,.btn.active.focus {
+    outline: none;
 }
-.btn-warning {
-	background-color: #f58142;
-    border-color: #f58142;
+
+
+.btn:focus, .btn:active {
+  box-shadow: none !important;
+  
 }
-.btn-warning:hover {
-	background-color: #f57842;
-    border-color: #f57842;
+.btn-outline-primary:active, .btn-outline-primary:hover {
+	color: black !important;
 }
-.btn-warning:foc {
-	background-color: #f57842;
-    border-color: #f57842;
+.btn-outline-warning:active, .btn-outline-warning:hover, .btn-primary:active {
+	color: lightgrey !important;
+	outline: #082a40 !important;
 }
+.btn-primary, .btn-primary:focus, .btn-primary:hover,
+.btn-outline-warning:focus, .btn-outline-warning:hover, .btn-outline-primary:active, .btn-outline-primary:focus {
+	color: white;
+	background-color: #082a40 !important;
+    border-color: #082a40;
+}
+
+
+.btn-outline-primary:hover, .btn-warning, .btn-warning:focus, .btn-warning:hover, .btn-warning:active {
+    color: white; 
+    border-color: #F24E1B !important;
+    background-color: #F24E1B !important;
+}
+
+.btn-outline-warning {
+    color: #F24E1B; 
+    border-color: #F24E1B;
+}
+ .btn-outline-primary {
+    color: #082a40; 
+    border-color: #082a40;
+}
+
 .centered-container {
 	height: 87%;
 	margin: 0;
