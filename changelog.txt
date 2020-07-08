@@ -1,0 +1,6 @@
+BETA 1.0.16
+  -Fixed bug introduced in 1.0.15 which allowed 0 ship tickets to be uploaded
+
+BETA 1.0.15
+  -Added support for multiple ship ticket files and dynamic interface for them
+  -Bug fixes and improvements

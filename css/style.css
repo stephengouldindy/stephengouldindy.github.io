@@ -16,6 +16,9 @@
 	padding: 6px;
 	display: none;
 }
+#changelog {
+	text-align: center;
+}
 #signOutBtn {
 	display: none;
 	margin-right: 20px;
