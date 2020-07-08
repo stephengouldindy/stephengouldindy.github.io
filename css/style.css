@@ -20,9 +20,9 @@
 	text-align: center;
 }
 #submitTruckBtn {
-	background-color: #F24E1B;
+	background-color: #F24E1B !important;
 	color: white;
-	border-color: #082a40;
+
 }
 #signOutBtn {
 	display: none;

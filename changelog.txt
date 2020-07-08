@@ -1,5 +1,9 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+BETA 1.0.18
+  -visual changes
+  -bug fixes
+
 BETA 1.0.17
   -Bill of Lading no longer required. 1+ ship tickets still required.
   -Fixed bug introduced in 1.0.15 with multiple ship ticket viewers 
