@@ -2,11 +2,11 @@
 <html lang="en">
     <head>
         <title> SGI Shipping & Receiving</title>
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
-        <link rel="icon" type="image/ico" href="img/favicon.ico">
         <script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   
   
@@ -28,6 +28,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel = "stylesheet">
     <script src = "js/auth.js" async></script>
+    <script src = "js/buttons.js" async></script>
 
     <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT-->         
     <script>    
@@ -79,6 +80,7 @@
                     curYear = info.date.getFullYear();              
                 }, //end dateClick
                 eventClick: function(info) {
+                    console.log(info.event.extendedProps);
                     //populate event info modal with event data
                     var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
                     var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
@@ -97,11 +99,19 @@
                     $("#creator").html(`Scheduled by: ${info.event.extendedProps.creator}`);
                     //dynamically add pdf containers and embed accordingly
                     for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
-                        addTicketPdfElement(i);
+                        console.log("ship ", i);
+                        addTicketPdfElement(`shipTicketPdfContainer${i}`);
                         PDFObject.embed(info.event.extendedProps.shipTicketUrls[i], `#shipTicketPdfContainer${i}`);
                     }
-                    PDFObject.embed(info.event.extendedProps.ladingURL, "#ladingPdfContainer");
+                    if (info.event.extendedProps.ladingURL != "") {
+                        console.log("lading");
+                        addTicketPdfElement("ladingPdfContainer");
+                        PDFObject.embed(info.event.extendedProps.ladingURL, "#ladingPdfContainer");
+                        
+                    }
                     
+                    //set first pdf container as active to display carousel
+                    document.getElementById("pdfCarousel-inner").firstElementChild.setAttribute("class", "carousel-item active");
                     $("#myModal").modal("show");
                     
                 }
@@ -152,12 +162,12 @@
                 //TODO: change this to an event source method after we confirm the new event has been entered into the database
                 let shipTicketFiles = document.getElementById('shipTicketFileArea').files;
                 let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
-                if (shipTicketFiles.length == 0 || ladingBillFile == undefined) {
+                if (shipTicketFiles.length == 0) {
                     alert("Please upload all necessary paperwork!");
                     $("#uploadText").hide();
                     return;
                 }
-                else if (ladingBillFile.type != "application/pdf") {
+                if (ladingBillFile != undefined && ladingBillFile.type != "application/pdf") {
                     alert('Uploaded files must be saved as PDF.');
                     $("#uploadText").hide();
                     return;
@@ -180,9 +190,13 @@
                 } 
                 setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
                 //upload each of the ship ticket files and add their download urls to list
-                let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
-                let ladingBillURL = ladingBillUpload.downloadURL;
-                let ladingBillRef = ladingBillUpload.ref;
+                var ladingBillURL = "";
+                var ladingBillRef = "";
+                if (ladingBillFile) {
+                    let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
+                    ladingBillURL = ladingBillUpload.downloadURL;
+                    ladingBillRef = ladingBillUpload.ref;
+                }
 
                 console.log(`ladingBillURL: ${ladingBillURL}`);
                 console.log(`ladingBillRef: ${ladingBillRef}`);
@@ -249,11 +263,11 @@
 
 
     // Adds a PDFObject and its containing carousel element to the document
-    function addTicketPdfElement(number) {
+    function addTicketPdfElement(id) {
         var p = document.getElementById("pdfCarousel-inner");
         var newElement = document.createElement('div');
         newElement.setAttribute('class', "carousel-item");
-        newElement.setAttribute('id', `shipTicketPdfContainer${number}`);
+        newElement.setAttribute('id', id);
         p.appendChild(newElement);
 
     }
@@ -464,11 +478,6 @@
                 </a>
                 <div id="pdfCarousel" class="carousel slide" data-interval = "false">
                     <div class="carousel-inner" id = "pdfCarousel-inner">
-                        <div class="carousel-item active">
-                            <div class = "container">
-                            <div id = "ladingPdfContainer"  aria-describedby="pdfHelp"></div>
-                        </div>
-                        </div>
             
                     </div>
                 

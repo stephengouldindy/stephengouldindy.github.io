@@ -139,48 +139,6 @@ $("#signOutBtn").click(function() {
   }
 });
 
-$("#incomingbtn").click(function() {
-	$("#incomingbtn").attr("class", function(i, origValue){
-		//if button not selected, switch
-		if (origValue === "btn btn-outline-primary") {
-			//flip other button
-			$("#outgoingbtn").attr("class", "btn btn-outline-warning");
-			//toggle button states for good practice
-			return "btn btn-warning";
-		}
-		else return "btn btn-warning";
-	});
-}); 
-
-/*
- * Flip swap outgoing and incoming buttons if the outgoing is pressed and is not enabled
- */
-
-$("#outgoingbtn").click(function() {
-	$("#outgoingbtn").attr("class", function(i, origValue){
-
-		if (origValue === "btn btn-outline-warning") {
-			//flip other button
-			$("#incomingbtn").attr("class", "btn btn-outline-primary");
-			return "btn btn-primary";
-		}
-		else return "btn btn-primary";
-	});
-}); 
-
-/*
- * Clear delivery window time boxes
- */
-
- $("#clearTimeBtn").click(function() {
- 	console.log($("#startTime").val());
- 	console.log($("#endTime").val());
- 	$("#startTime").val("");
- 	$("#endTime").val("");
- });
-$("#editInfoBtn").click(function() {
-  alert("Function not yet implemented. Sorry, but you'll have to create a new event if you need to make changes.");
-});
 
 //creates an account using the provided information and associate the display name with it
 $("#createAccountBtn").click(async function() {
@@ -235,50 +193,14 @@ $("#signInBtn").click(async function() {
 	}
 	
 });
-//delete file on click
-            $("#deleteShipmentBtn").click(function() {
-                if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-                    let billFile; 
-                    let billRef;
-                    let docRef = db.collection("events").doc($("#eventId").html());
-                    docRef.get().then(function(doc) {
-                        
-                        billFile = doc.data().ladingBillRef;
-                        billRef = storageRef.child(billFile);
-                        docRef.delete().then(function() {
-                        console.log("Document deleted.");
-                        shipFiles = doc.data().shipTicketRefs;
-                        shipFiles.forEach((shipFile) => {
-                            let shipRef = storageRef.child(shipFile);
-                            shipRef.delete().then(function() {
-                          // File deleted successfully
-                          console.log("ship deleted");
-                        }).catch(function(error) {
-                            alert(`Something went wrong: ${error}. Please try again.`);
-                              return;
-                        });
-                        });
-                        
-
-                        billRef.delete().then(function() {
-                            // File deleted successfully
-                            console.log("bill deleted");
-                        }).catch(function(error) {
-                              alert(`Something went wrong: ${error}. Please try again.`);
-                              return;
-                        });
-                    //hide the modal
-                    $("#myModal").modal("hide");
-
-                }).catch(function(error) {
-                    alert(`Something went wrong: ${error}. Please try again.`);
-                    return;
-                });
-                    });
-                    
-                
-            } 
-          });
+$('#myModal').on('hidden.bs.modal', function () {
+  var p = document.getElementById("pdfCarousel-inner");
+  var child = p.lastElementChild;  
+        while (child) { 
+            p.removeChild(child); 
+            child = p.lastElementChild; 
+        } 
+});
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
