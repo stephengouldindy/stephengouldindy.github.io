@@ -18,6 +18,7 @@
 }
 #changelog {
 	text-align: center;
+	margin-bottom: 0px !important;
 }
 #submitTruckBtn {
 	background-color: #F24E1B !important;
@@ -45,11 +46,11 @@
 }
 #userHeaderMenu {
 	float: right;
-	height: 2.5vh !important;
+	height: 2.25vh !important;
 }
 
 #userHeaderMenu > * {
-	height: 2.5vh !important;
+	height: 2.25vh !important;
   	margin-left: 10px;
   	margin-right: 10px;
 
@@ -62,23 +63,7 @@
 #currentUser {
 	display: none;
 }
-/*
-#currentUser {
-	vertical-align: center;
 
-	margin-right: 5px;
-	vertical-align: center;
-	display: none;
-}
-
-#signOutBtn {
-	height: 2.25rem;
-	margin-top: 10px;
-	display: none;
-	margin-right: 20px;
-	border-radius: 20px;
-	background-color: #082a40;
-}*/
 
 #calendar > * {
 	z-index: 0;
@@ -99,7 +84,7 @@
 }
 #loginApplet {
 	display: none;
-	height: 80%;
+	height: 90%;
 }
 
 #modalContainer {
@@ -234,6 +219,8 @@ small {
 	border-radius: 25px;
 	border: solid #F24E1B;
   	background-color: white;
+  	margin-bottom: 0px !important;
+  	padding-bottom: 0px !important;
 }
 
 .form-group {
@@ -291,7 +278,7 @@ small {
 header {
 	z-index: 1;
 	position: fixed;
-	height: 2.5rem;
+	height: 5.5vh;
 	padding-bottom: 0px;
 	left: 0;
 	top: 0;
