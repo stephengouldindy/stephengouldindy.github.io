@@ -43,6 +43,7 @@
 	margin-left: auto;
 	margin-right: auto;
 	transition: transform .3s;
+	box-shadow: 
 }
 #userHeaderMenu {
 	float: right;
@@ -50,14 +51,17 @@
 }
 
 #userHeaderMenu > * {
+	padding-top: 10px;
+	padding-bottom: 10px;
 	height: 2.25vh !important;
   	margin-left: 10px;
   	margin-right: 10px;
 
 }
 #signOutBtn {
-	border-radius: 20px;
+	border-radius: 15px;
 	background-color: #082a40;
+	border-color: #082a40;
 	display: none;
 }
 #currentUser {
@@ -114,6 +118,7 @@ div {
 	border-width: 20px;
 	border-bottom-left-radius: 25px;
 	border-bottom-right-radius: 25px;
+	margin-bottom: 15px;
 }
 .modal-content {
 	width: 800px;
@@ -313,6 +318,8 @@ footer > * {
 
 #signInBtn, #createAccountBtn {
 	background-color: #082a40;
+	border-color: #082a40;
+
 }
 .nav-item {
 	color: #082a40;

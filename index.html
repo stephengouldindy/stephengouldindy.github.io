@@ -68,6 +68,7 @@
                     curMonth = info.date.getMonth() + 1;
                     curYear = info.date.getFullYear();
                     //display new shipment form
+                    $("#formArrow").css("transform", "rotate(-90deg)");
                     $("#formcontainer").slideDown(0); 
 
                     $("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
@@ -192,6 +193,7 @@
                     });
                 } 
                 setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
+                $("#formArrow").css("transform", "rotate(90deg)");
                 //upload each of the ship ticket files and add their download urls to list
                 var ladingBillURL = "";
                 var ladingBillRef = "";
@@ -228,7 +230,7 @@
                     
                 async function uploadTaskPromise(file) {
                     return new Promise(function(resolve, reject) {
-                        let fileName = uuidv4();
+                        let fileName = `${uuidv4()}.pdf`;
                         let fileRef = storageRef.child(fileName);
                         uploadTask = fileRef.put(file);
                         uploadTask.on('state_changed',
