@@ -5,7 +5,7 @@ $(document).ready(function() {
 
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.0.18");
+  $("#version").html("BETA v1.1.0");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -17,9 +17,14 @@ $(document).ready(function() {
   if (user) {
   	console.log(user.email);
   	$("#loginApplet").fadeOut();
-  	$("#signOutBtn").show();
+    $("#signOutBtn").show();
+    $("#signOutBtn").css("display", "inline-block");
+    $("#currentUser").html(user.displayName);
+    $("#currentUser").show();
+  	
   	$("#blueLogo").show();
   	$("footer").hide();
+
 
   	db.collection("events").onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
@@ -118,6 +123,7 @@ $(document).ready(function() {
   } else {
     // User is signed out.
     $("#calendarApplet").fadeOut();
+    $("#currentUser").hide();
   	$("#signOutBtn").hide();
   	$("#blueLogo").fadeOut();
   	$("footer").fadeIn();

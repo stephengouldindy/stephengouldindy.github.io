@@ -42,6 +42,9 @@
         var calendar;
 
         document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date();
+            var todayDate = `${(today.getMonth()+1)}/${today.getDate()}/${today.getFullYear()}`;
+            $("#dateAlert").html(`Selected Date: <b>${todayDate}</b>`);
             var calendarEl = document.getElementById('calendar');
 
             calendar = new FullCalendar.Calendar(calendarEl, {
@@ -310,7 +313,7 @@
     </head>
 
     <body>
-        <header><img src = "img/bluelogo.svg" id = "blueLogo"> <btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn></header>
+        <header><img src = "img/bluelogo.svg" id = "blueLogo"> <div id = "userHeaderMenu"><span id = "currentUser">Current User</span><span><btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn></span></div></header>
 <div id = "loginApplet" >
         <div class = "container centered-container">
             <p class = "sg-font-hdr">Stephen Gould Indianapolis Shipping and Receiving</p>
@@ -373,10 +376,10 @@
 
 
     <div id = "calendar"> </div>
-
+<button id = "arrowContainerBtn"><div id = "formArrow"></div></button>
 <div class = "container" id = "formcontainer">
     <div id = "dateAlert" class="alert alert-primary" role="alert">
-    If you see this, tell Spencer right away!
+    Date Alert
     </div>
         <form id = "newTruckForm">
             <div class="form-group">

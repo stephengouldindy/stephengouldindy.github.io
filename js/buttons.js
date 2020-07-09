@@ -28,6 +28,22 @@ $("#outgoingbtn").click(function() {
 	});
 }); 
 
+$("#arrowContainerBtn").click(function() {
+	if($("#formcontainer").css("display") === "none") {
+		$("#formcontainer").slideDown(300);
+		//setTimeout(function() {document.getElementById('formcontainer').scrollIntoView({ behavior: "smooth", block: 'center'});}, 100);
+
+		$("#formArrow").css("transform", "rotate(-90deg)");
+	}
+	else {
+		
+		//document.getElementById('calendar').scrollIntoView({ behavior: "smooth", block: 'center'});
+		$("#formArrow").css("transform", "rotate(90deg)");
+		$("#formcontainer").slideUp(300);
+	}
+});
+
+
 /*
  * Clear delivery window time boxes
  */
@@ -89,3 +105,4 @@ $("#editInfoBtn").click(function() {
                 
             } 
           });
+

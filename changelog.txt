@@ -1,5 +1,10 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+BETA 1.1.0
+  -Added dropdown box for new truck form
+  -Gave date select default value of (TODAY)
+  -Added current user displayname in header
+
 BETA 1.0.18
   -visual changes
   -bug fixes
