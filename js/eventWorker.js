@@ -54,3 +54,10 @@ function pastEventListener() {
 		}
 	});
 }
+
+/*
+ * Clean up events that are older than 
+ */
+function noCountryForOldEvents() {
+
+}

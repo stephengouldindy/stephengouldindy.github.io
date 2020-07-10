@@ -26,6 +26,7 @@
 
 }
 #arrowContainerBtn {
+	margin-top: .5rem;
 	outline: none;
 	background-color: #F24E1B;
 	border-radius: 20px;
@@ -65,7 +66,8 @@
 	display: none;
 }
 
-
+#calendar {
+}
 #calendar > * {
 	z-index: 0;
 }
