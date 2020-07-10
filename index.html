@@ -29,18 +29,15 @@
     <link href="css/style.css" rel = "stylesheet">
     <script src = "js/auth.js" async></script>
     <script src = "js/buttons.js" async></script>
-    <script src = "js/eventListener.js" async></script>
+    <script src = "js/eventWorker.js" async></script>
 
     <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT-->         
     <script>    
 
         var _DEBUG = false;
-        var curMinute;
-        var curHour;
-        var curDay;
-        var curMonth;
-        var curYear;
         var calendar;
+        var curEvent;
+
 
         document.addEventListener('DOMContentLoaded', function() {
             var today = new Date();
@@ -85,7 +82,7 @@
                     curYear = info.date.getFullYear();              
                 }, //end dateClick
                 eventClick: function(info) {
-                    console.log(info.event.extendedProps);
+                    curEvent = info;
 
                     //populate event info modal with event data
                     var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
@@ -105,12 +102,10 @@
                     $("#creator").html(`Scheduled by: ${info.event.extendedProps.creator}`);
                     //dynamically add pdf containers and embed accordingly
                     for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
-                        console.log("ship ", i);
                         addTicketPdfElement(`shipTicketPdfContainer${i}`);
                         PDFObject.embed(info.event.extendedProps.shipTicketUrls[i], `#shipTicketPdfContainer${i}`);
                     }
                     if (info.event.extendedProps.ladingURL != "") {
-                        console.log("lading");
                         addTicketPdfElement("ladingPdfContainer");
                         PDFObject.embed(info.event.extendedProps.ladingURL, "#ladingPdfContainer");
                         
@@ -118,6 +113,15 @@
                     
                     //set first pdf container as active to display carousel
                     document.getElementById("pdfCarousel-inner").firstElementChild.setAttribute("class", "carousel-item active");
+                    //enable/disable resolve button based on event status
+                    if (info.event.extendedProps.resolved == true) {
+                        document.getElementById("resolveShipmentBtn").disabled = true;
+                        $("#resolveShipmentBtn").html("Shipment Resolved");
+                    }
+                    else {
+                        document.getElementById("resolveShipmentBtn").disabled = false;
+                        $("#resolveShipmentBtn").html("Mark as Resolved");
+                    }
                     $("#myModal").modal("show");
                     
                 }
@@ -133,12 +137,12 @@
             $("#submitTruckBtn").click(async function() {
                 //unwrapping data...
                 $("#uploadText").show();
+                document.getElementById("submitTruckBtn").disabled = true;
                 var startTime = $("#startTime").val();
                 var endTime = $("#endTime").val();
 
                 //FIXME DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
                 var allDay = (startTime === "");
-                console.log("allDay:" + allDay);
                 var startHour;
                 var startMinute;
                 var endHour;
@@ -171,11 +175,13 @@
                 if (shipTicketFiles.length == 0) {
                     alert("Please upload all necessary paperwork!");
                     $("#uploadText").hide();
+                    document.getElementById("submitTruckBtn").disabled = false;
                     return;
                 }
                 if (ladingBillFile != undefined && ladingBillFile.type != "application/pdf") {
                     alert('Uploaded files must be saved as PDF.');
                     $("#uploadText").hide();
+                    document.getElementById("submitTruckBtn").disabled = false;
                     return;
                 }
                 //confirm all file types are ok before uploading any
@@ -191,7 +197,6 @@
                      await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
                         shipTicketUrls[i] = response.downloadURL;
                         shipTicketRefs[i] = response.ref;
-                        console.log(`${i}: `, response.downloadURL, response.ref);
                     });
                 } 
                 setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
@@ -205,8 +210,6 @@
                     ladingBillRef = ladingBillUpload.ref;
                 }
 
-                console.log(`ladingBillURL: ${ladingBillURL}`);
-                console.log(`ladingBillRef: ${ladingBillRef}`);
                 db.collection("events").add({
                     allDay: allDay,
                     date: date,
@@ -221,7 +224,8 @@
                     ladingURL: ladingBillURL,
                     shipTicketRefs: shipTicketRefs,
                     ladingBillRef: ladingBillRef,
-                    creator: await firebase.auth().currentUser.displayName
+                    creator: await firebase.auth().currentUser.displayName,
+                    resolved: false
                 }).then(function(docRef) {
                     console.log(`Document ${docRef.id} successfully written`);
                     $("#uploadText").hide();
@@ -257,6 +261,7 @@
                 //hide form
                 
                 //scroll to top
+                document.getElementById("submitTruckBtn").disabled = false;
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
@@ -499,8 +504,9 @@
       <div class="modal-footer">
         <small id = "creator" style = "text-align: left;">Truck Scheduled by: </small>
         <small id="eventId" style = "display: none;"> Event ID Error</small>
-        <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
+        <button type="button" class="btn btn-primary" id = "resolveShipmentBtn">Mark as Resolved</button>
         <button type="button" class="btn btn-primary" id = "editInfoBtn">Edit Info</button>
+        <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>

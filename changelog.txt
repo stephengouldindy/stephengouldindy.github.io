@@ -1,5 +1,9 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+BETA 1.2.0 
+	-Events marked as resolved will now appear in green
+	-new delete event schema works in real time and does not require stupid refresh solution
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.15.0
 	-Events will now appear red if the scheduled time has passed (in a future release, this will only happen if the delivery has not been marked as resolved)
 	-Fixed a major bug which prevented event information from being viewed when event had an arrival window
@@ -28,3 +32,5 @@ BETA 1.0.15
   -Added support for multiple ship ticket files and dynamic interface for them
   -Bug fixes and improvements
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Developed by Spencer Douglas for use by Stephen Gould Indianapolis

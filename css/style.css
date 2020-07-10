@@ -1,5 +1,5 @@
 
-	.container {
+.container {
 	word-wrap: break-word;
 	word-break: break-all;
   	padding-top: 20px;
@@ -175,6 +175,9 @@ small {
     outline: none;
 }
 
+.btn:disabled {
+	cursor: not-allowed !important;
+}
 
 .btn:focus, .btn:active {
   box-shadow: none !important;

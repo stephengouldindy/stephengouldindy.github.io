@@ -6,7 +6,7 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.15.0");
+  $("#version").html("BETA v1.2.0");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -29,12 +29,13 @@ $(document).ready(function() {
   	db.collection("events").onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
     changes.forEach(change => {
+        let data = change.doc.data();
         if (change.type === "removed") {
             //FIXME: find a better solution to this
-            setTimeout(function() { location.reload(); }, 750);
+            let event = calendar.getEventById(change.doc.id);
+            event.remove();
         }
         else if (change.type === "added") {
-            let data = change.doc.data();
             let day = data.date.split('/')[1];
             let month = data.date.split('/')[0] - 1;
             let year = data.date.split('/')[2];
@@ -60,6 +61,7 @@ $(document).ready(function() {
                     
                     newEvent = {
                           title: data.title,
+                          id: change.doc.id,
                           eventTextColor: eventTextColor,
                           start: startDate,
                           end: endDate,
@@ -78,13 +80,14 @@ $(document).ready(function() {
                           docId: change.doc.id,
                           ladingURL: ladingURL,
                           shipTicketUrls: data.shipTicketUrls,
-                          creator: data.creator
-
+                          creator: data.creator,
+                          resolved: data.resolved
                     }; //newEvent
                 } else {
                     let dateObj = new Date(year, month, day);
                     newEvent = {
                         title: data.title,
+                        id: change.doc.id,
                         start: dateObj,
                         eventTextColor: eventTextColor,
                         allDay: data.allDay,
@@ -102,8 +105,8 @@ $(document).ready(function() {
                         docId: change.doc.id,
                         ladingURL: ladingURL,
                         shipTicketUrls: data.shipTicketUrls,
-                        creator: data.creator
-                        
+                        creator: data.creator,
+                        resolved: data.resolved
                     }; //newEvent
                 } //end else
                 calendar.addEvent(newEvent);

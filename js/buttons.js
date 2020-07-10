@@ -31,18 +31,15 @@ $("#outgoingbtn").click(function() {
 $("#arrowContainerBtn").click(function() {
 	if($("#formcontainer").css("display") === "none") {
 		$("#formcontainer").slideDown(300);
-		//setTimeout(function() {document.getElementById('formcontainer').scrollIntoView({ behavior: "smooth", block: 'center'});}, 100);
 
 		$("#formArrow").css("transform", "rotate(-90deg)");
 	}
 	else {
 		
-		//document.getElementById('calendar').scrollIntoView({ behavior: "smooth", block: 'center'});
 		$("#formArrow").css("transform", "rotate(90deg)");
 		$("#formcontainer").slideUp(300);
 	}
 });
-
 
 /*
  * Clear delivery window time boxes
@@ -54,55 +51,78 @@ $("#arrowContainerBtn").click(function() {
  	$("#startTime").val("");
  	$("#endTime").val("");
  });
+
+$("#resolveShipmentBtn").click(function() {
+	//curEvent is set on eventClick, representing our FullCalendar event object
+	if (!confirm(`Please confirm you would like to mark truck from ${curEvent.event.title} for ${curEvent.event.extendedProps.customerName} as resolved.`)) {
+		return;
+	}
+	var eventRef = db.collection("events").doc($("#eventId").html());
+	return eventRef.update({
+    	resolved: true
+	}).then(function() {
+    	console.log("Document successfully updated!");
+		calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
+		calendar.getEventById(curEvent.event.id).setProp("borderColor", "green");
+		calendar.getEventById(curEvent.event.id).setExtendedProp("resolved", true);
+    	$("#myModal").modal("hide");
+	})
+	.catch(function(error) {
+	    // The document probably doesn't exist.
+	    console.error("Error updating document: ", error);
+	});
+});
+
 $("#editInfoBtn").click(function() {
   alert("Function not yet implemented. Sorry, but you'll have to create a new event if you need to make changes.");
 });
+
+
 //delete file on click
-            $("#deleteShipmentBtn").click(function() {
-                if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-                    let billFile; 
-                    let billRef;
-                    let docRef = db.collection("events").doc($("#eventId").html());
-                    docRef.get().then(function(doc) {
-                        
-                        
-
-                        docRef.delete().then(function() {
-                        console.log("Document deleted.");
-                        shipFiles = doc.data().shipTicketRefs;
-                        shipFiles.forEach((shipFile) => {
-                            let shipRef = storageRef.child(shipFile);
-                            shipRef.delete().then(function() {
-                          // File deleted successfully
-                          console.log("ship deleted");
-                        }).catch(function(error) {
-                            alert(`Something went wrong: ${error}. Please try again.`);
-                              return;
-                        });
-                        });
-
-                        billFile = doc.data().ladingBillRef; 
-                        //check if a bill is associated
-                        if (billFile != "") {
-	                        billRef = storageRef.child(billFile);
-	                        billRef.delete().then(function() {
-	                            // File deleted successfully
-	                            console.log("bill deleted");
-	                        }).catch(function(error) {
-	                              alert(`Something went wrong: ${error}. Please try again.`);
-	                              return;
-	                        });
-                    	}
-                    //hide the modal
-                    $("#myModal").modal("hide");
-
+$("#deleteShipmentBtn").click(function() {
+    if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
+        let billFile; 
+        let billRef;
+        //delete the db entry
+        let docRef = db.collection("events").doc($("#eventId").html());
+        docRef.get().then(function(doc) {
+            docRef.delete().then(function() {
+            console.log("Document deleted.");
+            //delete any ship tickets
+            shipFiles = doc.data().shipTicketRefs;
+            shipFiles.forEach((shipFile) => {
+                let shipRef = storageRef.child(shipFile);
+                shipRef.delete().then(function() {
+              // File deleted successfully
+              console.log("ship deleted");
+            }).catch(function(error) {
+                alert(`Something went wrong: ${error}. Please try again.`);
+                  return;
+            });
+            });
+            //delete the bill file if any
+            billFile = doc.data().ladingBillRef; 
+            //check if a bill is associated
+            if (billFile != "") {
+                billRef = storageRef.child(billFile);
+                billRef.delete().then(function() {
+                    // File deleted successfully
+                    console.log("bill deleted");
                 }).catch(function(error) {
-                    alert(`Something went wrong: ${error}. Please try again.`);
-                    return;
+                      alert(`Something went wrong: ${error}. Please try again.`);
+                      return;
                 });
-                    });
-                    
-                
-            } 
-          });
+        	}
+        //hide the modal
+        $("#myModal").modal("hide");
+
+    }).catch(function(error) {
+        alert(`Something went wrong: ${error}. Please try again.`);
+        return;
+    });
+        });
+        
+    
+} 
+});
 
