@@ -1,7 +1,0 @@
-This is a test:
-- Something
-- Another thing
-
-
-  What about this?
-  1.16
