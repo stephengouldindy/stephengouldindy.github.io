@@ -29,6 +29,7 @@
     <link href="css/style.css" rel = "stylesheet">
     <script src = "js/auth.js" async></script>
     <script src = "js/buttons.js" async></script>
+    <script src = "js/eventListener.js" async></script>
 
     <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT-->         
     <script>    
@@ -85,6 +86,7 @@
                 }, //end dateClick
                 eventClick: function(info) {
                     console.log(info.event.extendedProps);
+
                     //populate event info modal with event data
                     var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
                     var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
@@ -252,9 +254,6 @@
                 }
             
 
-
-
-                //calendar.addEvent(newEvent);
                 //hide form
                 
                 //scroll to top

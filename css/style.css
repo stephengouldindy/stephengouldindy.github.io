@@ -51,15 +51,12 @@
 }
 
 #userHeaderMenu > * {
-	padding-top: 10px;
-	padding-bottom: 10px;
 	height: 2.25vh !important;
   	margin-left: 10px;
   	margin-right: 10px;
 
 }
 #signOutBtn {
-	border-radius: 15px;
 	background-color: #082a40;
 	border-color: #082a40;
 	display: none;
@@ -290,7 +287,6 @@ header {
 	width: 100%;
 	background-color: #F24E1B;
 	color: white;
-	border-bottom: solid white;
 }
 
 footer {

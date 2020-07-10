@@ -2,20 +2,20 @@
  * auth.js - contains scripts for user management, including signups/signins on login page
  */
 $(document).ready(function() {
-
+  let today = new Date();
+  console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.1.01");
+  $("#version").html("BETA v1.15.0");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
 
   //$("#pdfCarousel").hide();
-  console.log(firebase.auth().currentUser);
 
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-  	console.log(user.email);
+
   	$("#loginApplet").fadeOut();
     $("#signOutBtn").show();
     $("#signOutBtn").css("display", "inline-block");
@@ -28,7 +28,6 @@ $(document).ready(function() {
 
   	db.collection("events").onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
-    console.log(changes);
     changes.forEach(change => {
         if (change.type === "removed") {
             //FIXME: find a better solution to this
@@ -78,7 +77,7 @@ $(document).ready(function() {
                           comments: data.notes,
                           docId: change.doc.id,
                           ladingURL: ladingURL,
-                          shipTicketURLs: data.shipTicketUrls,
+                          shipTicketUrls: data.shipTicketUrls,
                           creator: data.creator
 
                     }; //newEvent
@@ -113,6 +112,7 @@ $(document).ready(function() {
         
         //TODO: HANDLE DELETE AND UPDATE
     });
+    pastEventListener();
   }); //END FIRESTORE EVENT CHANGE LISTENER
   	
 
