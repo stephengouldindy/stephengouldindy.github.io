@@ -6,7 +6,7 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.2.1");
+  $("#version").html("BETA v1.5.0");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -28,6 +28,7 @@ $(document).ready(function() {
 
   	db.collection("events").onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
+    console.log(changes);
     changes.forEach(change => {
         let data = change.doc.data();
         if (change.type === "removed") {
@@ -35,6 +36,7 @@ $(document).ready(function() {
             let event = calendar.getEventById(change.doc.id);
             event.remove();
         }
+        //else if (change.type === "")
         else if (change.type === "added") {
             let day = data.date.split('/')[1];
             let month = data.date.split('/')[0] - 1;
@@ -45,6 +47,7 @@ $(document).ready(function() {
             let shipTicketURL = data.shipTicketURL;
             let ladingURL = data.ladingURL;
             let eventTextColor = 'white';
+            let prefix = data.isOutgoing ? "O - " : "I - ";
             //TODO: 
 
             var newEvent;
@@ -60,7 +63,7 @@ $(document).ready(function() {
                     
                     
                     newEvent = {
-                          title: data.title,
+                          title: prefix + data.title,
                           id: change.doc.id,
                           eventTextColor: eventTextColor,
                           start: startDate,
@@ -86,7 +89,7 @@ $(document).ready(function() {
                 } else {
                     let dateObj = new Date(year, month, day);
                     newEvent = {
-                        title: data.title,
+                        title: prefix + data.title,
                         id: change.doc.id,
                         start: dateObj,
                         eventTextColor: eventTextColor,

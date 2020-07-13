@@ -1,5 +1,14 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+
+BETA 1.5.0
+	-Added the ability to edit all information about events except for the paperwork associated with them
+	-Added an "I" or "O" indictator to event titles on the calendar to signify whether the truck is (I)ncoming or (O)utgoing
+	-Visual changes and bug fixes
+
+BETA 1.2.1 
+	-minor fixes and improvements
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.2.0 
 	-Events marked as resolved will now appear in green
 	-new delete event schema works in real time and does not require stupid refresh solution
