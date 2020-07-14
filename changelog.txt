@@ -1,5 +1,8 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+BETA 1.7.1
+	-Visual changes and improvements
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.7.0
 	-Added Copy buttons which pull the existing attribute value of an event into its corresponding textbox
 	-Fixed edit info textboxes not clearing on submission

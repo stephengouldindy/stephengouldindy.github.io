@@ -6,7 +6,7 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.7.1");
+  $("#version").html("BETA v1.7.2");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -167,6 +167,10 @@ $("#signOutBtn").click(function() {
 $("#createAccountBtn").click(async function() {
 	
 	let email = $("#newUserEmail").val();
+  if (email.split("@")[1] != "stephengould.com") {
+    alert("You must register with a Stephen Gould email.");
+    return;
+  }
 	let password = $("#newUserPass").val();
 	let displayName = $("#newUserName").val();
 
@@ -179,7 +183,6 @@ $("#createAccountBtn").click(async function() {
 	  // ...
 	});
 	var user = firebase.auth().currentUser;
-	console.log(user);
 	user.updateProfile({
   	displayName: displayName,
 	}).then(async function() {
@@ -211,11 +214,10 @@ $("#createAccountBtn").click(async function() {
 $("#signInBtn").click(async function() {
   var email = $("#loginEmail").val();
 	var password = $("#loginPass").val();
-	console.log(`email: ${email} pass: ${password}`);
 	var signInAttempt; 
 	try {
 		signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
-		console.log(signInAttempt);
+
 		if (signInAttempt.user) {
       if (signInAttempt.user.emailVerified === false) {
             alert(`Please check your email for a verification link to be able to view and manage appointments. If you need a new confirmation email, `

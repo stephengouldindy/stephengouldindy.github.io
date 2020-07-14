@@ -147,7 +147,6 @@ $("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
   	//TODO: UPDATE THE BUTTON BASED ON WHICH IS SELECTED 
   	let dateStr = $("#modalDate").html();
   	let date = new Date(dateStr);
-  	console.log(date);
 	let arrivalWindow =  $("#modalTime").html().split("-");
 	let start = arrivalWindow[0];
 	let end = arrivalWindow[1];
@@ -157,7 +156,6 @@ $("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
 	let customerName = $("#modalCustomer").html();
 	let destination = $("#modalDestination").html();
 	let notes = $("#modalComments").html();
-	console.log($("#modalVendor").html());
 
   	//set time to either empty or its value
 	if (end != undefined) {
@@ -215,7 +213,6 @@ $("#confirmEditBtn").click(function() {
 	let arrivalWindow =  $("#modalTime").html().split("-");
 	let origStart;
 	let origEnd;
-	console.log(arrivalWindow.length);
 	if (arrivalWindow.length == 1) {
 		origStart = "";
 		origEnd = "";
@@ -230,7 +227,6 @@ $("#confirmEditBtn").click(function() {
 	
 
 	//detect all changes for compilation
-	console.log(origOutgoingStatus, ($("#editoutgoingbtn").attr("class")));
 	if (origOutgoingStatus === "OUTGOING SHIPMENT") {
 		//was originally an outgoing shipment
 		if ($("#editoutgoingbtn").attr("class") != "btn btn-primary") {
@@ -249,7 +245,6 @@ $("#confirmEditBtn").click(function() {
 	let newDateComponents = ($("#editDatePicker").val()).split('-');
 
 	let newDate = `${newDateComponents[1]}/${newDateComponents[2]}/${newDateComponents[0]}`;
-	console.log(newDate + ":" + $("#modalDate").html());
 	if (newDate != $("#modalDate").html()) {
 		dateChange.date = newDate;
 	}
@@ -260,7 +255,6 @@ $("#confirmEditBtn").click(function() {
 	else {
 		isNowAllDay = true;
 	} 
-	console.log (isNowAllDay, wasAllDay);
 	if (isNowAllDay != wasAllDay) {
 			allDayChange.allDay = isNowAllDay;
 	}
