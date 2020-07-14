@@ -6,7 +6,7 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.6.0");
+  $("#version").html("BETA v1.7.0");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -45,7 +45,9 @@ $(document).ready(function() {
             let event = calendar.getEventById(change.doc.id);
             event.remove();
         }
-        //else if (change.type === "")
+        else if (change.type === "modified") {
+          setTimeout(function() {location.reload();}, 300);
+        }
         else if (change.type === "added") {
             let day = data.date.split('/')[1];
             let month = data.date.split('/')[0] - 1;

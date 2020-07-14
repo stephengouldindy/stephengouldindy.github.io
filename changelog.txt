@@ -1,5 +1,10 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+BETA 1.7.0
+	-Added Copy buttons which pull the existing attribute value of an event into its corresponding textbox
+	-Fixed edit info textboxes not clearing on submission
+	-Fixed existing events' updates not pushing to users who did not make the change
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.6.0
 	-Added email verification system and new 'Resend Verficiation' tab at login which allows you to resend verification email
 	-Fixed bug introduced in 1.5.0 which prevented appointment type from populating correctly into edit info form

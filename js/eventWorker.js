@@ -9,10 +9,7 @@ function initEvents() {
 	let now = new Date();
 	let events = calendar.getEvents();
 	events.forEach(function(event) {
-		console.log("wha");
-		console.log(event.extendedProps);
 		if (event.extendedProps.resolved == true) {
-			
 			return;
 		}
 		if (event.allDay) {
@@ -57,7 +54,6 @@ function pastEventListener() {
 
 /*
  * Clean up events that are older than the prefered time
- */
-function noCountryForOldEvents(maxAge) {
+ */) {
 
 }

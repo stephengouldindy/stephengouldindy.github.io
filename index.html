@@ -512,7 +512,7 @@
             <small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>        
             
             <div class ="row" style="width: 100%; margin: 0 auto; height: 100%;">
-                <a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: black;">
+                <a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: #F24E1B;">
                     <div class = "container">
                         <span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
                         <span class="sr-only">Previous</span>
@@ -525,7 +525,7 @@
 
                 </div>
 
-                <a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: black;">
+                <a href="#pdfCarousel" role="button" data-slide="next" style = "width: 10%; background-color: #F24E1B;">
                     <div class = "container">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="sr-only">Next</span>
@@ -539,7 +539,7 @@
             <small id="eventId" style = "display: none;"> Event ID Error</small>
             <button type="button" class="btn btn-primary" id = "resolveShipmentBtn">Mark as Resolved</button>
             <button type="button" class="btn btn-primary" id = "editInfoBtn" href = "#editModal">Edit Info</button>
-            <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Cancel Truck Appointment</button>
+            <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Cancel Truck</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
     </div>
@@ -590,22 +590,22 @@
 
                     <div class="form-group">
                         <label for="vendorBox">Carrier</label>
-                        <input type="text" class="form-control" id="editVendorBox" placeholder="Carrier/Vendor Name">
+                        <input type="text" class="form-control" id="editVendorBox" placeholder="Carrier/Vendor Name"> <button  id = "copyVendorBtn" class = "btn btn-primary" type = "button">Copy</button>
                     </div>
                     <div class="form-group">
                         <label for="customerBox">Customer</label>
-                        <input type="text" class="form-control" id="editCustomerBox" placeholder="Customer Name">
+                        <input type="text" class="form-control" id="editCustomerBox" placeholder="Customer Name"> <button class = "btn btn-primary" id = "copyCustomerBtn" type = "button">Copy</button>
                     </div>
                     <div class="form-group">
                         <label for="destinationBox">Destination</label>
-                        <input type="text" class="form-control" id="editDestinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
+                        <input type="text" class="form-control" id="editDestinationBox" placeholder="123 Easy St, Whitestown, IN 46075"> <button class = "btn btn-primary" id = "copyDestinationBtn" type = "button">Copy</button>
                     </div>
                     <!-- -->
 
                     <!--COMMENTS TEXT AREA-->
                     <div class="form-group">
                         <label for="notesArea">Description/Notes</label>
-                        <textarea class="form-control" id="editNotesArea" rows="3"></textarea>
+                        <textarea class="form-control" id="editNotesArea" rows="3"></textarea> <button class = "btn btn-primary" id = "copyNotesBtn" type = "button">Copy</button>
                     </div>
 
                     <small id = "updateText" style = "display: none;">Updating...</small>
@@ -620,29 +620,5 @@
 </div>
 </div>
 <!--END MODAL-->
-<!-- EMAIL NOT VERIFIED DATA MODAL -->
-<div class="modal" tabindex="-1" role="dialog" id= "notVerifiedModal">
 
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 id = "notVerifiedTitle">Account not Verified</h4>
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true" id = "closeModal">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-              <div class = "container" id = "modalContainer">
-
-                
-            </div> 
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id = "confirmEditBtn">Save Changes</button>
-            <button type="button" class="btn btn-danger" id = "cancelEditBtn">OK</button>
-        </div>
-    </div>
-</div>
-</div>
 </html>

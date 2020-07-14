@@ -28,9 +28,6 @@ $("#incomingbtn").click(function() {
 	});
  }); 
 
-
-
-
  $("#editincomingbtn").click(function() {
  	$("#editincomingbtn").attr("class", function(i, origValue){
 		//if button not selected, switch
@@ -69,6 +66,44 @@ $("#incomingbtn").click(function() {
 
  		$("#formArrow").css("transform", "rotate(90deg)");
  		$("#formcontainer").slideUp(300);
+ 	}
+ });
+
+/*
+ * Copy Original Values to Edit Fields
+ */
+
+$("#copyVendorBtn").click(function() {
+$("#editVendorBox").val($("#editVendorBox").attr("placeholder"));
+});
+
+$("#copyCustomerBtn").click(function() {
+$("#editCustomerBox").val($("#editCustomerBox").attr("placeholder"));
+});
+
+$("#copyDestinationBtn").click(function() {
+$("#editDestinationBox").val($("#editDestinationBox").attr("placeholder"));
+});
+
+$("#copyNotesBtn").click(function() {
+$("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
+});
+
+/*
+ * Confirm exit of edit dialog and clear fields
+ */
+
+ $("#cancelEditBtn").click(function() {
+ 	if (!confirm("Are you sure you wish to erase your changes to this event?")) {
+ 		return;
+ 	}
+ 	else {
+ 		$("#editVendorBox").val("");
+		$("#editCustomerBox").val("");
+		$("#editDestinationBox").val("");
+		$("#editNotesArea").val("");
+		$("#editModal").modal("hide");
+
  	}
  });
 
@@ -269,7 +304,11 @@ $("#confirmEditBtn").click(function() {
 		return curEventRef.update(changes)
 		.then(function() {
     		console.log("Document successfully updated!");
-    		setTimeout(function() {location.reload();}, 300);
+    		$("#editVendorBox").val("");
+			$("#editCustomerBox").val("");
+			$("#editDestinationBox").val("");
+			$("#editNotesArea").val("");
+			$("#editModal").hide();
 
 		})
 		.catch(function(error) {
@@ -281,12 +320,6 @@ $("#confirmEditBtn").click(function() {
 
 
 
-});
-
-$("cancelEditBtn").click(function() {
-	if (confirm("Are you sure you wish to erase your changes to the appointment?")) {
-		$("#editModal").modal("hide");
-	}
 });
 
 
