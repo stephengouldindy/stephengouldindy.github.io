@@ -1,11 +1,14 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
-
+BETA 1.6.0
+	-Added email verification system and new 'Resend Verficiation' tab at login which allows you to resend verification email
+	-Fixed bug introduced in 1.5.0 which prevented appointment type from populating correctly into edit info form
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.5.0
 	-Added the ability to edit all information about events except for the paperwork associated with them
 	-Added an "I" or "O" indictator to event titles on the calendar to signify whether the truck is (I)ncoming or (O)utgoing
 	-Visual changes and bug fixes
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.2.1 
 	-minor fixes and improvements
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,9 @@ $("#incomingbtn").click(function() {
 	});
  }); 
 
+
+
+
  $("#editincomingbtn").click(function() {
  	$("#editincomingbtn").attr("class", function(i, origValue){
 		//if button not selected, switch
@@ -114,11 +117,12 @@ $("#incomingbtn").click(function() {
 	let start = arrivalWindow[0];
 	let end = arrivalWindow[1];
 	let title = $("#modalVendor").html().split(" - ");
-	let vendorName = title[1];
-	let type = title[0];
+	let type = title[1];
+	let vendorName = title[0];
 	let customerName = $("#modalCustomer").html();
 	let destination = $("#modalDestination").html();
 	let notes = $("#modalComments").html();
+	console.log($("#modalVendor").html());
 
   	//set time to either empty or its value
 	if (end != undefined) {
@@ -141,15 +145,15 @@ $("#incomingbtn").click(function() {
 	let dateResult = `${date.getFullYear()}-${dateMonth}-${dateDay}`;
 
 	//flip buttons if the shipment is outgoing
-	if (type === "I") {
+	if (type === "INCOMING DELIVERY") {
 		$("#editincomingbtn").click();
 	}
-	else if (type === "O") {
+	else if (type === "OUTGOING SHIPMENT") {
 		$("#editoutgoingbtn").click();
 	}
 	$("#editDatePicker").val(dateResult);
-	$("#editInfoTitle").html(`Editing ${title[1]} Appointment for Customer: ${customerName}`);
-	$("#editVendorBox").attr("placeholder", title[1]);
+	$("#editInfoTitle").html(`Editing ${title[0]} Appointment for Customer: ${customerName}`);
+	$("#editVendorBox").attr("placeholder", title[0]);
 	$("#editCustomerBox").attr("placeholder", customerName);
 	$("#editDestinationBox").attr("placeholder", destination);
 	$("#editNotesArea").attr("placeholder", notes);
@@ -187,12 +191,12 @@ $("#confirmEditBtn").click(function() {
 		origEnd = arrivalWindow[1];
 		wasAllDay = false;
 	}	
-	let origOutgoingStatus = $("#modalVendor").html().split(" - ")[0];
+	let origOutgoingStatus = $("#modalVendor").html().split(" - ")[1];
 	
 
 	//detect all changes for compilation
 	console.log(origOutgoingStatus, ($("#editoutgoingbtn").attr("class")));
-	if (origOutgoingStatus === "O") {
+	if (origOutgoingStatus === "OUTGOING SHIPMENT") {
 		//was originally an outgoing shipment
 		if ($("#editoutgoingbtn").attr("class") != "btn btn-primary") {
 			//change to incoming occurred
@@ -265,13 +269,7 @@ $("#confirmEditBtn").click(function() {
 		return curEventRef.update(changes)
 		.then(function() {
     		console.log("Document successfully updated!");
-    		//FIXME: MAKE A BETTER SYSTEM FOR THIS
-    		location.reload();
-    		//var newEvent = calendar.getEventById(eventId);
-			//Object.assign(newEvent, changes);
-			//calendar.rerenderEvents();
-			//calendar.render();
-			//$("#editModal").modal("hide");
+    		setTimeout(function() {location.reload();}, 300);
 
 		})
 		.catch(function(error) {
@@ -339,4 +337,52 @@ $("#deleteShipmentBtn").click(function() {
 
     } 
 });
+
+//resend confirmation email or log the user in if they are already verified
+$("#resendEmailBtn").click(async function() {
+
+  	var email = $("#resendEmailBox").val();
+	var password = $("#resendEmailPass").val();
+	console.log(`email: ${email} pass: ${password}`);
+	var signInAttempt; 
+	try {
+		signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
+		console.log(signInAttempt);
+		if (signInAttempt.user) {
+			//sign-in success
+			if (signInAttempt.user.emailVerified) {
+				alert("Your account has already been verified. Logging you in...");
+			}
+			else {
+				//user not verified
+				signInAttempt.user.sendEmailVerification().then(function() {
+				  	// Email sent.
+				  	console.log("Email sent.")
+				  	alert(`Email sent to ${signInAttempt.user.email}. Check your inbox and confirm your email to be able to log in.`);
+				}).catch(function(error) {
+				 	// An error happened.
+					alert(`ERROR: ${error}`);
+				});
+			}
+
+		}
+	}
+	catch(error) {
+  		// Handle Errors here.
+  		console.log('caught err');
+  		var errorCode = error.code;
+  		var errorMessage = error.message;
+  		console.log(error.code, error.message);
+  		if (errorCode === 'auth/wrong-password') {
+    		alert('Wrong password.');
+  		} else {
+    		alert(errorMessage);
+  		}
+	}
+
+
+
+      
+});
+
 

@@ -3,6 +3,7 @@
 <head>
     <title> SGI Shipping & Receiving</title>
     <link rel="icon" type="image/ico" href="img/favicon.ico">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -24,7 +25,9 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
-
+    <!------------------------------------------------------------------------------------>
+    
+    <!--SGI Calendar Scripts and CSS-->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel = "stylesheet">
     <script src = "js/auth.js" async></script>
@@ -229,6 +232,7 @@
                         ladingBillRef: ladingBillRef,
                         creator: await firebase.auth().currentUser.displayName,
                         resolved: false
+
                     }).then(function(docRef) {
                         console.log(`Document ${docRef.id} successfully written`);
                         $("#uploadText").hide();
@@ -237,8 +241,17 @@
                         $("#formcontainer").slideDown(300);
                     });
 
+
+                    ///////////////////////////////////////
+                    /*
+                     * Uploads the given Javascript file object. 
+                     * @return SUCCESS - Resolved promise containing the reference in firebase and the download URL.
+                     * @return FAILURE - Rejected promise which causes the form to reopen.
+                     */
                     async function uploadTaskPromise(file) {
                         return new Promise(function(resolve, reject) {
+                            //FIXME: Differentiate between the Firestore fire name and the name that appears in the
+                            //pdf viewer.
                             let fileName = `${uuidv4()}.pdf`;
                             let fileRef = storageRef.child(fileName);
                             uploadTask = fileRef.put(file);
@@ -261,7 +274,6 @@
                     }
 
 
-                    //hide form
                     
                     //scroll to top
                     document.getElementById("submitTruckBtn").disabled = false;
@@ -297,7 +309,7 @@
         appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
         measurementId: "G-WVCBC8FL46"
     };
-    let TESTfirebaseConfig = {
+    let testBranchConfig = {
         apiKey: "AIzaSyAQbpyy6atOm9Nw6wRokl6dhedyqPFSDg0",
         authDomain: "sgi-testbranch.firebaseapp.com",
         databaseURL: "https://sgi-testbranch.firebaseio.com",
@@ -309,13 +321,10 @@
     };
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
-      //firebase.initializeApp(TESTfirebaseConfig);
+      //firebase.initializeApp(testBranchConfig);
       firebase.analytics();
       var db = firebase.firestore();
       var storageRef = firebase.storage().ref();
-      /*
-       * PRIMARY EVENT POPULATION LISTENER
-       */
 
    </script>
 
@@ -330,7 +339,8 @@
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Log In</a>
-                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Create New Account</a>
+                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">New Account</a>
+                    <a class="nav-item nav-link" id="nav-resend-tab" data-toggle="tab" href="#nav-resend" role="tab" aria-controls="nav-resend" aria-selected="false">Resend Verification</a>
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -351,6 +361,7 @@
                         <p class="forgot-password text-center">
                          <a href="#" id = "forgotPassLink">Forgot Password?</a>
                      </p>
+
                      <p class = "text-center"><a href = "changelog.txt" id = "changelog">Changelog</a></p>
                  </form>
              </div>
@@ -371,6 +382,22 @@
                         <input id = "newUserPass" type="password" class="form-control" placeholder="Must be at least 6 characters" />
                     </div>
                     <button type="button" class="btn btn-primary login-btn" id = "createAccountBtn">Create Account</button>
+
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-resend" role="tabpanel" aria-labelledby="nav-resend-tab">
+                <form>
+                    <h3 class = "landing-hdr">Resend Confirmation Email</h3>
+
+                    <div class="form-group">
+                        <label for ="resendEmailBox">Email Address</label>
+                        <input id = "resendEmailBox" type="email" class="form-control" placeholder="example@stephengould.com" />
+                    </div>
+                    <div class="form-group">
+                        <label for = "resendEmailPass">Password</label>
+                        <input id = "resendEmailPass" type="password" class="form-control" placeholder="Password" />
+                    </div>
+                    <button type="button" class="btn btn-primary login-btn" id = "resendEmailBtn">Resend Email</button>
 
                 </form>
             </div>
@@ -441,7 +468,7 @@
             <!--COMMENTS TEXT AREA-->
             <div class="form-group">
                 <label for="notesArea">Description/Notes</label>
-                <textarea class="form-control" id="notesArea" rows="3" placeholder="Special Instructions/Notes, Pallet Count, Product Type, etc."></textarea>
+                <textarea class="form-control" id="notesArea" rows="3" placeholder="Shipment updates/issues, Special Instructions/Notes, Pallet Count, Product Type, etc."></textarea>
             </div>
 
             <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment</button>
@@ -512,7 +539,7 @@
             <small id="eventId" style = "display: none;"> Event ID Error</small>
             <button type="button" class="btn btn-primary" id = "resolveShipmentBtn">Mark as Resolved</button>
             <button type="button" class="btn btn-primary" id = "editInfoBtn" href = "#editModal">Edit Info</button>
-            <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Delete Shipment</button>
+            <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Cancel Truck Appointment</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
     </div>
@@ -593,4 +620,29 @@
 </div>
 </div>
 <!--END MODAL-->
+<!-- EMAIL NOT VERIFIED DATA MODAL -->
+<div class="modal" tabindex="-1" role="dialog" id= "notVerifiedModal">
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id = "notVerifiedTitle">Account not Verified</h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id = "closeModal">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <div class = "container" id = "modalContainer">
+
+                
+            </div> 
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id = "confirmEditBtn">Save Changes</button>
+            <button type="button" class="btn btn-danger" id = "cancelEditBtn">OK</button>
+        </div>
+    </div>
+</div>
+</div>
 </html>

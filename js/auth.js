@@ -6,22 +6,31 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v1.5.0");
+  $("#version").html("BETA v1.6.0");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
 
   //$("#pdfCarousel").hide();
 
-  firebase.auth().onAuthStateChanged(function(user) {
+  firebase.auth().onAuthStateChanged(async function(user) {
   if (user) {
+    console.log(user, user.emailVerified);
+    if (!user.emailVerified) {
 
+      await firebase.auth().signOut().then(function() {
+        console.log("logged out");
+          
+        }).catch(function(error) {
+        // An error happened.
+      });
+      return;
+    }
   	$("#loginApplet").fadeOut();
     $("#signOutBtn").show();
     $("#signOutBtn").css("display", "inline-block");
     $("#currentUser").html(user.displayName);
     $("#currentUser").show();
-  	
   	$("#blueLogo").show();
   	$("footer").hide();
 
@@ -154,8 +163,7 @@ $("#signOutBtn").click(function() {
 
 //creates an account using the provided information and associate the display name with it
 $("#createAccountBtn").click(async function() {
-	alert("This function has been temporarily disabled. Contact dougla55@purdue.edu for an account.");
-	/*
+	
 	let email = $("#newUserEmail").val();
 	let password = $("#newUserPass").val();
 	let displayName = $("#newUserName").val();
@@ -164,21 +172,40 @@ $("#createAccountBtn").click(async function() {
 		// Handle Errors here.
 	    var errorCode = error.code;
 	    var errorMessage = error.message;
+      alert("Registration failed... " + error.message);
+      return;
 	  // ...
 	});
 	var user = firebase.auth().currentUser;
 	console.log(user);
 	user.updateProfile({
   	displayName: displayName,
-	}).then(function() {
+	}).then(async function() {
   		// Update successful.
   		console.log("displayName associated");
   		console.log(user.displayName, user.email);
+      user.sendEmailVerification().then(function() {
+        // Email sent.
+        //alert(`A confirmation email has been sent to ${user.email}. Check your email to log in.`);
+        firebase.auth().signOut().then(function() {
+        console.log("logged out");
+        alert(`Account created. Check ${user.email} for a confirmation email in order to be able to log in.`);
+          
+        }).catch(function(error) {
+        // An error happened.
+        });
+      }).catch(function(error) {
+        // An error happened.
+      });
+
 	}).catch(function(error) {
   		// An error happened.
   		console.log("displayName failed");
-	});*/
+      //delete user
+	});
 });
+
+
 $("#signInBtn").click(async function() {
   var email = $("#loginEmail").val();
 	var password = $("#loginPass").val();
@@ -188,7 +215,10 @@ $("#signInBtn").click(async function() {
 		signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
 		console.log(signInAttempt);
 		if (signInAttempt.user) {
-			
+      if (signInAttempt.user.emailVerified === false) {
+            alert(`Please check your email for a verification link to be able to view and manage appointments. If you need a new confirmation email, `
+            + `you may request one in the 'Resend Verification' tab.` );
+          }
 		}
 
 	}
