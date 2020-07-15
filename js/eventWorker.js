@@ -27,6 +27,9 @@ function initEvents() {
 		}
 	});
 }
+/*
+ *	Marks events with their proper colors
+ */
 function pastEventListener() {
 	let now = new Date();
 	let events = calendar.getEvents();
@@ -54,6 +57,7 @@ function pastEventListener() {
 
 /*
  * Clean up events that are older than the prefered time
- */ function noCountryForOldEvents() {
+ */ 
+ function noCountryForOldEvents() {
 
 }
