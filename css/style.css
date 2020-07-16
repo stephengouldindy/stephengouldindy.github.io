@@ -71,7 +71,7 @@
 
 #calendar {
 }
-#calendar > * {
+#calendar > * > * {
 	z-index: 0;
 }
 #calendarApplet {
