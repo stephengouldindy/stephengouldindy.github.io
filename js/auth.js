@@ -6,7 +6,7 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v2.1");
+  $("#version").html("BETA v2.2");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -211,6 +211,20 @@ $("#createAccountBtn").click(async function() {
       //delete user
 	});
 });
+
+$("#forgotPassword").click(function() {
+  console.log("we did it");
+  var emailAddress = prompt("Enter your email:");
+
+  firebase.auth().sendPasswordResetEmail(emailAddress).then(function() {
+  // Email sent.
+  alert(`Password reset email sent to ${emailAddress}.`)
+}).catch(function(error) {
+  // An error happened.
+  alert(error);
+});
+
+})
 
 
 $("#signInBtn").click(async function() {

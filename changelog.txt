@@ -1,5 +1,7 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
-
+BETA 2.2
+	-Added forgot password functionality to login
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.1
 	-Added title field, made carrier its own field
 	-Added weekday to date selection
