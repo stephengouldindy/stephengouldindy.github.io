@@ -77,6 +77,10 @@ $("#clearFilesBtn").click(function() {
  * Copy Original Values to Edit Fields
  */
 
+$("#copyTitleBtn").click(function() {
+$("#editTitleBox").val($("#editTitleBox").attr("placeholder"));
+});
+
 $("#copyVendorBtn").click(function() {
 $("#editVendorBox").val($("#editVendorBox").attr("placeholder"));
 });
@@ -102,6 +106,7 @@ $("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
  		return;
  	}
  	else {
+ 		$("#editTitleBox").val("");
  		$("#editVendorBox").val("");
 		$("#editCustomerBox").val("");
 		$("#editDestinationBox").val("");
@@ -159,9 +164,10 @@ $("#clearTruckFormBtn").click(function() {
 	let arrivalWindow =  $("#modalTime").html().split("-");
 	let start = arrivalWindow[0];
 	let end = arrivalWindow[1];
-	let title = $("#modalVendor").html().split(" - ");
-	let type = title[1];
-	let vendorName = title[0];
+	let titleArr = $("#modalTitle").html().split(" - ");
+	let type = titleArr[1];
+	let title = titleArr[0];
+	let vendorName = $("#modalVendor").html();
 	let customerName = $("#modalCustomer").html();
 	let destination = $("#modalDestination").html();
 	let notes = $("#modalComments").html();
@@ -194,8 +200,8 @@ $("#clearTruckFormBtn").click(function() {
 		$("#editoutgoingbtn").click();
 	}
 	$("#editDatePicker").val(dateResult);
-	$("#editInfoTitle").html(`Editing ${title[0]} Appointment for Customer: ${customerName}`);
-	$("#editVendorBox").attr("placeholder", title[0]);
+	$("#editInfoTitle").html(`Editing ${title} Appointment for Customer: ${customerName}`);
+	$("#editVendorBox").attr("placeholder", vendorName);
 	$("#editCustomerBox").attr("placeholder", customerName);
 	$("#editDestinationBox").attr("placeholder", destination);
 	$("#editNotesArea").attr("placeholder", notes);
@@ -211,6 +217,7 @@ $("#confirmEditBtn").click(function() {
 	var dateChange = {};
 	var startTimeChange = {};
 	var endTimeChange = {};
+	var titleChange = {};
 	var vendorChange = {};
 	var customerChange = {};
 	var destinationChange = {};
@@ -232,7 +239,7 @@ $("#confirmEditBtn").click(function() {
 		origEnd = arrivalWindow[1];
 		wasAllDay = false;
 	}	
-	let origOutgoingStatus = $("#modalVendor").html().split(" - ")[1];
+	let origOutgoingStatus = $("#modalTitle").html().split(" - ")[1];
 	
 
 	//detect all changes for compilation
@@ -273,8 +280,11 @@ $("#confirmEditBtn").click(function() {
 	if ($("#editEndTime").val() != origEnd) {
 		endTimeChange.endTime = $("#editEndTime").val();
 	}
+	if ($("#editTitleBox").val() != "") {
+		titleChange.title = $("#editTitleBox").val();
+	}
 	if ($("#editVendorBox").val() != "") {
-		vendorChange.title = $("#editVendorBox").val();
+		vendorChange.vendorName = $("#editVendorBox").val();
 	}
 	if ($("#editCustomerBox").val() != "") {
 		customerChange.customerName = $("#editCustomerBox").val();
@@ -294,6 +304,7 @@ $("#confirmEditBtn").click(function() {
 								startTimeChange,
 								endTimeChange,
 								allDayChange,
+								titleChange,
 								vendorChange,
 								customerChange,
 								destinationChange,
@@ -307,6 +318,7 @@ $("#confirmEditBtn").click(function() {
 		return curEventRef.update(changes)
 		.then(function() {
     		console.log("Document successfully updated!");
+    		$("#editTitleBox").val("");
     		$("#editVendorBox").val("");
 			$("#editCustomerBox").val("");
 			$("#editDestinationBox").val("");

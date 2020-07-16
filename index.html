@@ -40,11 +40,11 @@
         var _DEBUG = false;
         var calendar;
         var curEvent;
-
+        var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
         document.addEventListener('DOMContentLoaded', function() {
             var today = new Date();
-            var todayDate = `${(today.getMonth()+1)}/${today.getDate()}/${today.getFullYear()}`;
+            var todayDate = `${weekdays[today.getDay()]} ${(today.getMonth()+1)}/${today.getDate()}/${today.getFullYear()}`;
             $("#dateAlert").html(`Selected Date: <b>${todayDate}</b>`);
             var calendarEl = document.getElementById('calendar');
 
@@ -78,7 +78,7 @@
                         $("#formArrow").css("transform", "rotate(-90deg)");
                         $("#formcontainer").slideDown(0); 
 
-                        $("#dateAlert").html(`Selected Date: <b>${curMonth}/${curDay}/${curYear}</b>`);
+                        $("#dateAlert").html(`Selected Date: <b>${weekdays[info.date.getDay()]} ${curMonth}/${curDay}/${curYear}</b>`);
                         //flash selection colour
                         let oldColor = info.dayEl.style.backgroundColor;
                         info.dayEl.style.backgroundColor = '#c7c7c7';
@@ -89,11 +89,11 @@
                     }, //end dateClick
                     eventClick: function(info) {
                         curEvent = info;
-                        console.log(info.event.extendedProps.shipTicketUrls.length);
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
                         var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
-                        $("#modalVendor").html(`${info.event.title.split(" - ")[1]} - ${type}`);
+                        $("#modalTitle").html(`${info.event.title.split(" - ")[1]} - ${type}`);
+                        $("#modalVendor").html(`${info.event.extendedProps.vendorName}`);
                         $("#modalCustomer").html(`${info.event.extendedProps.customerName}`);
                         $("#modalDate").html(`${info.event.extendedProps.eventDate}`);
                         if (!info.event.allDay) {
@@ -164,7 +164,8 @@
                         endHour = endTime.split(":")[0];
                         endMinute = endTime.split(":")[1];
                     }
-                    var date = $("#dateAlert").text().split(":")[1];
+                    var date = $("#dateAlert").text().split("day ")[1];
+                    var title = $("#titleBox").val();
                     var customerName = $("#customerBox").val();
                     var vendorName = $("#vendorBox").val();
                     var destination = $("#destinationBox").val();
@@ -226,7 +227,8 @@
                         startTime: startTime,
                         endTime: endTime,
                         notes: comments,
-                        title: vendorName,
+                        title: title,
+                        vendorName: vendorName,
                         shipTicketUrls: shipTicketUrls,
                         //ladingURL: ladingBillURL,
                         shipTicketRefs: shipTicketRefs,
@@ -437,6 +439,10 @@
 
             </div>
             <div class="form-group">
+                <label for="titleBox">Appointment Title</label>
+                <input type="text" class="form-control" id="titleBox" placeholder="Calendar Event Title">
+            </div>
+            <div class="form-group">
                 <label for="vendorBox">Carrier</label>
                 <input type="text" class="form-control" id="vendorBox" placeholder="Carrier/Vendor Name">
             </div>
@@ -489,7 +495,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 id = "modalVendor">Modal title</h4>
+                <h4 id = "modalTitle">Modal title</h4>
 
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id = "closeModal">&times;</span>
@@ -498,6 +504,7 @@
             <div class="modal-body">
               <div class = "container" id = "modalContainer">
                 <div class = "row"><b>Date: </b><b id="modalDate" style ="font-weight: normal;"></b></div>
+                <div class = "row"><b>Carrier: </b><b id="modalVendor" style ="font-weight: normal;"></b></div>
                 <div class = "row"><b>Arrival Window: </b><b id="modalTime" style ="font-weight: normal;"></b></div>
                 <div class = "row"><b>Customer Name: </b><b id="modalCustomer" style ="font-weight: normal;"></b></div>
                 <div class = "row"><b>Destination Address: </b><b id="modalDestination" style ="font-weight: normal;"></b></div>
@@ -551,7 +558,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 id = "editInfoTitle">Modal title</h4>
+                <h4 id = "editInfoTitle">ERROR: DID NOT FIND TITLE</h4>
 
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" id = "closeModal">&times;</span>
@@ -583,27 +590,25 @@
                             <small id="editTimeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
                         </div>
                     </div>
-
-                    <!-- -->
-
-
                     <div class="form-group">
-                        <label for="vendorBox">Carrier</label>
+                        <label for="editTitleBox">Event Title</label>
+                        <input type="text" class="form-control" id="editTitleBox" placeholder="Calendar Event Title"> <button  id = "copyTitleBtn" class = "btn btn-primary" type = "button">Copy</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="editVendorBox">Carrier</label>
                         <input type="text" class="form-control" id="editVendorBox" placeholder="Carrier/Vendor Name"> <button  id = "copyVendorBtn" class = "btn btn-primary" type = "button">Copy</button>
                     </div>
                     <div class="form-group">
-                        <label for="customerBox">Customer</label>
+                        <label for="editCustomerBox">Customer</label>
                         <input type="text" class="form-control" id="editCustomerBox" placeholder="Customer Name"> <button class = "btn btn-primary" id = "copyCustomerBtn" type = "button">Copy</button>
                     </div>
                     <div class="form-group">
-                        <label for="destinationBox">Destination</label>
+                        <label for="editDestinationBox">Destination</label>
                         <input type="text" class="form-control" id="editDestinationBox" placeholder="123 Easy St, Whitestown, IN 46075"> <button class = "btn btn-primary" id = "copyDestinationBtn" type = "button">Copy</button>
                     </div>
-                    <!-- -->
 
-                    <!--COMMENTS TEXT AREA-->
                     <div class="form-group">
-                        <label for="notesArea">Description/Notes</label>
+                        <label for="editNotesArea">Description/Notes</label>
                         <textarea class="form-control" id="editNotesArea" rows="3"></textarea> <button class = "btn btn-primary" id = "copyNotesBtn" type = "button">Copy</button>
                     </div>
 

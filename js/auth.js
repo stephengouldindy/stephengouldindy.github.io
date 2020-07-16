@@ -75,6 +75,7 @@ $(document).ready(function() {
                     
                     newEvent = {
                           title: prefix + data.title,
+                          vendorName: data.vendorName,
                           id: change.doc.id,
                           eventTextColor: eventTextColor,
                           start: startDate,
@@ -101,6 +102,7 @@ $(document).ready(function() {
                     let dateObj = new Date(year, month, day);
                     newEvent = {
                         title: prefix + data.title,
+                        vendorName: data.vendorName,
                         id: change.doc.id,
                         start: dateObj,
                         eventTextColor: eventTextColor,
