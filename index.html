@@ -430,9 +430,9 @@
              <!-- -->
              <div class = "form-group">
                 <label for="startTime">Arrival Window:</label>
-                <input type="time" id="startTime" name="startTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
+                <div class = "row" style = "padding-left: 20px;"><input type="time" id="startTime" name="startTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
                 <input type="time" id="endTime" name="endTime"  min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
-                <button type="button" class="btn btn-danger" id ="clearTimeBtn">Reset</button>
+                <div class = "col"><button type = "button" id = "clearTimeBtn"><span id = "clearTimeBtnText">&times;</span></button></div></div>
                 <small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
 
             </div>

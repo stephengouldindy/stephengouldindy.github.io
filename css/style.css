@@ -26,9 +26,7 @@
 	color: white;
 
 }
-#datepicker {
-	background-color: black;
-}
+
 #arrowContainerBtn {
 	margin-top: .5rem;
 	outline: none;
@@ -351,13 +349,13 @@ footer > * {
 	background-color: lightgrey;
 }
 
-#clearFilesBtnText {
+#clearFilesBtnText, #clearTimeBtnText {
 	display: block;
 	padding-left:0px;
     text-align: center;
     line-height: 1em;
 }
-#clearFilesBtn {
+#clearFilesBtn, #clearTimeBtn {
 	font-size: 2vh;
 	color: white;
 	background-color: #F24E1B;
