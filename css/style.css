@@ -350,13 +350,12 @@ footer > * {
 }
 
 #clearFilesBtnText, #clearTimeBtnText {
-	display: block;
-	padding-left:0px;
-    text-align: center;
-    line-height: 1em;
+	line-height: 0px;
+	height: 1.7px;
 }
 #clearFilesBtn, #clearTimeBtn {
-	font-size: 2vh;
+	padding: 0 auto;
+	
 	color: white;
 	background-color: #F24E1B;
 	border-radius: 30px;
@@ -366,9 +365,15 @@ footer > * {
 	height: 30px;
 	width: 30px;
 	text-align: center;
-	padding-left: 6.25px;
+	display: inline-flex;
+  	flex-direction: column;
+ 	 justify-content: center;
+  	align-items: center;
+  	font-weight: bold;
+  	text-decoration: none;
 }
-#clearFilesBtn:active {
+	
+#clearFilesBtn:active, #clearTimeBtn:active {
 	color: black;
 }
 
