@@ -69,6 +69,10 @@ $("#incomingbtn").click(function() {
  	}
  });
 
+$("#clearFilesBtn").click(function() {
+	$("#shipTicketFileArea").val("");
+});
+
 /*
  * Copy Original Values to Edit Fields
  */
@@ -120,6 +124,11 @@ $("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
  	$("#editStartTime").val("");
  	$("#editEndTime").val("");
  });
+
+$("#clearTruckFormBtn").click(function() {
+	$("#newTruckForm").trigger('reset');
+	$("#outgoingbtn").click(); 
+});
 
  $("#resolveShipmentBtn").click(function() {
 	//curEvent is set on eventClick, representing our FullCalendar event object
@@ -320,38 +329,23 @@ $("#confirmEditBtn").click(function() {
 //delete file on click
 $("#deleteShipmentBtn").click(function() {
 	if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
-		let billFile; 
-		let billRef;
         //delete the db entry
         let docRef = db.collection("events").doc($("#eventId").html());
         docRef.get().then(function(doc) {
         	docRef.delete().then(function() {
         		console.log("Document deleted.");
-            //delete any ship tickets
+            //delete any paperwork
             shipFiles = doc.data().shipTicketRefs;
             shipFiles.forEach((shipFile) => {
             	let shipRef = storageRef.child(shipFile);
             	shipRef.delete().then(function() {
               // File deleted successfully
-              console.log("ship deleted");
+              console.log("file deleted");
           }).catch(function(error) {
           	alert(`Something went wrong: ${error}. Please try again.`);
           	return;
           });
       });
-            //delete the bill file if any
-            billFile = doc.data().ladingBillRef; 
-            //check if a bill is associated
-            if (billFile != "") {
-            	billRef = storageRef.child(billFile);
-            	billRef.delete().then(function() {
-                    // File deleted successfully
-                    console.log("bill deleted");
-                }).catch(function(error) {
-                	alert(`Something went wrong: ${error}. Please try again.`);
-                	return;
-                });
-            }
         //hide the modal
         $("#myModal").modal("hide");
 

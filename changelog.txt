@@ -1,5 +1,11 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 
+BETA 2.0
+	-Paperwork is no longer required. Event info PDF Viewer is fully dynamic and will adapt to any number of pdfs, including none.
+	-Bill of lading and ship ticket upload locations have been replaced with a single paperwork upload location
+	-Added Reset Form button which completely resets the truck form.
+	-Added reset button to Paperwork upload to deselect uploaded files
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.7.2
 	-Fixed bug which broke event colorer
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

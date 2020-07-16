@@ -89,7 +89,7 @@
                     }, //end dateClick
                     eventClick: function(info) {
                         curEvent = info;
-
+                        console.log(info.event.extendedProps.shipTicketUrls.length);
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
                         var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
@@ -111,14 +111,17 @@
                             addTicketPdfElement(`shipTicketPdfContainer${i}`);
                             PDFObject.embed(info.event.extendedProps.shipTicketUrls[i], `#shipTicketPdfContainer${i}`);
                         }
-                        if (info.event.extendedProps.ladingURL != "") {
-                            addTicketPdfElement("ladingPdfContainer");
-                            PDFObject.embed(info.event.extendedProps.ladingURL, "#ladingPdfContainer");
-                            
+                        //if there are no files, we need to display nothing
+                        if (info.event.extendedProps.shipTicketUrls.length == 0){
+                            $("#pdfInterface").hide();
+
                         }
-                        
+                        else {
+                            document.getElementById("pdfCarousel-inner").firstElementChild.setAttribute("class", "carousel-item active");
+                            $("#pdfInterface").show();
+                        }
                         //set first pdf container as active to display carousel
-                        document.getElementById("pdfCarousel-inner").firstElementChild.setAttribute("class", "carousel-item active");
+                        
                         //enable/disable resolve button based on event status
                         if (info.event.extendedProps.resolved == true) {
                             document.getElementById("resolveShipmentBtn").disabled = true;
@@ -177,23 +180,21 @@
                     //insert new object into calendar as event 
                     //TODO: change this to an event source method after we confirm the new event has been entered into the database
                     let shipTicketFiles = document.getElementById('shipTicketFileArea').files;
-                    let ladingBillFile = document.getElementById('ladingBillFileArea').files[0];
-                    if (shipTicketFiles.length == 0) {
+                    /*if (shipTicketFiles.length == 0) {
                         alert("Please upload all necessary paperwork!");
                         $("#uploadText").hide();
                         document.getElementById("submitTruckBtn").disabled = false;
                         return;
                     }
-                    if (ladingBillFile != undefined && ladingBillFile.type != "application/pdf") {
-                        alert('Uploaded files must be saved as PDF.');
-                        $("#uploadText").hide();
-                        document.getElementById("submitTruckBtn").disabled = false;
-                        return;
-                    }
+                    */
+
                     //confirm all file types are ok before uploading any
                     for (var i = 0; i < shipTicketFiles.length; i++) {
                         if (shipTicketFiles[i].type != "application/pdf") {
                             alert('Uploaded files must be saved as PDF.');
+                            $("#uploadText").hide();
+                            document.getElementById("submitTruckBtn").disabled = false;
+                            return;
                         }
                     } 
                     var shipTicketUrls = [];
@@ -208,13 +209,13 @@
                  setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
                  $("#formArrow").css("transform", "rotate(90deg)");
                     //upload each of the ship ticket files and add their download urls to list
-                    var ladingBillURL = "";
-                    var ladingBillRef = "";
-                    if (ladingBillFile) {
-                        let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
-                        ladingBillURL = ladingBillUpload.downloadURL;
-                        ladingBillRef = ladingBillUpload.ref;
-                    }
+                    // var ladingBillURL = "";
+                    // var ladingBillRef = "";
+                    // if (ladingBillFile) {
+                    //     let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
+                    //     ladingBillURL = ladingBillUpload.downloadURL;
+                    //     ladingBillRef = ladingBillUpload.ref;
+                    // }
 
                     db.collection("events").add({
                         allDay: allDay,
@@ -227,9 +228,9 @@
                         notes: comments,
                         title: vendorName,
                         shipTicketUrls: shipTicketUrls,
-                        ladingURL: ladingBillURL,
+                        //ladingURL: ladingBillURL,
                         shipTicketRefs: shipTicketRefs,
-                        ladingBillRef: ladingBillRef,
+                        //ladingBillRef: ladingBillRef,
                         creator: await firebase.auth().currentUser.displayName,
                         resolved: false
 
@@ -331,6 +332,8 @@
 </head>
 
 <body>
+
+
     <header><img src = "img/bluelogo.svg" id = "blueLogo"> <div id = "userHeaderMenu"><span id = "currentUser">Current User</span><span><btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn></span></div></header>
     <div id = "loginApplet" >
         <div class = "container centered-container">
@@ -447,19 +450,11 @@
             </div>
             <!-- -->
 
-            <!--BILL OF LADING FILE SELECTION-->
+            <!--PAPERWORK FILE SELECTION-->
             <div class="form-group">
-                <label for="ladingBillFileArea">Bill of Lading (must be .pdf)</label>
+                <label for="shipTicketFileArea">Paperwork (must be .pdf)</label>
 
-                <input type="file" class="form-control-file" id="ladingBillFileArea" accept=".pdf">
-
-            </div>
-            <!--END FILE SELECTION-->
-            <!--SHIP TICKET FILE SELECTION-->
-            <div class="form-group">
-                <label for="shipTicketFileArea">Ship Ticket(s) (must be .pdf)</label>
-
-                <input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf" multiple = "true">
+               <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearFilesBtn"><span id = "clearFilesBtnText">&times;</span></button></div></div>
 
             </div>
             <!--END FILE SELECTION-->
@@ -472,6 +467,7 @@
             </div>
 
             <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment</button>
+            <button type = "reset" class = "btn btn-danger" id = "clearTruckFormBtn">Reset Form</button>
             <small id = "uploadText" style = "display: none;">Uploading...</small>
         </form>
     </div>
@@ -490,7 +486,7 @@
 <!-- EVENT DATA MODAL -->
 <div class="modal" tabindex="-1" role="dialog" id= "myModal">
 
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 id = "modalVendor">Modal title</h4>
@@ -508,10 +504,11 @@
                 <div class = "row"><b>Description/Notes: </b><b id="modalComments" style ="font-weight: normal;"></b></div>
 
             </div>
+            <div id = "pdfInterface">
             <h4>Shipment Paperwork</h4>
             <small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>     
             
-            <div class ="row" style="width: 100%; margin: 0 auto; height: 100%; border: solid #082a40;">
+            <div class ="row" style="width: 100%; margin: 0 auto; height: 100%; border: solid #082a40;" >
                 <a href="#pdfCarousel" role="button" data-slide="prev" style = "width: 10%; background-color: #F24E1B;">
                     <div class = "container">
                         <span class="carousel-control-prev-icon" aria-hidden="true" style = "top: 50%; bottom: 50%;"></span>
@@ -533,6 +530,7 @@
                 </a>
                 
             </div>
+        </div>
         </div>
         <div class="modal-footer">
             <small id = "creator" style = "text-align: left;">Truck Scheduled by: </small>
@@ -563,6 +561,7 @@
               <div class = "container" id = "modalContainer">
 
                 <form id = "editTruckForm">
+
                     <div class="form-group">
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-primary" id = "editoutgoingbtn">Outgoing Shipment</button> 

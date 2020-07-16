@@ -22,8 +22,12 @@
 }
 #submitTruckBtn {
 	background-color: #F24E1B !important;
+	border-color: transparent;
 	color: white;
 
+}
+#datepicker {
+	background-color: black;
 }
 #arrowContainerBtn {
 	margin-top: .5rem;
@@ -108,12 +112,7 @@ div {
 }
 */
 
-#myModal {
-	margin: 0 auto;
-}
-#editModal {
-	margin: 0 auto;
-}
+
 #modal-body {
 	height: 900px;
 }
@@ -126,6 +125,7 @@ div {
 	border-bottom-right-radius: 25px;
 	margin-bottom: 15px;
 }
+
 .modal-content {
 	width: 800px;
 	max-height: 100%;
@@ -345,6 +345,35 @@ footer > * {
 	border-right-color: #F24E1B !important;
 }
 
+#shipTicketFileArea {
+	outline: dashed grey;
+	margin-left: 20px;
+	background-color: lightgrey;
+}
+
+#clearFilesBtnText {
+	display: block;
+	padding-left:0px;
+    text-align: center;
+    line-height: 1em;
+}
+#clearFilesBtn {
+	font-size: 2vh;
+	color: white;
+	background-color: #F24E1B;
+	border-radius: 30px;
+	border: solid #082a40;
+	outline: none;
+	vertical-align: middle;
+	height: 30px;
+	width: 30px;
+	text-align: center;
+	padding-left: 6.25px;
+}
+#clearFilesBtn:active {
+	color: black;
+}
+
 body {
 	height: 100%;
 	background-color: #082a40;
@@ -379,4 +408,20 @@ body {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
