@@ -1,13 +1,24 @@
 $("#dropdownbtn").click(function() {
-	if ($("#myDropdown").css("display") === "none") {
-		$("#myDropdown").show();
+	console.log($("#myDropdown").css("opacity"));
+	if ($("#myDropdown").css("opacity") < 1.0) {
+
+		$("#myDropdown").css("visibility" , "visible");
+		$("#myDropdown").css("opacity" , 1.0);
+
 	}
 	else {
-		$("#myDropdown").hide();
+		$("#myDropdown").css("opacity", 0.0);
+		$("#myDropdown").css("visibility" , "hidden");
+
 	}
 });
 
+window.onclick = function(event) {
 
+  if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
+    $("#dropdownbtn").click();
+  }
+}
 
 $("#incomingbtn").click(function() {
 	$("#incomingbtn").attr("class", function(i, origValue){
@@ -223,6 +234,11 @@ $("#clearTruckFormBtn").click(function() {
 	$("#editDestinationBox").attr("placeholder", destination);
 	$("#editNotesArea").attr("placeholder", notes);
 	$("#myModal").modal("hide");
+	$("#editTitleBox").val("");
+    $("#editVendorBox").val("");
+	$("#editCustomerBox").val("");
+	$("#editDestinationBox").val("");
+	$("#editNotesArea").val("");
 	$("#editModal").modal("show");
 });
 
@@ -335,11 +351,6 @@ $("#confirmEditBtn").click(function() {
 		return curEventRef.update(changes)
 		.then(function() {
     		console.log("Document successfully updated!");
-    		$("#editTitleBox").val("");
-    		$("#editVendorBox").val("");
-			$("#editCustomerBox").val("");
-			$("#editDestinationBox").val("");
-			$("#editNotesArea").val("");
 			$("#editModal").hide();
 
 		})

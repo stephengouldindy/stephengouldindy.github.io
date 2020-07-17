@@ -1,4 +1,8 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
+BETA 2.3.1
+	-Fixed bug where edit form did not clear its text values on close
+	-Fancier dropdown menu
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.3
 	- Added preliminary dropdown menu (sign out button now lives here!)
 	- We have lots of appointments! Calendar now resizes dynamically to accommodate showing the entire day without having to scroll
