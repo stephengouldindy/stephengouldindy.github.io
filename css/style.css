@@ -92,7 +92,13 @@
 	margin-right: 10px;
 	line-height: 0px;
 }
-
+#managePaperworkBtn {
+	background-color: #F24E1B !important;
+	border-radius: 20px;
+	margin: 5px;
+	height: 3vh;
+	line-height: 0px;
+}
 #calendar {
 }
 #calendar > * > * {

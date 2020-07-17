@@ -1,10 +1,12 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
+BETA 2.5.3
+	- Added paperwork management button (that doesn't work 🤪) 
 BETA 2.5.2 
-	-Moved reset truck scheduling form to right side of form so you don't bump it and ask, "Why the hell did he put that there?"
+	- Moved reset truck scheduling form to right side of form so you don't bump it and ask, "Why the hell did he put that there?"
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.5.1
-	-Restyled edit window clear button to fit with rest of application
+	- Restyled edit window clear button to fit with rest of application
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.5
 	- Edit event works correctly, and not in the previous very dumb, intrusive way where every logged in user would have their page 

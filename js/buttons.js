@@ -379,11 +379,12 @@ $("#confirmEditBtn").click(function() {
 		});
 	}
 
-
-
-
 });
 
+$("#managePaperworkBtn").click(function() {
+	alert("Man, wouldn't that be nice! Sorry; this hasn't been implemented yet. You'll have to delete your event and make a new one " +
+	"if you need to make paperwork changes. I will implement this no later than July 24th. - Spencer");
+})
 
 //delete file on click
 $("#deleteShipmentBtn").click(function() {
