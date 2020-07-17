@@ -47,6 +47,7 @@ $(document).ready(function() {
             event.remove();
         }
         else if (change.type === "modified") {
+          let event = calendar.getEventById(change.doc.id);
           setTimeout(function() {location.reload();}, 300);
         }
         else if (change.type === "added") {
