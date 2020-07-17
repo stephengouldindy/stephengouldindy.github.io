@@ -16,7 +16,8 @@ $("#dropdownbtn").click(function() {
 window.onclick = function(event) {
 
   if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
-    $("#dropdownbtn").click();
+		$("#myDropdown").css("opacity", 0.0);
+		$("#myDropdown").css("visibility" , "hidden");
   }
 }
 
