@@ -1,12 +1,16 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
 
+BETA 2.5.1
+	-Restyled edit window clear button to fit with rest of application
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.5
 	- Edit event works correctly, and not in the previous very dumb, intrusive way where every logged in user would have their page 
 	  refreshed anytime someone edited an event in order to display the changes. Sorry about that. Sometimes you just have to make 
 	  things 'work'. Enjoy not bumping into each other now!
 	- Skipped 2.4
 	- Major code refactors and reorganization, streamlining. You have no idea how organized I feel now.
+	- Have a great weekend!
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.3.1
 	- Fixed bug where edit form did not clear its text values on close

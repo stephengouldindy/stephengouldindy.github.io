@@ -547,19 +547,17 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col">
                             <label for="editDatePicker">Date:</label>
                             <input type = "date" id = "editDatePicker">
-                        </div> 
                     </div>
                     <div class = "form-group">
-                        <div class = "col">
                             <label for="editStart">Arrival Window:</label>
-                            <input type="time" id="editStartTime" name="editStartTime" min= "06:30" max = "16:00" aria-describedby="editTimeHelpBlock">
-                            <input type="time" id="editEndTime" name="editEndTime"  min= "06:30" max = "16:00" aria-describedby="editTimeHelpBlock">
-                            <button type="button" class="btn btn-danger" id ="clearEditTimeBtn">Reset</button>
+                            <div class = "row" style = "padding-left: 20px;">
+                                <input type="time" id="editStartTime" name="editStartTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
+                            <input type="time" id="editEndTime" name="editEndTime"  min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
+                            <div class = "col"><button type = "button" id = "clearEditTimeBtn"><span id = "clearEditTimeBtnText">&times;</span></button></div>
+                            </div>
                             <small id="editTimeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label for="editTitleBox">Event Title</label>
