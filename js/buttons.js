@@ -1,3 +1,11 @@
+/*
+ * @author Spencer Douglas dougla55@purdue.edu
+ * buttons.js- contains all button event listeners not pertaining to login
+ */
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// DROPDOWN MENU
 $("#dropdownbtn").click(function() {
 	console.log($("#myDropdown").css("opacity"));
 	if ($("#myDropdown").css("opacity") < 1.0) {
@@ -16,11 +24,15 @@ $("#dropdownbtn").click(function() {
 window.onclick = function(event) {
 
   if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
+  		if ($("#myDropdown").css("opacity") === 0.0) {
+  			return;
+  		}
 		$("#myDropdown").css("opacity", 0.0);
 		$("#myDropdown").css("visibility" , "hidden");
   }
 }
-
+// END DROPDOWN MENU
+///////////////////////////////////////////////////////////////////////////////////////
 $("#incomingbtn").click(function() {
 	$("#incomingbtn").attr("class", function(i, origValue){
 		//if button not selected, switch
@@ -158,6 +170,7 @@ $("#clearTruckFormBtn").click(function() {
 	$("#outgoingbtn").click(); 
 });
 
+
  $("#resolveShipmentBtn").click(function() {
 	//curEvent is set on eventClick, representing our FullCalendar event object
 	if (!confirm(`Please confirm you would like to mark truck from ${curEvent.event.title} for ${curEvent.event.extendedProps.customerName} as resolved.`)) {
@@ -178,6 +191,10 @@ $("#clearTruckFormBtn").click(function() {
 	    console.error("Error updating document: ", error);
 	});
 });
+
+
+
+
 
  $("#editInfoBtn").click(function() {
   	// alert("Function not yet implemented. Sorry, but you'll have to create a new event if you need to make changes.");
@@ -243,7 +260,9 @@ $("#clearTruckFormBtn").click(function() {
 	$("#editModal").modal("show");
 });
 
-
+/*
+ * Wraps any changes detected and attempts to push them out
+ */
 $("#confirmEditBtn").click(function() {
 	//determine which inputs have a change include and compile them into a changes object to be pushed to database
 	
@@ -298,7 +317,7 @@ $("#confirmEditBtn").click(function() {
 	if (newDate != $("#modalDate").html()) {
 		dateChange.date = newDate;
 	}
-
+	//FIXME: is not thorough enough.
 	if ($("#editStartTime").val() != "" && $("#editEndTime").val() != "") {
 		isNowAllDay = false;
 	}
@@ -343,16 +362,15 @@ $("#confirmEditBtn").click(function() {
 								customerChange,
 								destinationChange,
 								notesChange);
-	
 	console.log(changes);
-	console.log(Object.keys(changes).length);
 	if (Object.keys(changes).length > 0) {
 		let eventId = $("#eventId").html();
 		let curEventRef = db.collection("events").doc(eventId);
 		return curEventRef.update(changes)
 		.then(function() {
     		console.log("Document successfully updated!");
-			$("#editModal").hide();
+    		//calendar eventWorker will handle the frontend changes.
+			$("#editModal").modal("hide");
 
 		})
 		.catch(function(error) {
@@ -400,51 +418,6 @@ $("#deleteShipmentBtn").click(function() {
     } 
 });
 
-//resend confirmation email or log the user in if they are already verified
-$("#resendEmailBtn").click(async function() {
 
-  	var email = $("#resendEmailBox").val();
-	var password = $("#resendEmailPass").val();
-	console.log(`email: ${email} pass: ${password}`);
-	var signInAttempt; 
-	try {
-		signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
-		console.log(signInAttempt);
-		if (signInAttempt.user) {
-			//sign-in success
-			if (signInAttempt.user.emailVerified) {
-				alert("Your account has already been verified. Logging you in...");
-			}
-			else {
-				//user not verified
-				signInAttempt.user.sendEmailVerification().then(function() {
-				  	// Email sent.
-				  	console.log("Email sent.")
-				  	alert(`Email sent to ${signInAttempt.user.email}. Check your inbox and confirm your email to be able to log in.`);
-				}).catch(function(error) {
-				 	// An error happened.
-					alert(`ERROR: ${error}`);
-				});
-			}
-
-		}
-	}
-	catch(error) {
-  		// Handle Errors here.
-  		console.log('caught err');
-  		var errorCode = error.code;
-  		var errorMessage = error.message;
-  		console.log(error.code, error.message);
-  		if (errorCode === 'auth/wrong-password') {
-    		alert('Wrong password.');
-  		} else {
-    		alert(errorMessage);
-  		}
-	}
-
-
-
-      
-});
 
 

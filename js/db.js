@@ -1,17 +1,17 @@
 /*
- * auth.js - contains scripts for user management, including signups/signins on login page
+ * db.js - intializes page based on firebase/firestore states; handles firestore communication
  */
+
+
 $(document).ready(function() {
   let today = new Date();
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v2.3.1");
+  $("#version").html("BETA v2.5");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
-
-  //$("#pdfCarousel").hide();
 
   firebase.auth().onAuthStateChanged(async function(user) {
   if (user) {
@@ -40,100 +40,26 @@ $(document).ready(function() {
     let changes = snapshot.docChanges();
     console.log(changes);
     changes.forEach(change => {
-        let data = change.doc.data();
+        
         if (change.type === "removed") {
             //FIXME: find a better solution to this
             let event = calendar.getEventById(change.doc.id);
             event.remove();
         }
         else if (change.type === "modified") {
-          let event = calendar.getEventById(change.doc.id);
-          setTimeout(function() {location.reload();}, 300);
+          calendar.getEventById(change.doc.id).remove();
+          addCalendarEvent(change);
+          console.log(change);
+          //setTimeout(function() {location.reload();}, 300);
         }
         else if (change.type === "added") {
-            let day = data.date.split('/')[1];
-            let month = data.date.split('/')[0] - 1;
-            let year = data.date.split('/')[2];
-            let dateObj = new Date(year, month, day);
-            let bkgColor = data.isOutgoing ? '#082a40' : '#F24E1B';
-            let borderColor = !data.isOutgoing ? '#082a40' : '#F24E1B';
-            let shipTicketURL = data.shipTicketURL;
-            let ladingURL = data.ladingURL;
-            let eventTextColor = 'white';
-            let prefix = data.isOutgoing ? "O - " : "I - ";
-            //TODO: 
-
-            var newEvent;
-
-            if (!data.allDay) {
-                    let startHour = data.startTime.split(':')[0];
-                    let startMinute = data.startTime.split(':')[1];
-                    let endHour = data.endTime.split(':')[0];
-                    let endMinute = data.endTime.split(':')[1];
-                    let startDate = new Date(year, month, day, startHour, startMinute);
-                    let endDate = new Date(year, month, day, endHour, endMinute);
-                    
-                    
-                    
-                    newEvent = {
-                          title: prefix + data.title,
-                          vendorName: data.vendorName,
-                          id: change.doc.id,
-                          eventTextColor: eventTextColor,
-                          start: startDate,
-                          end: endDate,
-                          allDay: data.allDay,
-                          editable: false,
-                          backgroundColor: bkgColor,
-                          borderColor: borderColor,
-                          displayEventEnd: true,
-                          isOutgoing: data.isOutgoing,
-                          customerName: data.customerName,
-                          eventDate: data.date,
-                          destination: data.destination,
-                          eventStartTime: data.startTime,
-                          eventEndTime: data.endTime,
-                          comments: data.notes,
-                          docId: change.doc.id,
-                          ladingURL: ladingURL,
-                          shipTicketUrls: data.shipTicketUrls,
-                          creator: data.creator,
-                          resolved: data.resolved
-                    }; //newEvent
-                } else {
-                    let dateObj = new Date(year, month, day);
-                    newEvent = {
-                        title: prefix + data.title,
-                        vendorName: data.vendorName,
-                        id: change.doc.id,
-                        start: dateObj,
-                        eventTextColor: eventTextColor,
-                        allDay: data.allDay,
-                        editable: false,
-                        backgroundColor: bkgColor,
-                        borderColor: borderColor,
-                        displayEventEnd: true,
-                        isOutgoing: data.isOutgoing,
-                        customerName: data.customerName,
-                        eventDate: data.date,
-                        destination: data.destination,
-                        eventStartTime: data.startTime,
-                        eventEndTime: data.endTime,
-                        comments: data.notes,
-                        docId: change.doc.id,
-                        ladingURL: ladingURL,
-                        shipTicketUrls: data.shipTicketUrls,
-                        creator: data.creator,
-                        resolved: data.resolved
-                    }; //newEvent
-                } //end else
-                calendar.addEvent(newEvent);
-            
+            addCalendarEvent(change)
         } //end added type
         
         //TODO: HANDLE DELETE AND UPDATE
     });
-    pastEventListener();
+    //set all event colors based on status
+    eventColorWorker(true);
   }); //END FIRESTORE EVENT CHANGE LISTENER
   	
 
@@ -230,7 +156,9 @@ $("#forgotPassword").click(function() {
 
 })
 
-
+/*
+ * Attempts to sign the user in.
+ */
 $("#signInBtn").click(async function() {
   var email = $("#loginEmail").val();
 	var password = $("#loginPass").val();
@@ -258,7 +186,58 @@ $("#signInBtn").click(async function() {
   		}
 	}
 	
-});
+}); // end signInBtn
+
+/*
+ * Attempts to resend confirmation email or log the user in if they are already verified
+ */
+
+$("#resendEmailBtn").click(async function() {
+
+    var email = $("#resendEmailBox").val();
+  var password = $("#resendEmailPass").val();
+  console.log(`email: ${email} pass: ${password}`);
+  var signInAttempt; 
+  try {
+    signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
+    console.log(signInAttempt);
+    if (signInAttempt.user) {
+      //sign-in success
+      if (signInAttempt.user.emailVerified) {
+        alert("Your account has already been verified. Logging you in...");
+      }
+      else {
+        //user not verified
+        signInAttempt.user.sendEmailVerification().then(function() {
+            // Email sent.
+            console.log("Email sent.")
+            alert(`Email sent to ${signInAttempt.user.email}. Check your inbox and confirm your email to be able to log in.`);
+        }).catch(function(error) {
+          // An error happened.
+          alert(`ERROR: ${error}`);
+        });
+      }
+
+    }
+  }
+  catch(error) {
+      // Handle Errors here.
+      console.log('caught err');
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(error.code, error.message);
+      if (errorCode === 'auth/wrong-password') {
+        alert('Wrong password.');
+      } else {
+        alert(errorMessage);
+      }
+  }
+      
+}); //end resendEmailBtn
+
+/*
+ * Cleans up pdf viewers on modal close so they don't accumulate.
+ */
 $('#myModal').on('hidden.bs.modal', function () {
   var p = document.getElementById("pdfCarousel-inner");
   var child = p.lastElementChild;  
@@ -267,6 +246,41 @@ $('#myModal').on('hidden.bs.modal', function () {
             child = p.lastElementChild; 
         } 
 });
+
+
+/*
+ * Found on stack overflow.
+ * Uploads the given Javascript file object. 
+ * @return SUCCESS - Resolved promise containing the reference in firebase and the download URL.
+ * @return FAILURE - Rejected promise which causes the form to reopen.
+ */
+async function uploadTaskPromise(file) {
+    return new Promise(function(resolve, reject) {
+        //FIXME: Differentiate between the Firestore fire name and the name that appears in the
+        //pdf viewer.
+        let fileName = `${uuidv4()}.pdf`;
+        let fileRef = storageRef.child(fileName);
+        uploadTask = fileRef.put(file);
+        uploadTask.on('state_changed',
+            function(snapshot) {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            },
+            function error(err) {
+                alert('error', err);
+                reject();
+                $("#formcontainer").slideDown(300);
+            },
+            function complete() {
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    resolve({downloadURL: downloadURL, ref: fileName});
+                })
+            });
+    }); 
+}
+/*
+ * Found on stack overflow. Generates a (extremely likely to be) unique key. If it's not, it was the fate of God. Sorry.
+ */
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

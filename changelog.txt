@@ -1,7 +1,16 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
+Developed by Spencer Douglas for use by Stephen Gould Indianapolis
+
+BETA 2.5
+	- Edit event works correctly, and not in the previous very dumb, intrusive way where every logged in user would have their page 
+	  refreshed anytime someone edited an event in order to display the changes. Sorry about that. Sometimes you just have to make 
+	  things 'work'. Enjoy not bumping into each other now!
+	- Skipped 2.4
+	- Major code refactors and reorganization, streamlining. You have no idea how organized I feel now.
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.3.1
-	-Fixed bug where edit form did not clear its text values on close
-	-Fancier dropdown menu
+	- Fixed bug where edit form did not clear its text values on close
+	- Fancier dropdown menu
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.3
 	- Added preliminary dropdown menu (sign out button now lives here!)
@@ -10,75 +19,74 @@ BETA 2.3
 	- General bug fixes, changes, and improvments
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.2
-	-Added forgot password functionality to login
+	- Added forgot password functionality to login
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.1
-	-Added title field, made carrier its own field
-	-Added weekday to date selection
+	- Added title field, made carrier its own field
+	- Added weekday to date selection
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.0.1
-	-Restyled arrival window clear button to fit with rest of form
+	- Restyled arrival window clear button to fit with rest of form
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.0
-	-Paperwork is no longer required. Event info PDF Viewer is fully dynamic and will adapt to any number of pdfs, including none.
-	-Bill of lading and ship ticket upload locations have been replaced with a single paperwork upload location
-	-Added Reset Form button which completely resets the truck form.
-	-Added reset button to Paperwork upload to deselect uploaded files
+	- Paperwork is no longer required. Event info PDF Viewer is fully dynamic and will adapt to any number of pdfs, including none.
+	- Bill of lading and ship ticket upload locations have been replaced with a single paperwork upload location
+	- Added Reset Form button which completely resets the truck form.
+	- Added reset button to Paperwork upload to deselect uploaded files
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.7.2
-	-Fixed bug which broke event colorer
+	- Fixed bug which broke event colorer
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.7.1
-	-Visual changes and improvements
+	- Visual changes and improvements
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.7.0
-	-Added Copy buttons which pull the existing attribute value of an event into its corresponding textbox
-	-Fixed edit info textboxes not clearing on submission
-	-Fixed existing events' updates not pushing to users who did not make the change
+	- Added Copy buttons which pull the existing attribute value of an event into its corresponding textbox
+	- Fixed edit info textboxes not clearing on submission
+	- Fixed existing events' updates not pushing to users who did not make the change
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.6.0
-	-Added email verification system and new 'Resend Verficiation' tab at login which allows you to resend verification email
-	-Fixed bug introduced in 1.5.0 which prevented appointment type from populating correctly into edit info form
+	- Added email verification system and new 'Resend Verficiation' tab at login which allows you to resend verification email
+	- Fixed bug introduced in 1.5.0 which prevented appointment type from populating correctly into edit info form
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.5.0
-	-Added the ability to edit all information about events except for the paperwork associated with them
-	-Added an "I" or "O" indictator to event titles on the calendar to signify whether the truck is (I)ncoming or (O)utgoing
-	-Visual changes and bug fixes
+	- Added the ability to edit all information about events except for the paperwork associated with them
+	- Added an "I" or "O" indictator to event titles on the calendar to signify whether the truck is (I)ncoming or (O)utgoing
+	- Visual changes and bug fixes
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.2.1 
-	-minor fixes and improvements
+	- minor fixes and improvements
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.2.0 
-	-Events marked as resolved will now appear in green
+	- Events marked as resolved will now appear in green
 	-new delete event schema works in real time and does not require stupid refresh solution
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.15.0
-	-Events will now appear red if the scheduled time has passed (in a future release, this will only happen if the delivery has not been marked as resolved)
-	-Fixed a major bug which prevented event information from being viewed when event had an arrival window
+	- Events will now appear red if the scheduled time has passed (in a future release, this will only happen if the delivery has not been marked as resolved)
+	- Fixed a major bug which prevented event information from being viewed when event had an arrival window
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 BETA 1.1.01
-  -Fixed bug where downloaded pdfs did not have .pdf extension when downloaded
-  -Visual changes to dropdown arrow
+  - Fixed bug where downloaded pdfs did not have .pdf extension when downloaded
+  - Visual changes to dropdown arrow
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.1.0
-  -Added dropdown box for new truck form
-  -Gave date select default value of (TODAY)
-  -Added current user displayname in header
+  - Added dropdown box for new truck form
+  - Gave date select default value of (TODAY)
+  - Added current user displayname in header
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.0.18
-  -visual changes
-  -bug fixes
+  - visual changes
+  - bug fixes
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.0.17
-  -Bill of Lading no longer required. 1+ ship tickets still required.
-  -Fixed bug introduced in 1.0.15 with multiple ship ticket viewers 
+  - Bill of Lading no longer required. 1+ ship tickets still required.
+  - Fixed bug introduced in 1.0.15 with multiple ship ticket viewers 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.0.16
-  -Fixed bug introduced in 1.0.15 which allowed 0 ship tickets to be uploaded
+  - Fixed bug introduced in 1.0.15 which allowed 0 ship tickets to be uploaded
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 1.0.15
-  -Added support for multiple ship ticket files and dynamic interface for them
-  -Bug fixes and improvements
+  - Added support for multiple ship ticket files and dynamic interface for them
+  - Bug fixes and improvements
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Developed by Spencer Douglas for use by Stephen Gould Indianapolis

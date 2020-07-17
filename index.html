@@ -30,11 +30,12 @@
     <!--SGI Calendar Scripts and CSS-->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel = "stylesheet">
-    <script src = "js/auth.js" async></script>
-    <script src = "js/buttons.js" async></script>
     <script src = "js/eventWorker.js" async></script>
-
-    <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT-->         
+    <script src = "js/pageWorker.js" async></script>
+    <script src = "js/db.js" async></script>
+    <script src = "js/buttons.js" async></script>
+    
+    <!--INTIALIZE CALENDAR-->         
     <script>    
 
         var _DEBUG = false;
@@ -89,6 +90,7 @@
              
                     }, //end dateClick
                     eventClick: function(info) {
+                        console.log(info);
                         curEvent = info;
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
@@ -138,8 +140,6 @@
                     }
                     
                 });
-
-
 
 
                 /*
@@ -246,40 +246,6 @@
                         $("#formcontainer").slideDown(300);
                     });
 
-
-                    ///////////////////////////////////////
-                    /*
-                     * Uploads the given Javascript file object. 
-                     * @return SUCCESS - Resolved promise containing the reference in firebase and the download URL.
-                     * @return FAILURE - Rejected promise which causes the form to reopen.
-                     */
-                    async function uploadTaskPromise(file) {
-                        return new Promise(function(resolve, reject) {
-                            //FIXME: Differentiate between the Firestore fire name and the name that appears in the
-                            //pdf viewer.
-                            let fileName = `${uuidv4()}.pdf`;
-                            let fileRef = storageRef.child(fileName);
-                            uploadTask = fileRef.put(file);
-                            uploadTask.on('state_changed',
-                                function(snapshot) {
-                                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                    console.log('Upload is ' + progress + '% done');
-                                },
-                                function error(err) {
-                                    alert('error', err);
-                                    reject();
-                                    $("#formcontainer").slideDown(300);
-                                },
-                                function complete() {
-                                    uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                                        resolve({downloadURL: downloadURL, ref: fileName});
-                                    })
-                                });
-                        }); 
-                    }
-
-
-                    
                     //scroll to top
                     document.getElementById("submitTruckBtn").disabled = false;
                     window.scrollTo({
@@ -291,15 +257,7 @@
             }); //end DOM content loaded event listener
 
 
-        // Adds a PDFObject and its containing carousel element to the document
-        function addTicketPdfElement(id) {
-            var p = document.getElementById("pdfCarousel-inner");
-            var newElement = document.createElement('div');
-            newElement.setAttribute('class', "carousel-item");
-            newElement.setAttribute('id', id);
-            p.appendChild(newElement);
-
-        }
+        
 
       // Your web app's Firebase configuration
 
