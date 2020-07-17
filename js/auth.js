@@ -6,7 +6,7 @@ $(document).ready(function() {
   console.log(today);
   $("#calendarApplet").hide();
 
-  $("#version").html("BETA v2.2");
+  $("#version").html("BETA v2.3");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -31,7 +31,8 @@ $(document).ready(function() {
     $("#signOutBtn").css("display", "inline-block");
     $("#currentUser").html(user.displayName);
     $("#currentUser").show();
-  	$("#blueLogo").show();
+  	$("#blueLogo").fadeIn();
+    $("#hamburger").fadeIn();
   	$("footer").hide();
 
 
@@ -142,10 +143,12 @@ $(document).ready(function() {
   } else {
     // User is signed out.
     $("#calendarApplet").fadeOut();
+    $("#currentUser").html("");
     $("#currentUser").hide();
   	$("#signOutBtn").hide();
   	$("#blueLogo").fadeOut();
   	$("footer").fadeIn();
+    $("#hamburger").fadeOut();
   	$("#loginApplet").fadeIn();
 
     // ...

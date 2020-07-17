@@ -37,6 +37,13 @@
     <!--PRIMARY CALENDAR & EVENT MANAGEMENT SCRIPT-->         
     <script>    
 
+        window.onclick = function(event) {
+
+  if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
+    $("#myDropdown").hide();
+  }
+}
+
         var _DEBUG = false;
         var calendar;
         var curEvent;
@@ -49,6 +56,7 @@
             var calendarEl = document.getElementById('calendar');
 
             calendar = new FullCalendar.Calendar(calendarEl, {
+                height: "auto",
                 aspectRatio: 1.7,
                 weekends: false,
                 eventTextColor: 'white',
@@ -91,8 +99,9 @@
                         curEvent = info;
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
-                        var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY"
-                        $("#modalTitle").html(`${info.event.title.split(" - ")[1]} - ${type}`);
+                        var type = (info.event.extendedProps.isOutgoing) ? "OUTGOING SHIPMENT" : "INCOMING DELIVERY";
+                        //trim the leading I or O from title
+                        $("#modalTitle").html(`${info.event.title.substring(4)} - ${type}`);
                         $("#modalVendor").html(`${info.event.extendedProps.vendorName}`);
                         $("#modalCustomer").html(`${info.event.extendedProps.customerName}`);
                         $("#modalDate").html(`${info.event.extendedProps.eventDate}`);
@@ -336,7 +345,17 @@
 <body>
 
 
-    <header><img src = "img/bluelogo.svg" id = "blueLogo"> <div id = "userHeaderMenu"><span id = "currentUser">Current User</span><span><btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn></span></div></header>
+    <header><div class="dropdown">
+  <button id = "dropdownbtn"><img src = "img/menu.svg" id = "hamburger"></button>
+  <div id="myDropdown" class="dropdown-content">
+    <a href="#">Under Construction...</a>
+    <a href="#">More Stuff</a>
+    <a href="#">To Come!</a>
+    <btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn>
+  </div>
+</div>
+
+        <img src = "img/bluelogo.svg" id = "blueLogo"> <text id = "currentUser">Current User</text></header>
     <div id = "loginApplet" >
         <div class = "container centered-container">
             <p class = "sg-font-hdr">Stephen Gould Indianapolis Shipping and Receiving</p>

@@ -1,4 +1,10 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
+BETA 2.3
+	- Added preliminary dropdown menu (sign out button now lives here!)
+	- We have lots of appointments! Calendar now resizes dynamically to accommodate showing the entire day without having to scroll
+	- Fixed bug introduced in 2.1 where edit title placeholder was not set to the event title
+	- General bug fixes, changes, and improvments
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.2
 	-Added forgot password functionality to login
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

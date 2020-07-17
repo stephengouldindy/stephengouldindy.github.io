@@ -1,3 +1,14 @@
+$("#dropdownbtn").click(function() {
+	if ($("#myDropdown").css("display") === "none") {
+		$("#myDropdown").show();
+	}
+	else {
+		$("#myDropdown").hide();
+	}
+});
+
+
+
 $("#incomingbtn").click(function() {
 	$("#incomingbtn").attr("class", function(i, origValue){
 		//if button not selected, switch
@@ -164,9 +175,14 @@ $("#clearTruckFormBtn").click(function() {
 	let arrivalWindow =  $("#modalTime").html().split("-");
 	let start = arrivalWindow[0];
 	let end = arrivalWindow[1];
-	let titleArr = $("#modalTitle").html().split(" - ");
-	let type = titleArr[1];
-	let title = titleArr[0];
+	let fullTitle = $("#modalTitle").html();
+	let typeLen = 16;
+	let spacerLen = 3;
+	let type = fullTitle.substring(fullTitle.length - 1 - typeLen);
+	let title = fullTitle.substring(0, fullTitle.length - 1 - typeLen - spacerLen);
+	console.log(type + "|" + title + "|");
+	//let type = titleArr[1];
+	//let title = titleArr[0];
 	let vendorName = $("#modalVendor").html();
 	let customerName = $("#modalCustomer").html();
 	let destination = $("#modalDestination").html();
@@ -200,7 +216,8 @@ $("#clearTruckFormBtn").click(function() {
 		$("#editoutgoingbtn").click();
 	}
 	$("#editDatePicker").val(dateResult);
-	$("#editInfoTitle").html(`Editing ${title} Appointment for Customer: ${customerName}`);
+	$("#editInfoTitle").html(`Editing ${title}`);
+	$("#editTitleBox").attr("placeholder", title);
 	$("#editVendorBox").attr("placeholder", vendorName);
 	$("#editCustomerBox").attr("placeholder", customerName);
 	$("#editDestinationBox").attr("placeholder", destination);
@@ -239,7 +256,7 @@ $("#confirmEditBtn").click(function() {
 		origEnd = arrivalWindow[1];
 		wasAllDay = false;
 	}	
-	let origOutgoingStatus = $("#modalTitle").html().split(" - ")[1];
+	let origOutgoingStatus = $("#modalTitle").html().substring($("#modalTitle").html().length - 1 - 16);
 	
 
 	//detect all changes for compilation
