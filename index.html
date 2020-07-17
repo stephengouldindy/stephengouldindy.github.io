@@ -146,13 +146,12 @@
                 * Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
                 */
                 $("#submitTruckBtn").click(async function() {
-                    //unwrapping data...
                     $("#uploadText").show();
                     document.getElementById("submitTruckBtn").disabled = true;
                     var startTime = $("#startTime").val();
                     var endTime = $("#endTime").val();
 
-                    //FIXME DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
+                    //FIXME: DIFFERENTIATE BETWEEN INVALID AND ALL DAY EVENTS
                     var allDay = (startTime === "");
                     var startHour;
                     var startMinute;
@@ -181,15 +180,7 @@
                         console.log(destination);
                     }
                     //insert new object into calendar as event 
-                    //TODO: change this to an event source method after we confirm the new event has been entered into the database
                     let shipTicketFiles = document.getElementById('shipTicketFileArea').files;
-                    /*if (shipTicketFiles.length == 0) {
-                        alert("Please upload all necessary paperwork!");
-                        $("#uploadText").hide();
-                        document.getElementById("submitTruckBtn").disabled = false;
-                        return;
-                    }
-                    */
 
                     //confirm all file types are ok before uploading any
                     for (var i = 0; i < shipTicketFiles.length; i++) {
@@ -211,14 +202,6 @@
                  } 
                  setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
                  $("#formArrow").css("transform", "rotate(90deg)");
-                    //upload each of the ship ticket files and add their download urls to list
-                    // var ladingBillURL = "";
-                    // var ladingBillRef = "";
-                    // if (ladingBillFile) {
-                    //     let ladingBillUpload = await uploadTaskPromise(ladingBillFile);
-                    //     ladingBillURL = ladingBillUpload.downloadURL;
-                    //     ladingBillRef = ladingBillUpload.ref;
-                    // }
 
                     db.collection("events").add({
                         allDay: allDay,
