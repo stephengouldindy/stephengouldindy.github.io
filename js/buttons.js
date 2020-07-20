@@ -209,7 +209,6 @@ $("#clearTruckFormBtn").click(function() {
 	let spacerLen = 3;
 	let type = fullTitle.substring(fullTitle.length - 1 - typeLen);
 	let title = fullTitle.substring(0, fullTitle.length - 1 - typeLen - spacerLen);
-	console.log(type + "|" + title + "|");
 	//let type = titleArr[1];
 	//let title = titleArr[0];
 	let vendorName = $("#modalVendor").html();

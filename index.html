@@ -57,13 +57,13 @@
                 nowIndicator: true,
                 minTime: "06:00:00",
                 maxTime: "16:30:00",
-                plugins: [ 'dayGrid', 'timeGrid', 'interaction' ],
+                plugins: [ 'dayGrid', 'timeGrid', 'listView', 'interaction' ],
                 defaultView: 'timeGridWeek',
                 selectable: false,
                 header: {
                     left: 'prev,next, today',
                     center: 'title',
-                    right: 'timeGridDay, timeGridWeek, dayGridMonth'
+                    right: 'timeGridDay, timeGridWeek, dayGridMonth, listWeek'
                 },
                     //Date clicking handling 
                     dateClick: function(info) {
@@ -547,24 +547,24 @@
                     </div>
                     <div class="form-group">
                         <label for="editTitleBox">Event Title</label>
-                        <input type="text" class="form-control" id="editTitleBox" placeholder="Calendar Event Title"> <button  id = "copyTitleBtn" class = "btn btn-primary" type = "button">Copy</button>
+                        <input type="text" class="form-control" id="editTitleBox" placeholder="Calendar Event Title"> <button  id = "copyTitleBtn" class = "btn btn-primary" type = "button">Copy Current Value</button>
                     </div>
                     <div class="form-group">
                         <label for="editVendorBox">Carrier</label>
-                        <input type="text" class="form-control" id="editVendorBox" placeholder="Carrier/Vendor Name"> <button  id = "copyVendorBtn" class = "btn btn-primary" type = "button">Copy</button>
+                        <input type="text" class="form-control" id="editVendorBox" placeholder="Carrier/Vendor Name"> <button  id = "copyVendorBtn" class = "btn btn-primary" type = "button">Copy Current Value</button>
                     </div>
                     <div class="form-group">
                         <label for="editCustomerBox">Customer</label>
-                        <input type="text" class="form-control" id="editCustomerBox" placeholder="Customer Name"> <button class = "btn btn-primary" id = "copyCustomerBtn" type = "button">Copy</button>
+                        <input type="text" class="form-control" id="editCustomerBox" placeholder="Customer Name"> <button class = "btn btn-primary" id = "copyCustomerBtn" type = "button">Copy Current Value</button>
                     </div>
                     <div class="form-group">
                         <label for="editDestinationBox">Destination</label>
-                        <input type="text" class="form-control" id="editDestinationBox" placeholder="123 Easy St, Whitestown, IN 46075"> <button class = "btn btn-primary" id = "copyDestinationBtn" type = "button">Copy</button>
+                        <input type="text" class="form-control" id="editDestinationBox" placeholder="123 Easy St, Whitestown, IN 46075"> <button class = "btn btn-primary" id = "copyDestinationBtn" type = "button">Copy Current Value</button>
                     </div>
 
                     <div class="form-group">
                         <label for="editNotesArea">Description/Notes</label>
-                        <textarea class="form-control" id="editNotesArea" rows="3"></textarea> <button class = "btn btn-primary" id = "copyNotesBtn" type = "button">Copy</button>
+                        <textarea class="form-control" id="editNotesArea" rows="3"></textarea> <button class = "btn btn-primary" id = "copyNotesBtn" type = "button">Copy Current Value</button>
                     </div>
 
                     <small id = "updateText" style = "display: none;">Updating...</small>

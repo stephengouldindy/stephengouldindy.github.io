@@ -16,6 +16,7 @@ function eventColorWorker(isLaunch) {
 	let now = new Date();
 	let events = calendar.getEvents();
 	events.forEach(function(event) {
+
 		//skip resolved events, but color them if this is the first time this has been run.
 		if (event.extendedProps.resolved == true) {
 			if (isLaunch) {
@@ -24,15 +25,20 @@ function eventColorWorker(isLaunch) {
 			}
 			return;
 		}
-		if (event.allDay) {
+		if (event.allDay === true) {
 			if (event.start.getDate() < now.getDate()) {
-				console.log("before");
 				event.setProp("backgroundColor", "red");
 				event.setProp("borderColor", "red");
 			}
 		} else {
-			if (event.end < now) {
-				console.log("end before");
+			//check for start == end case where end is set to null
+			if (event.end === null) {
+				if (event.start < now) {
+					event.setProp("backgroundColor", "red");
+					event.setProp("borderColor", "red");
+				} 
+			}
+			else if (event.end < now) {
 				event.setProp("backgroundColor", "red");
 				event.setProp("borderColor", "red");
 			}
@@ -60,8 +66,7 @@ function addCalendarEvent(change) {
                     let endHour = data.endTime.split(':')[0];
                     let endMinute = data.endTime.split(':')[1];
                     let startDate = new Date(year, month, day, startHour, startMinute);
-                    let endDate = new Date(year, month, day, endHour, endMinute);
-                    
+                    var endDate = new Date(year, month, day, endHour, endMinute);
                     
                     
                     newEvent = {
@@ -123,6 +128,6 @@ function addCalendarEvent(change) {
 /*
  * Clean up events that are older than the prefered time
  */ 
- function noCountryForOldEvents(timeLimit) {
+function noCountryForOldEvents(timeLimit) {
 
 }
