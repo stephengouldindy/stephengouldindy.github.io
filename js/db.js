@@ -5,7 +5,6 @@
 
 $(document).ready(function() {
   let today = new Date();
-  console.log(today);
   $("#calendarApplet").hide();
   $("#version").html("BETA v2.5.4");
   //hide the event form on pageload
@@ -14,7 +13,6 @@ $(document).ready(function() {
 
   firebase.auth().onAuthStateChanged(async function(user) {
   if (user) {
-    console.log(user, user.emailVerified);
     if (!user.emailVerified) {
 
       await firebase.auth().signOut().then(function() {
