@@ -5,7 +5,7 @@
 
 
 /*
- * addTicketPdfElement - Adds a PDFObject and its containing carousel element to the document
+ * addTicketPdfElement - Adds a PDFObject div and its containing carousel element to the document
  */
 function addTicketPdfElement(id) {
     var p = document.getElementById("pdfCarousel-inner");
@@ -13,5 +13,12 @@ function addTicketPdfElement(id) {
     newElement.setAttribute('class', "carousel-item");
     newElement.setAttribute('id', id);
     p.appendChild(newElement);
+
+}
+
+/*
+ * populatePdfManager - handles populating the paperwork management screen based on present PDFS
+ */
+function populatePdfManager() {
 
 }
