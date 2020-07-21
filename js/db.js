@@ -5,8 +5,8 @@
 
 $(document).ready(function() {
   let today = new Date();
-  $("#calendarApplet").hide();
-  $("#version").html("BETA v2.5.4");
+  // $("#calendarApplet").hide();
+  $("#version").html("BETA v2.5.5");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
