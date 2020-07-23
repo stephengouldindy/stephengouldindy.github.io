@@ -118,7 +118,6 @@
                         //if there are no files, we need to display nothing
                         if (info.event.extendedProps.shipTicketUrls.length == 0){
                             $("#pdfInterface").hide();
-
                         }
                         else {
                             document.getElementById("pdfCarousel-inner").firstElementChild.setAttribute("class", "carousel-item active");
@@ -193,11 +192,13 @@
                     } 
                     var shipTicketUrls = [];
                     var shipTicketRefs = [];
+                    var shipTicketNames = [];
 
                     for (var i = 0; i < shipTicketFiles.length; i++) {
                      await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
                         shipTicketUrls[i] = response.downloadURL;
                         shipTicketRefs[i] = response.ref;
+                        shipTicketNames[i] = (response.name != undefined) ? response.name : response.ref;
                     });
                  } 
                  setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
@@ -215,10 +216,9 @@
                         title: title,
                         vendorName: vendorName,
                         shipTicketUrls: shipTicketUrls,
-                        //ladingURL: ladingBillURL,
                         shipTicketRefs: shipTicketRefs,
-                        //ladingBillRef: ladingBillRef,
-                        creator: await firebase.auth().currentUser.displayName,
+                        shipTicketNames: shipTicketNames,
+                        creator: $("#currentUser").html(),
                         resolved: false
 
                     }).then(function(docRef) {
@@ -388,7 +388,7 @@
                 <label for="startTime">Arrival Window:</label>
                 <div class = "row" style = "padding-left: 20px;"><input type="time" id="startTime" name="startTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
                 <input type="time" id="endTime" name="endTime"  min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
-                <div class = "col"><button type = "button" id = "clearTimeBtn"><span id = "clearTimeBtnText">&times;</span></button></div></div>
+                <div class = "col"><button type = "button" id = "clearTimeBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
                 <small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
 
             </div>
@@ -414,7 +414,7 @@
             <div class="form-group">
                 <label for="shipTicketFileArea">Paperwork (must be .pdf)</label>
 
-               <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearFilesBtn"><span id = "clearFilesBtnText">&times;</span></button></div></div>
+               <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearFilesBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
 
             </div>
             <!--END FILE SELECTION-->
@@ -456,7 +456,7 @@
                 </button>
             </div>
             <div class="modal-body">
-              <div class = "container" id = "modalContainer">
+              <div class = "container modalContainer" >
                 <div class = "row"><b>Date: </b><b id="modalDate" style ="font-weight: normal;"></b></div>
                 <div class = "row"><b>Carrier: </b><b id="modalVendor" style ="font-weight: normal;"></b></div>
                 <div class = "row"><b>Arrival Window: </b><b id="modalTime" style ="font-weight: normal;"></b></div>
@@ -465,11 +465,12 @@
                 <div class = "row"><b>Description/Notes: </b><b id="modalComments" style ="font-weight: normal;"></b></div>
 
             </div>
-            <div id = "pdfInterface">
             <div class = "row" style = "margin-left: 5px;">
                 <h4>Shipment Paperwork</h4> 
                 <button type="button" class="btn btn-primary" id = "managePaperworkBtn">Manage</button>
             </div>
+            <div id = "pdfInterface">
+            
             <small id="pdfHelp" class="form-text text-muted>">Hover over pdf to print or download. Click arrows to switch files.</small>     
             
             <div class ="row" style="width: 100%; margin: 0 auto; height: 100%; border: solid #082a40;" >
@@ -512,7 +513,7 @@
 <!-- EDIT DATA MODAL -->
 <div class="modal" tabindex="-1" role="dialog" id= "editModal">
 
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 id = "editInfoTitle">ERROR: DID NOT FIND TITLE</h4>
@@ -522,7 +523,7 @@
                 </button>
             </div>
             <div class="modal-body">
-              <div class = "container" id = "modalContainer">
+              <div class = "container modalContainer">
 
                 <form id = "editTruckForm">
 
@@ -541,7 +542,7 @@
                             <div class = "row" style = "padding-left: 20px;">
                                 <input type="time" id="editStartTime" name="editStartTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
                             <input type="time" id="editEndTime" name="editEndTime"  min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
-                            <div class = "col"><button type = "button" id = "clearEditTimeBtn"><span id = "clearEditTimeBtnText">&times;</span></button></div>
+                            <div class = "col"><button type = "button" id = "clearEditTimeBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div>
                             </div>
                             <small id="editTimeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
                     </div>
@@ -579,5 +580,35 @@
 </div>
 </div>
 <!--END MODAL-->
+
+
+<div class="modal" tabindex="-1" role="dialog" id= "managePaperworkModal">
+
+ <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id = "managePaperworkTitle">ERROR</h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id = "closeModal">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4 style = "margin-bottom: 3px;">Existing Attachments</h4>
+                <small>Check existing paperwork to remove it from the appointment. Add files to the uploader to attach more.</small>
+              <div class = "container modalContainer" id = "fileList">
+
+              </div> 
+              <h4>Attach New</h4>
+              <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="newPaperworkFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearNewPaperworkBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
+        </div>
+        <div class="modal-footer">
+            <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes</button>
+            <button type="button" class="btn btn-danger" data-dismiss = "modal" id = "closeManagerBtn">Back</button>
+            <small id = "updatingPaperworkText" style = "display: none;">Updating...</small>
+        </div>
+    </div>
+</div>
+</div>
 
 </html>

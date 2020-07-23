@@ -6,7 +6,7 @@
 $(document).ready(function() {
   let today = new Date();
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v2.5.5");
+  $("#version").html("BETA v2.6");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -34,36 +34,32 @@ $(document).ready(function() {
 
 
   	db.collection("events").onSnapshot(snapshot => {
-    let changes = snapshot.docChanges();
-    console.log(changes);
-    changes.forEach(change => {
-        
-        if (change.type === "removed") {
-            //FIXME: find a better solution to this
-            let event = calendar.getEventById(change.doc.id);
-            event.remove();
-        }
-        else if (change.type === "modified") {
-          calendar.getEventById(change.doc.id).remove();
-          addCalendarEvent(change);
-          console.log(change);
-          //setTimeout(function() {location.reload();}, 300);
-        }
-        else if (change.type === "added") {
-            addCalendarEvent(change)
-        } //end added type
-        
-        //TODO: HANDLE DELETE AND UPDATE
-    });
-    //set all event colors based on status
-    eventColorWorker(true);
-  }); //END FIRESTORE EVENT CHANGE LISTENER
+      let changes = snapshot.docChanges();
+      console.log(changes);
+      changes.forEach(change => {
+          
+          if (change.type === "removed") {
+              let event = calendar.getEventById(change.doc.id);
+              event.remove();
+          }
+          else if (change.type === "modified") {
+            //replace event
+            calendar.getEventById(change.doc.id).remove();
+            addCalendarEvent(change);
+          }
+          else if (change.type === "added") {
+              addCalendarEvent(change)
+          } 
+          
+      });
+      //set all event colors based on status
+      eventColorWorker(true);
+    }); //END FIRESTORE EVENT CHANGE LISTENER
   	
 
-  $("#calendarApplet").fadeIn();
-  calendar.render();
+    $("#calendarApplet").fadeIn();
+    calendar.render();
 
-    // ...
   } else {
     // User is signed out.
     $("#calendarApplet").fadeOut();
@@ -120,11 +116,8 @@ $("#createAccountBtn").click(async function() {
   		console.log(user.displayName, user.email);
       user.sendEmailVerification().then(function() {
         // Email sent.
-        //alert(`A confirmation email has been sent to ${user.email}. Check your email to log in.`);
         firebase.auth().signOut().then(function() {
-        console.log("logged out");
-        alert(`Account created. Check ${user.email} for a confirmation email in order to be able to log in.`);
-          
+          alert(`Account created. Check ${user.email} for a confirmation email in order to be able to log in.`);
         }).catch(function(error) {
         // An error happened.
         });
@@ -135,14 +128,13 @@ $("#createAccountBtn").click(async function() {
 	}).catch(function(error) {
   		// An error happened.
   		console.log("displayName failed");
+      alert("An error occurred.");
       //delete user
 	});
 });
 
 $("#forgotPassword").click(function() {
-  console.log("we did it");
   var emailAddress = prompt("Enter your email:");
-
   firebase.auth().sendPasswordResetEmail(emailAddress).then(function() {
   // Email sent.
   alert(`Password reset email sent to ${emailAddress}.`)
@@ -232,21 +224,9 @@ $("#resendEmailBtn").click(async function() {
       
 }); //end resendEmailBtn
 
-/*
- * Cleans up pdf viewers on modal close so they don't accumulate.
- */
-$('#myModal').on('hidden.bs.modal', function () {
-  var p = document.getElementById("pdfCarousel-inner");
-  var child = p.lastElementChild;  
-        while (child) { 
-            p.removeChild(child); 
-            child = p.lastElementChild; 
-        } 
-});
-
 
 /*
- * Found on stack overflow.
+ * Framework found on stackoverflow.
  * Uploads the given Javascript file object. 
  * @return SUCCESS - Resolved promise containing the reference in firebase and the download URL.
  * @return FAILURE - Rejected promise which causes the form to reopen.
@@ -270,13 +250,13 @@ async function uploadTaskPromise(file) {
             },
             function complete() {
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                    resolve({downloadURL: downloadURL, ref: fileName});
+                    resolve({downloadURL: downloadURL, ref: fileName, name: file.name});
                 })
             });
     }); 
 }
 /*
- * Found on stack overflow. Generates a (extremely likely to be) unique key. If it's not, it was the fate of God. Sorry.
+ * Found on stack overflow. Generates a (extremely likely to be) unique key. If it's not, it was the fate of God. Sorry about your lost file.
  */
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

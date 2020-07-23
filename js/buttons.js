@@ -107,6 +107,9 @@ $("#incomingbtn").click(function() {
 $("#clearFilesBtn").click(function() {
 	$("#shipTicketFileArea").val("");
 });
+$("#clearNewPaperworkBtn").click(function() {
+	$("#newPaperworkFileArea").val("");
+});
 
 /*
  * Copy Original Values to Edit Fields
@@ -182,7 +185,7 @@ $("#clearTruckFormBtn").click(function() {
 	}).then(function() {
 		console.log("Document successfully updated!");
 		calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
-		calendar.getEventById(curEvent.event.id).setProp("borderColor", "green");
+		calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
 		calendar.getEventById(curEvent.event.id).setExtendedProp("resolved", true);
 		$("#myModal").modal("hide");
 	})
@@ -379,11 +382,111 @@ $("#confirmEditBtn").click(function() {
 	}
 
 });
-
+/*
+ * Initialize paperwork manager modal
+ */
 $("#managePaperworkBtn").click(function() {
-	alert("Man, wouldn't that be nice! Sorry; this hasn't been implemented yet. You'll have to delete your event and make a new one " +
-	"if you need to make paperwork changes. I will implement this no later than July 24th. - Spencer");
-})
+
+	if (curEvent.event.extendedProps.shipTicketNames != undefined) {
+		for (var i = 0; i < curEvent.event.extendedProps.shipTicketNames.length; i++) {
+            populatePdfManager(curEvent.event.extendedProps.shipTicketNames[i]);
+        }
+	} else {
+		alert("This appointment was created in an outdated version and does not support this functionality." +
+			  "If you need to edit paperwork, you'll have to recreate the event. New events will allow you to manage paperwork.");
+		return;
+	}
+	let suffixLen = 20;
+	//alert("Man, wouldn't that be nice! Sorry; this hasn't been implemented yet. You'll have to delete your event and make a new one " +
+	//"if you need to make paperwork changes. I will implement this no later than July 24th. - Spencer");
+	$("#managePaperworkTitle").html(`Managing Paperwork for ${$("#modalTitle").html().substring(0, $("#modalTitle").html().length - suffixLen)}`);
+	$("#myModal").modal("hide");
+	$("#managePaperworkModal").modal("show");
+
+});
+
+$("#closeManagerBtn").click(function() {
+	$("#myModal").modal("show");
+});
+
+$("#paperworkUpdateBtn").click(async function() {
+	$("#updatingPaperworkText").show();
+	document.getElementById("paperworkUpdateBtn").disabled = true;
+	//document.getElementById("paperworkUpdateBtn").disabled = true;
+	//determine which boxes are unchecked
+	var list = document.getElementById("fileList");
+	var children = list.children;
+	var removed = [];
+	var origURLs = [...curEvent.event.extendedProps.shipTicketUrls];
+	var origRefs = [...curEvent.event.extendedProps.shipTicketRefs];
+	var origNames = [...curEvent.event.extendedProps.shipTicketNames];
+	for (var i = children.length - 1; i >= 0; i--) {
+		var child = children[i];
+	    console.log(child.lastElementChild.checked);
+	    if (child.lastElementChild.checked) {
+	    	console.log(i);
+	    	//add to list of files to remove
+	    	removed.push(origRefs[i]);
+	    	origURLs.splice(i, 1);
+	    	origRefs.splice(i, 1);
+	    	origNames.splice(i, 1);
+
+	    }
+	}
+	let shipTicketFiles = document.getElementById('newPaperworkFileArea').files;
+    //confirm all file types are ok before uploading any
+    for (var i = 0; i < shipTicketFiles.length; i++) {
+        if (shipTicketFiles[i].type != "application/pdf") {
+            alert('Uploaded files must be saved as PDF.');
+            //$("#uploadNewText").hide();
+            $("#updatingPaperworkText").hide();
+            document.getElementById("paperworkUpdateBtn").disabled = false;
+            return;
+        }
+    } 
+    //upload files
+    for (var i = 0; i < shipTicketFiles.length; i++) {
+    	await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
+            origURLs.push(response.downloadURL);
+            origRefs.push(response.ref);
+            origNames.push((response.name != undefined) ? response.name : response.ref);
+        });
+    };
+   
+ 	//alert(`To be removed: ${removed}... To be added: ${orig}`);
+
+ 		let eventId = $("#eventId").html();
+		let curEventRef = db.collection("events").doc(eventId);
+		return curEventRef.update({shipTicketRefs: origRefs, shipTicketNames: origNames, shipTicketUrls: origURLs})
+		.then(function() {
+    		console.log("Document successfully updated!");
+    		//calendar eventWorker will handle the frontend changes.
+    		removed.forEach((shipFile) => {
+            	let shipRef = storageRef.child(shipFile);
+            		shipRef.delete().then(function() {
+              		// File deleted successfully
+              		console.log("file deleted");
+          		}).catch(function(error) {
+		          	alert(`Something went wrong: ${error}. Please try again.`);
+		          	return;
+		      	});
+      		});
+      		$("#updatingPaperworkText").hide();
+      		$("#managePaperworkModal").modal("hide");
+      		document.getElementById("paperworkUpdateBtn").disabled = false;
+      		$("#clearNewPaperworkBtn").click();
+      		alert("Paperwork updated.");
+
+		})
+		.catch(function(error) {
+	    	// The document probably doesn't exist.
+	    	console.error("Error updating document: ", error);
+		});
+	//firebase handler will handle updating the calendar if we just update the database
+	//update the file arrays
+
+});
+
 
 //delete file on click
 $("#deleteShipmentBtn").click(function() {
@@ -397,14 +500,14 @@ $("#deleteShipmentBtn").click(function() {
             shipFiles = doc.data().shipTicketRefs;
             shipFiles.forEach((shipFile) => {
             	let shipRef = storageRef.child(shipFile);
-            	shipRef.delete().then(function() {
-              // File deleted successfully
-              console.log("file deleted");
-          }).catch(function(error) {
-          	alert(`Something went wrong: ${error}. Please try again.`);
-          	return;
-          });
-      });
+            		shipRef.delete().then(function() {
+              		// File deleted successfully
+              		console.log("file deleted");
+          		}).catch(function(error) {
+		          	alert(`Something went wrong: ${error}. Please try again.`);
+		          	return;
+		      	});
+      		});
         //hide the modal
         $("#myModal").modal("hide");
 

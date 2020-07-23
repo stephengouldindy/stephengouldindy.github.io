@@ -21,7 +21,7 @@ function eventColorWorker(isLaunch) {
 		if (event.extendedProps.resolved == true) {
 			if (isLaunch) {
 				event.setProp("backgroundColor", "green");
-				event.setProp("borderColor", "green");
+				event.setProp("borderColor", "white");
 			}
 			return;
 		}
@@ -90,6 +90,9 @@ function addCalendarEvent(change) {
                           comments: data.notes,
                           docId: change.doc.id,
                           shipTicketUrls: data.shipTicketUrls,
+                          shipTicketRefs: data.shipTicketRefs,
+                          shipTicketNames: data.shipTicketNames,
+                          ////
                           creator: data.creator,
                           resolved: data.resolved
                     }; //newEvent
@@ -115,6 +118,9 @@ function addCalendarEvent(change) {
                         comments: data.notes,
                         docId: change.doc.id,
                         shipTicketUrls: data.shipTicketUrls,
+                        shipTicketRefs: data.shipTicketRefs,
+                        shipTicketNames: data.shipTicketNames,
+                          ////
                         creator: data.creator,
                         resolved: data.resolved
                     }; //newEvent
@@ -129,5 +135,6 @@ function addCalendarEvent(change) {
  * Clean up events that are older than the prefered time
  */ 
 function noCountryForOldEvents(timeLimit) {
+  //current time limit is 1 month.
 
 }

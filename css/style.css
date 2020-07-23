@@ -10,6 +10,7 @@
 }	
 
 #hamburger {
+	padding: 3px;
 	padding-left: 5px;
 	height: 100%;
 	display: none;
@@ -18,7 +19,7 @@
 	filter: brightness(150%) !important;
 }
 button:hover {
-	/*filter: brightness(125%);*/
+	filter: brightness(90%);
 }
 
 #blueLogo {
@@ -106,6 +107,7 @@ button:hover {
 	line-height: 0px;
 }
 #calendar {
+
 }
 #calendar > * > * {
 	z-index: 0;
@@ -114,13 +116,12 @@ button:hover {
 	border: solid #F24E1B !important;
 	border-radius: 25px;
 	background-color: white;
-	margin-top: 60px;
-	margin-bottom: 60px;
+	margin-top: 8vh;
+	margin-bottom: 5vh;
 	margin-right: auto;
 	margin-left: auto;
 	display: none;
 	height: 80%;
-	padding-bottom: 5px;
 	width: 95% !important;
 	max-width: 100% !important;
 
@@ -131,7 +132,7 @@ button:hover {
 }
 
 
-#modalContainer {
+.modalContainer {
 	border-top: 1px solid rgba(0,0,0,.25);
 	border-bottom: 1px solid rgba(0,0,0,.25);
 	padding-top: 5px !important;
@@ -381,17 +382,17 @@ footer > * {
 	border-right-color: #F24E1B !important;
 }
 
-#shipTicketFileArea {
+#shipTicketFileArea, #newPaperworkFileArea {
 	outline: dashed grey;
 	margin-left: 20px;
 	background-color: lightgrey;
 }
 
-#clearFilesBtnText, #clearTimeBtnText, #clearEditTimeBtnText {
+.xButtonText {
 	line-height: 0px;
 	height: 1.7px;
 }
-#clearFilesBtn, #clearTimeBtn, #clearEditTimeBtn {
+.xButton {
 	padding: 0 auto;
 	color: white;
 	background-color: #F24E1B;
