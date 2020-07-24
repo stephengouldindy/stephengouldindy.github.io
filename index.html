@@ -90,7 +90,8 @@
              
                     }, //end dateClick
                     eventClick: function(info) {
-                        console.log(info);
+                        //console.log(document.getElementById("modalComments").style.overflow);
+
                         curEvent = info;
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
@@ -135,7 +136,20 @@
                             document.getElementById("resolveShipmentBtn").disabled = false;
                             $("#resolveShipmentBtn").html("Mark as Resolved");
                         }
+                        let element = document.getElementById("infoModalContainer");
+                        
                         $("#myModal").modal("show");
+                        console.log(element.offsetHeight, element.scrollHeight);
+                        if (element.offsetHeight < element.scrollHeight ||
+                            element.offsetWidth < element.scrollWidth) {
+                            // your element have overflow
+                            $("#infoModalContainer").css("border-bottom-color", "red");
+                            $("#infoModalContainer").css("border-bottom-width", "3px");
+                        } else {
+                            // your element doesn't have overflow
+                            $("#infoModalContainer").css("border-bottom-color", "lightgrey");
+                            $("#infoModalContainer").css("border-bottom-width", "1px");
+                        }
                         
                     }
                     
@@ -374,7 +388,7 @@
         <div id = "calendar"> </div>
         <button id = "arrowContainerBtn"><div id = "formArrow"></div></button>
         <div class = "container" id = "formcontainer">
-            <div><button type = "reset" class = "btn btn-danger" id = "clearTruckFormBtn" style = "width: 100%;">Reset Form</button></div>
+            <div><button type = "reset" class = "btn btn-danger" id = "clearTruckFormBtn">Reset Form</button></div>
             <div id = "dateAlert" class="alert alert-primary" role="alert">
                 Date Alert
             </div>

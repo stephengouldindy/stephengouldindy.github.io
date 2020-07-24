@@ -25,6 +25,7 @@ button {
 }
 button:hover {
 	filter: brightness(90%);
+
 }
 
 #blueLogo {

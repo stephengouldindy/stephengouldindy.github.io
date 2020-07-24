@@ -2,7 +2,20 @@
  * pageWorker.js - dynamic DOM elements controller
  */
 
+//if 
+$('#infoModalContainer').on('scroll', function() {
+    console.log("scrolled");
+    let PADDING = 5;
+        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - PADDING) {
+            $("#infoModalContainer").css("border-bottom-color", "grey");
+            $("#infoModalContainer").css("border-bottom-width", "1px");
 
+        }
+        else {
+          $("#infoModalContainer").css("border-bottom-color", "red");
+          $("#infoModalContainer").css("border-bottom-width", "3px");
+        } 
+})
 
 /*
  * addTicketPdfElement - Adds a PDFObject div and its containing carousel element to the document
