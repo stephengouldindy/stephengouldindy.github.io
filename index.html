@@ -107,15 +107,16 @@
                             $("#modalTime").html(" No time specified.");
                         }
                         $("#modalDestination").html(`${info.event.extendedProps.destination}`);
-                        $("#modalComments").html(`${info.event.extendedProps.comments}`);
+                        $("#modalComments").html(`${info.event.extendedProps.comments.replace(/\n/g, "<br>")}`);
                         $("#eventId").html(info.event.extendedProps.docId);
                         $("#creator").html(`Scheduled by: ${info.event.extendedProps.creator}`);
                         //dynamically add pdf containers and embed accordingly
                         for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
+                            //If paperwork present, create a pdf container and associate it with the respective PDF url
                             addTicketPdfElement(`shipTicketPdfContainer${i}`);
                             PDFObject.embed(info.event.extendedProps.shipTicketUrls[i], `#shipTicketPdfContainer${i}`);
                         }
-                        //if there are no files, we need to display nothing
+                        //if there are no files, display nothing
                         if (info.event.extendedProps.shipTicketUrls.length == 0){
                             $("#pdfInterface").hide();
                         }
@@ -273,7 +274,7 @@
       var storageRef = firebase.storage().ref();
 
    </script>
-
+<!--End Calendar Framework-->
 </head>
 
 <body>
@@ -376,6 +377,7 @@
             <div id = "dateAlert" class="alert alert-primary" role="alert">
                 Date Alert
             </div>
+            <button type = "reset" class = "btn btn-danger" id = "clearTruckFormBtn">Reset Form</button>
             <form id = "newTruckForm">
                 <div class="form-group">
                  <div class="btn-group" role="group">
@@ -427,7 +429,7 @@
             </div>
 
             <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment</button>
-            <button type = "reset" class = "btn btn-danger" id = "clearTruckFormBtn">Reset Form</button>
+            
             <small id = "uploadText" style = "display: none;">Uploading...</small>
         </form>
     </div>
@@ -456,13 +458,13 @@
                 </button>
             </div>
             <div class="modal-body">
-              <div class = "container modalContainer" >
-                <div class = "row"><b>Date: </b><b id="modalDate" style ="font-weight: normal;"></b></div>
-                <div class = "row"><b>Carrier: </b><b id="modalVendor" style ="font-weight: normal;"></b></div>
-                <div class = "row"><b>Arrival Window: </b><b id="modalTime" style ="font-weight: normal;"></b></div>
-                <div class = "row"><b>Customer Name: </b><b id="modalCustomer" style ="font-weight: normal;"></b></div>
-                <div class = "row"><b>Destination Address: </b><b id="modalDestination" style ="font-weight: normal;"></b></div>
-                <div class = "row"><b>Description/Notes: </b><b id="modalComments" style ="font-weight: normal;"></b></div>
+              <div class = "container modalContainer" id = "infoModalContainer">
+                <div class = "row"><b class = "eventDataItem">Date: </b><text id="modalDate" ></text></div>
+                <div class = "row"><b class = "eventDataItem">Carrier: </b><text id="modalVendor" ></text></div>
+                <div class = "row"><b class = "eventDataItem">Arrival Window: </b><text id="modalTime" ></text></div>
+                <div class = "row"><b class = "eventDataItem">Customer Name: </b><text id="modalCustomer" ></text></div>
+                <div class = "row"><b class = "eventDataItem">Destination Address: </b><text id="modalDestination" ></text></div>
+                <div class = "row"><b class = "eventDataItem">Description/Notes: </b><text id="modalComments" ></text></div>
 
             </div>
             <div class = "row" style = "margin-left: 5px;">

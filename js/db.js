@@ -13,8 +13,9 @@ $(document).ready(function() {
 
   firebase.auth().onAuthStateChanged(async function(user) {
   if (user) {
+    console.log("logged in");
     if (!user.emailVerified) {
-
+      //TOOD: If user logs in without emailVerification, 
       await firebase.auth().signOut().then(function() {
         console.log("logged out");
           

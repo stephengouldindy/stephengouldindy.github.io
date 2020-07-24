@@ -10,7 +10,7 @@ $(document).ready(function() {
 //mark events that are past their end time
 
 /*
- *	Marks events with their proper colors. Only colors 
+ *	Marks events with their proper colors. Only colors. Runs on applet launch, then once every minute.
  */
 function eventColorWorker(isLaunch) {
 	let now = new Date();
@@ -31,7 +31,7 @@ function eventColorWorker(isLaunch) {
 				event.setProp("borderColor", "red");
 			}
 		} else {
-			//check for start == end case where end is set to null
+			//check for start == end case where end is set to null. FullCalendar quirk
 			if (event.end === null) {
 				if (event.start < now) {
 					event.setProp("backgroundColor", "red");
@@ -68,7 +68,7 @@ function addCalendarEvent(change) {
                     let startDate = new Date(year, month, day, startHour, startMinute);
                     var endDate = new Date(year, month, day, endHour, endMinute);
                     
-                    
+                    //newEvent that has a start and end
                     newEvent = {
                           title: prefix + data.title,
                           vendorName: data.vendorName,
@@ -92,11 +92,12 @@ function addCalendarEvent(change) {
                           shipTicketUrls: data.shipTicketUrls,
                           shipTicketRefs: data.shipTicketRefs,
                           shipTicketNames: data.shipTicketNames,
-                          ////
                           creator: data.creator,
                           resolved: data.resolved
-                    }; //newEvent
-                } else {
+
+                    }; 
+
+                } else /* allDay new event */{
                     let dateObj = new Date(year, month, day);
                     newEvent = {
                         title: prefix + data.title,
@@ -120,7 +121,6 @@ function addCalendarEvent(change) {
                         shipTicketUrls: data.shipTicketUrls,
                         shipTicketRefs: data.shipTicketRefs,
                         shipTicketNames: data.shipTicketNames,
-                          ////
                         creator: data.creator,
                         resolved: data.resolved
                     }; //newEvent

@@ -1,6 +1,11 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
 
+BETA 2.7
+	- Resolving a shipment now includes data about who did it/when it was resolved and gives the option to make a note about it when
+	  it has been resolved
+	- Added support for multiple lines in notes (previously did not format as expected)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.6
 	- Added ability to remove and add paperwork to an existing appointents. This means are now fully editable...
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

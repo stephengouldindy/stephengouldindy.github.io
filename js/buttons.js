@@ -179,10 +179,23 @@ $("#clearTruckFormBtn").click(function() {
 	if (!confirm(`Please confirm you would like to mark truck from ${curEvent.event.title} for ${curEvent.event.extendedProps.customerName} as resolved.`)) {
 		return;
 	}
+	let response = prompt("If you would like to associate any relevant notes with the appointment, you may enter them below.");
+	var notesWrapper = {}
+	let now = new Date();
+	if (response.trim().length > 0) {
+		notesWrapper.notes = `RESOLVED by ${$("#currentUser").html()}, ${now.toDateString()} ${now.toLocaleTimeString()}.<br>Resolve Notes: ${response}\n${$("#modalComments").html()}`;
+	}
+	else {
+		notesWrapper.notes = `RESOLVED by ${$("#currentUser").html()}, ${now.toDateString()} ${now.toLocaleTimeString()}.<br>${$("#modalComments").html()}`;
+	}
+	var changesWrapper = {};
+	var resolveWrapper = {resolved: true};
+	
+	let changes = Object.assign(changesWrapper, notesWrapper, resolveWrapper);
+
 	var eventRef = db.collection("events").doc($("#eventId").html());
-	return eventRef.update({
-		resolved: true
-	}).then(function() {
+	console.log(changes);
+	return eventRef.update(changes).then(function() {
 		console.log("Document successfully updated!");
 		calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
 		calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
@@ -217,7 +230,7 @@ $("#clearTruckFormBtn").click(function() {
 	let vendorName = $("#modalVendor").html();
 	let customerName = $("#modalCustomer").html();
 	let destination = $("#modalDestination").html();
-	let notes = $("#modalComments").html();
+	let notes = $("#modalComments").html().replace(/<br>/g, "\r\n");
 
   	//set time to either empty or its value
 	if (end != undefined) {
@@ -348,7 +361,9 @@ $("#confirmEditBtn").click(function() {
 		destinationChange.destination = $("#editDestinationBox").val();
 	}
 	if ($("#editNotesArea").val() != "") {
-		notesChange.notes = $("#editNotesArea").val();
+		let result  = $("#editNotesArea").val().replace(/\n/g, "<br>");
+		console.log(result, $("#editNotesArea").val().indexOf("\n"));
+		notesChange.notes = result;
 	}
 
 	//wrap any changes into 
@@ -397,8 +412,6 @@ $("#managePaperworkBtn").click(function() {
 		return;
 	}
 	let suffixLen = 20;
-	//alert("Man, wouldn't that be nice! Sorry; this hasn't been implemented yet. You'll have to delete your event and make a new one " +
-	//"if you need to make paperwork changes. I will implement this no later than July 24th. - Spencer");
 	$("#managePaperworkTitle").html(`Managing Paperwork for ${$("#modalTitle").html().substring(0, $("#modalTitle").html().length - suffixLen)}`);
 	$("#myModal").modal("hide");
 	$("#managePaperworkModal").modal("show");
@@ -482,9 +495,7 @@ $("#paperworkUpdateBtn").click(async function() {
 	    	// The document probably doesn't exist.
 	    	console.error("Error updating document: ", error);
 		});
-	//firebase handler will handle updating the calendar if we just update the database
-	//update the file arrays
-
+		//frontend snapshot handler will handle updating the calendar if we just update the database
 });
 
 
@@ -502,7 +513,7 @@ $("#deleteShipmentBtn").click(function() {
             	let shipRef = storageRef.child(shipFile);
             		shipRef.delete().then(function() {
               		// File deleted successfully
-              		console.log("file deleted");
+              		console.log(`${shipFile} deleted`);
           		}).catch(function(error) {
 		          	alert(`Something went wrong: ${error}. Please try again.`);
 		          	return;

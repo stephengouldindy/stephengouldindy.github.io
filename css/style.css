@@ -1,4 +1,6 @@
+button {
 
+}
 .container {
 	word-wrap: break-word;
 	word-break: break-all;
@@ -8,7 +10,10 @@
  	padding-left: 20px;
  	overflow: auto;
 }	
-
+#modalComments {
+	word-break: break-word;
+	word-wrap: break-word;
+}
 #hamburger {
 	padding: 3px;
 	padding-left: 5px;
@@ -38,6 +43,9 @@ button:hover {
 	background-color: #F24E1B !important;
 	border-color: transparent;
 	color: white;
+}
+.eventDataItem {
+	padding-right: 3px;
 }
 
 #clearTruckFormBtn {
@@ -138,6 +146,9 @@ button:hover {
 	padding-top: 5px !important;
 	padding-bottom: 5px !important; 
 }
+#infoModalContainer {
+	max-height: 30vh;
+}
 .fc-event-container:hover {
 	cursor: pointer;
 }
@@ -150,7 +161,6 @@ div {
 
 
 #modal-body {
-	height: 900px;
 }
 
 #formcontainer {
