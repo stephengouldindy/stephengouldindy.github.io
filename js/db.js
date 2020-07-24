@@ -6,7 +6,7 @@
 $(document).ready(function() {
   let today = new Date();
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v2.6");
+  $("#version").html("BETA v2.7");
   //hide the event form on pageload
   $("#formcontainer").hide();
 
@@ -15,7 +15,7 @@ $(document).ready(function() {
   if (user) {
     console.log("logged in");
     if (!user.emailVerified) {
-      //TOOD: If user logs in without emailVerification, 
+      //TOOD: If user logs in without emailVerification, get a log
       await firebase.auth().signOut().then(function() {
         console.log("logged out");
           

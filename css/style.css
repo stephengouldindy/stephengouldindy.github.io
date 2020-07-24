@@ -49,7 +49,8 @@ button:hover {
 }
 
 #clearTruckFormBtn {
-	float: right;
+	width: 100%;
+	margin-bottom: 1vh;
 }
 #arrowContainerBtn {
 	margin-top: .5rem;
