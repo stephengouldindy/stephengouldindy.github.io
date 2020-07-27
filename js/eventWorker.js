@@ -26,7 +26,8 @@ function eventColorWorker(isLaunch) {
 			return;
 		}
 		if (event.allDay === true) {
-			if (event.start.getDate() < now.getDate()) {
+			if (event.start < now && event.start.getDate() < now.getDate()) {
+        
 				event.setProp("backgroundColor", "red");
 				event.setProp("borderColor", "red");
 			}

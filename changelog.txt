@@ -3,6 +3,7 @@ Developed by Spencer Douglas for use by Stephen Gould Indianapolis
 
 BETA 2.7.1
 	- Added basic scroll visual cue
+	- Fixed bug with event colorer
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.7
 	- Resolving a shipment now includes data about who did it/when it was resolved and gives the option to make a note about it when

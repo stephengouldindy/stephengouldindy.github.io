@@ -4,7 +4,6 @@
 
 //if 
 $('#infoModalContainer').on('scroll', function() {
-    console.log("scrolled");
     let PADDING = 5;
         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - PADDING) {
             $("#infoModalContainer").css("border-bottom-color", "grey");
