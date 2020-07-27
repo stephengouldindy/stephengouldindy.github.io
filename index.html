@@ -113,7 +113,6 @@
                         $("#modalDestination").html(`${info.event.extendedProps.destination}`);
                         $("#modalComments").html(`${info.event.extendedProps.comments.replace(/\n/g, "<br>")}`);
                         $("#eventId").html(info.event.extendedProps.docId);
-                        $("#creator").html(`Scheduled by: ${info.event.extendedProps.creator}`);
 
                         let historyContent = (info.event.extendedProps.history == undefined ? 
                             "No history yet. Any new changes made will still be recorded." : `<ul>${info.event.extendedProps.history}</ul>`)
@@ -241,7 +240,6 @@
                         shipTicketUrls: shipTicketUrls,
                         shipTicketRefs: shipTicketRefs,
                         shipTicketNames: shipTicketNames,
-                        creator: $("#currentUser").html(),
                         resolved: false,
                         history: `<li>${$("#currentUser").html()} created - ${nowStr}</li>`
 
@@ -522,10 +520,9 @@
         </div>
         </div>
         <div class="modal-footer">
-            <button id = "eventHistoryBtn" type="button" class="btn btn-secondary" data-html = "true" data-container="body" data-toggle="popover" data-placement="right" data-content="HISTORY ERROR. TELL SPENCER.">
+            <button id = "eventHistoryBtn" type="button" class="btn btn-secondary" data-html = "true" data-container="body" data-toggle="popover" data-placement="left" data-content="HISTORY ERROR. TELL SPENCER.">
             i
             </button>
-            <small id = "creator" style = "text-align: left;">Truck Scheduled by: </small>
             <small id="eventId" style = "display: none;"> Event ID Error</small>
             <button type="button" class="btn btn-success" id = "resolveShipmentBtn">Mark as Resolved</button>
             <button type="button" class="btn btn-primary" id = "editInfoBtn" href = "#editModal">Edit Info</button>

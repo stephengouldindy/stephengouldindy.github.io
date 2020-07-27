@@ -93,7 +93,6 @@ function addCalendarEvent(change) {
                           shipTicketUrls: data.shipTicketUrls,
                           shipTicketRefs: data.shipTicketRefs,
                           shipTicketNames: data.shipTicketNames,
-                          creator: data.creator,
                           resolved: data.resolved,
                           history: data.history
 
@@ -123,7 +122,6 @@ function addCalendarEvent(change) {
                         shipTicketUrls: data.shipTicketUrls,
                         shipTicketRefs: data.shipTicketRefs,
                         shipTicketNames: data.shipTicketNames,
-                        creator: data.creator,
                         resolved: data.resolved,
                         history: data.history
                     }; //newEvent
