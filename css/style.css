@@ -279,6 +279,8 @@ small {
 	padding-top: .75em;
 	padding-bottom: .75em;
 	font-size: 12px;
+	background-color: #F24E1B;
+	border-color: #F24E1B;
 }
 
 .centered-container {

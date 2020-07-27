@@ -1,6 +1,16 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
 
+BETA 2.8.1
+	- Hotfixes
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+BETA 2.8
+	- Added event history--when a user creates, reschedules, resolves, or edits a truck appointment/its paperwork, 
+	  it is recorded in the event history with the user, action, and time
+	- Added visual cue for editing screen submission
+	- Fixed visual issue with info titles
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 BETA 2.8
 	- Added event history--when a user creates, reschedules, resolves, or edits a truck appointment/its paperwork, 
 	  it is recorded in the event history with the user, action, and time

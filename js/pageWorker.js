@@ -8,7 +8,7 @@
 $('#infoModalContainer').on('scroll', function() {
     let PADDING = 5;
         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - PADDING) {
-            $("#infoModalContainer").css("border-bottom-color", "grey");
+            $("#infoModalContainer").css("border-bottom-color", "rgba(0,0,0,.25)");
             $("#infoModalContainer").css("border-bottom-width", "1px");
 
         }

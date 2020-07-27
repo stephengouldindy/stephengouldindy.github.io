@@ -94,36 +94,36 @@ $("#incomingbtn").click(function() {
  	}
  });
 
-$("#clearFilesBtn").click(function() {
-	$("#shipTicketFileArea").val("");
-});
-$("#clearNewPaperworkBtn").click(function() {
-	$("#newPaperworkFileArea").val("");
-});
+ $("#clearFilesBtn").click(function() {
+ 	$("#shipTicketFileArea").val("");
+ });
+ $("#clearNewPaperworkBtn").click(function() {
+ 	$("#newPaperworkFileArea").val("");
+ });
 
 /*
  * Copy Original Values to Edit Fields
  */
 
-$("#copyTitleBtn").click(function() {
-$("#editTitleBox").val($("#editTitleBox").attr("placeholder"));
-});
+ $("#copyTitleBtn").click(function() {
+ 	$("#editTitleBox").val($("#editTitleBox").attr("placeholder"));
+ });
 
-$("#copyVendorBtn").click(function() {
-$("#editVendorBox").val($("#editVendorBox").attr("placeholder"));
-});
+ $("#copyVendorBtn").click(function() {
+ 	$("#editVendorBox").val($("#editVendorBox").attr("placeholder"));
+ });
 
-$("#copyCustomerBtn").click(function() {
-$("#editCustomerBox").val($("#editCustomerBox").attr("placeholder"));
-});
+ $("#copyCustomerBtn").click(function() {
+ 	$("#editCustomerBox").val($("#editCustomerBox").attr("placeholder"));
+ });
 
-$("#copyDestinationBtn").click(function() {
-$("#editDestinationBox").val($("#editDestinationBox").attr("placeholder"));
-});
+ $("#copyDestinationBtn").click(function() {
+ 	$("#editDestinationBox").val($("#editDestinationBox").attr("placeholder"));
+ });
 
-$("#copyNotesBtn").click(function() {
-$("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
-});
+ $("#copyNotesBtn").click(function() {
+ 	$("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
+ });
 
 /*
  * Confirm exit of edit dialog and clear fields
@@ -136,10 +136,10 @@ $("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
  	else {
  		$("#editTitleBox").val("");
  		$("#editVendorBox").val("");
-		$("#editCustomerBox").val("");
-		$("#editDestinationBox").val("");
-		$("#editNotesArea").val("");
-		$("#editModal").modal("hide");
+ 		$("#editCustomerBox").val("");
+ 		$("#editDestinationBox").val("");
+ 		$("#editNotesArea").val("");
+ 		$("#editModal").modal("hide");
 
  	}
  });
@@ -158,10 +158,10 @@ $("#editNotesArea").val($("#editNotesArea").attr("placeholder"));
  	$("#editEndTime").val("");
  });
 
-$("#clearTruckFormBtn").click(function() {
-	$("#newTruckForm").trigger('reset');
-	$("#outgoingbtn").click(); 
-});
+ $("#clearTruckFormBtn").click(function() {
+ 	$("#newTruckForm").trigger('reset');
+ 	$("#outgoingbtn").click(); 
+ });
 
 
  $("#resolveShipmentBtn").click(function() {
@@ -173,7 +173,7 @@ $("#clearTruckFormBtn").click(function() {
 	var notesWrapper = {}
 	let now = new Date();
 	if (response.trim().length > 0) {
-		notesWrapper.notes = `}.<br>Resolve Notes: ${response}\n${$("#modalComments").html()}`;
+		notesWrapper.notes = `Resolve Notes: ${response}\n${$("#modalComments").html()}`;
 	}
 	var changesWrapper = {};
 	var oldHistory = curEvent.event.extendedProps.history;
@@ -181,23 +181,23 @@ $("#clearTruckFormBtn").click(function() {
 		oldHistory = "";
 	}
 	var resolveWrapper = {resolved: true, 
-						  history: `<li>${$("#currentUser").html()} marked resolved - ${now.toDateString()} ${now.toLocaleTimeString()}</li>` + oldHistory};
-	let changes = Object.assign(changesWrapper, notesWrapper, resolveWrapper);
+		history: `<li>${$("#currentUser").html()} marked resolved - ${now.toDateString()} ${now.toLocaleTimeString()}</li>` + oldHistory};
+		let changes = Object.assign(changesWrapper, notesWrapper, resolveWrapper);
 
-	var eventRef = db.collection("events").doc($("#eventId").html());
-	console.log(changes);
-	return eventRef.update(changes).then(function() {
-		console.log("Document successfully updated!");
-		calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
-		calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
-		calendar.getEventById(curEvent.event.id).setExtendedProp("resolved", true);
-		$("#myModal").modal("hide");
-	})
-	.catch(function(error) {
+		var eventRef = db.collection("events").doc($("#eventId").html());
+		console.log(changes);
+		return eventRef.update(changes).then(function() {
+			console.log("Document successfully updated!");
+			calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
+			calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
+			calendar.getEventById(curEvent.event.id).setExtendedProp("resolved", true);
+			$("#myModal").modal("hide");
+		})
+		.catch(function(error) {
 	    // The document probably doesn't exist.
 	    console.error("Error updating document: ", error);
 	});
-});
+	});
 
 
 
@@ -208,14 +208,14 @@ $("#clearTruckFormBtn").click(function() {
   	//TODO: UPDATE THE BUTTON BASED ON WHICH IS SELECTED 
   	let dateStr = $("#modalDate").html();
   	let date = new Date(dateStr);
-	let arrivalWindow =  $("#modalTime").html().split("-");
-	let start = arrivalWindow[0];
-	let end = arrivalWindow[1];
-	let fullTitle = $("#modalTitle").html();
-	let typeLen = 16;
-	let spacerLen = 3;
-	let type = fullTitle.substring(fullTitle.length - 1 - typeLen);
-	let title = fullTitle.substring(0, fullTitle.length - 1 - typeLen - spacerLen);
+  	let arrivalWindow =  $("#modalTime").html().split("-");
+  	let start = arrivalWindow[0];
+  	let end = arrivalWindow[1];
+  	let fullTitle = $("#modalTitle").html();
+  	let typeLen = 16;
+  	let spacerLen = 3;
+  	let type = fullTitle.substring(fullTitle.length - 1 - typeLen);
+  	let title = fullTitle.substring(0, fullTitle.length - 1 - typeLen - spacerLen);
 	//let type = titleArr[1];
 	//let title = titleArr[0];
 	let vendorName = $("#modalVendor").html();
@@ -224,14 +224,14 @@ $("#clearTruckFormBtn").click(function() {
 	let notes = $("#modalComments").html().replace(/<br>/g, "\r\n");
 
   	//set time to either empty or its value
-	if (end != undefined) {
-		$("#editStartTime").val(start);
-		$("#editEndTime").val(end);
-	}
-	else {
-		$("#editStartTime").val("");
-		$("#editEndTime").val("");
-	}
+  	if (end != undefined) {
+  		$("#editStartTime").val(start);
+  		$("#editEndTime").val(end);
+  	}
+  	else {
+  		$("#editStartTime").val("");
+  		$("#editEndTime").val("");
+  	}
 	//adjust date components with leading zeroes if necessary
 	let dateMonth = `${date.getMonth() + 1}`;
 	if (dateMonth.length == 1) {
@@ -259,7 +259,7 @@ $("#clearTruckFormBtn").click(function() {
 	$("#editNotesArea").attr("placeholder", notes);
 	$("#myModal").modal("hide");
 	$("#editTitleBox").val("");
-    $("#editVendorBox").val("");
+	$("#editVendorBox").val("");
 	$("#editCustomerBox").val("");
 	$("#editDestinationBox").val("");
 	$("#editNotesArea").val("");
@@ -269,7 +269,7 @@ $("#clearTruckFormBtn").click(function() {
 /*
  * Wraps any changes detected and attempts to push them out
  */
-$("#confirmEditBtn").click(function() {
+ $("#confirmEditBtn").click(function() {
 	//determine which inputs have a change include and compile them into a changes object to be pushed to database
 	document.getElementById("paperworkUpdateBtn").disabled = true;
 	$("#updatingEventText").show();
@@ -386,17 +386,17 @@ $("#confirmEditBtn").click(function() {
 	//wrap any changes into simple object
 	var changeWrapper = {};
 	var changes = Object.assign(changeWrapper, 
-								isOutgoingChange, 
-								dateChange,
-								startTimeChange,
-								endTimeChange,
-								allDayChange,
-								titleChange,
-								vendorChange,
-								customerChange,
-								destinationChange,
-								notesChange, 
-								historyChange);
+		isOutgoingChange, 
+		dateChange,
+		startTimeChange,
+		endTimeChange,
+		allDayChange,
+		titleChange,
+		vendorChange,
+		customerChange,
+		destinationChange,
+		notesChange, 
+		historyChange);
 	console.log(changes);
 	//update history accordingly (X edited, X rescheduled)
 
@@ -407,48 +407,48 @@ $("#confirmEditBtn").click(function() {
 		.then(function() {
 			document.getElementById("paperworkUpdateBtn").disabled = false;
 			$("#updatingEventText").hide();
-    		console.log("Document successfully updated!");
+			console.log("Document successfully updated!");
     		//calendar eventWorker will handle the frontend changes.
-			$("#editModal").modal("hide");
+    		$("#editModal").modal("hide");
 
-		})
+    	})
 		.catch(function(error) {
 	    	// The document probably doesn't exist.
 	    	document.getElementById("paperworkUpdateBtn").disabled = false;
-			$("#updatingEventText").hide();
+	    	$("#updatingEventText").hide();
 	    	alert(`Error updating document: ${error}. Check your connection and try again.`);
-		});
+	    });
 	}
 
 });
 /*
  * Initialize paperwork manager modal
  */
-$("#managePaperworkBtn").click(function() {
+ $("#managePaperworkBtn").click(function() {
 
-	if (curEvent.event.extendedProps.shipTicketNames != undefined) {
-		for (var i = 0; i < curEvent.event.extendedProps.shipTicketNames.length; i++) {
-            populatePdfManager(curEvent.event.extendedProps.shipTicketNames[i]);
-        }
-	} else {
-		alert("This appointment was created in an outdated version and does not support this functionality. " +
-			  "If you need to edit paperwork, you'll have to recreate the event. New events will allow you to manage paperwork.");
-		return;
-	}
-	let suffixLen = 20;
-	$("#managePaperworkTitle").html(`Managing Paperwork for ${$("#modalTitle").html().substring(0, $("#modalTitle").html().length - suffixLen)}`);
-	$("#myModal").modal("hide");
-	$("#managePaperworkModal").modal("show");
+ 	if (curEvent.event.extendedProps.shipTicketNames != undefined) {
+ 		for (var i = 0; i < curEvent.event.extendedProps.shipTicketNames.length; i++) {
+ 			populatePdfManager(curEvent.event.extendedProps.shipTicketNames[i]);
+ 		}
+ 	} else {
+ 		alert("This appointment was created in an outdated version and does not support this functionality. " +
+ 			"If you need to edit paperwork, you'll have to recreate the event. New events will allow you to manage paperwork.");
+ 		return;
+ 	}
+ 	let suffixLen = 20;
+ 	$("#managePaperworkTitle").html(`Managing Paperwork for ${$("#modalTitle").html().substring(0, $("#modalTitle").html().length - suffixLen)}`);
+ 	$("#myModal").modal("hide");
+ 	$("#managePaperworkModal").modal("show");
 
-});
+ });
 
-$("#closeManagerBtn").click(function() {
-	$("#myModal").modal("show");
-});
+ $("#closeManagerBtn").click(function() {
+ 	$("#myModal").modal("show");
+ });
 
-$("#paperworkUpdateBtn").click(async function() {
-	$("#updatingPaperworkText").show();
-	document.getElementById("paperworkUpdateBtn").disabled = true;
+ $("#paperworkUpdateBtn").click(async function() {
+ 	$("#updatingPaperworkText").show();
+ 	document.getElementById("paperworkUpdateBtn").disabled = true;
 	//document.getElementById("paperworkUpdateBtn").disabled = true;
 	//determine which boxes are unchecked
 	var list = document.getElementById("fileList");
@@ -460,8 +460,8 @@ $("#paperworkUpdateBtn").click(async function() {
 	var origNames = [...curEvent.event.extendedProps.shipTicketNames];
 	for (var i = children.length - 1; i >= 0; i--) {
 		var child = children[i];
-	    if (child.lastElementChild.checked) {
-	    	console.log(i);
+		if (child.lastElementChild.checked) {
+			console.log(i);
 	    	//add to list of files to remove
 	    	removed.push(origRefs[i]);
 	    	origURLs.splice(i, 1);
@@ -474,8 +474,8 @@ $("#paperworkUpdateBtn").click(async function() {
 	let shipTicketFiles = document.getElementById('newPaperworkFileArea').files;
     //confirm all file types are ok before uploading any
     for (var i = 0; i < shipTicketFiles.length; i++) {
-        if (shipTicketFiles[i].type != "application/pdf") {
-            alert('Uploaded files must be saved as PDF.');
+    	if (shipTicketFiles[i].type != "application/pdf") {
+    		alert('Uploaded files must be saved as PDF.');
             //cancel upload
 
             $("#updatingPaperworkText").hide();
@@ -486,10 +486,10 @@ $("#paperworkUpdateBtn").click(async function() {
     //upload any new files
     for (var i = 0; i < shipTicketFiles.length; i++) {
     	await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
-            origURLs.push(response.downloadURL);
-            origRefs.push(response.ref);
-            origNames.push((response.name != undefined) ? response.name : response.ref);
-        });
+    		origURLs.push(response.downloadURL);
+    		origRefs.push(response.ref);
+    		origNames.push((response.name != undefined) ? response.name : response.ref);
+    	});
     };
 
 
@@ -497,35 +497,14 @@ $("#paperworkUpdateBtn").click(async function() {
     let eventId = $("#eventId").html();
     let curEventRef = db.collection("events").doc(eventId);
 
-    if (shipTicketFiles.length > 0) {
-    	let now = new Date();
-		let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
-		var oldHistory = curEvent.event.extendedProps.history;
-		if (oldHistory == undefined) {
-			oldHistory = "";
-		}
-		let newHistory =  + oldHistory;
-		curEventRef.update({history: newHistory})
-		.then(function() {
-			$("#eventHistoryBtn").attr("data-content", newHistory);
-		})
-		.catch(function(error) {
-			alert(`An error occured: ${error}. Check your connection.`);
-		});
+    let now = new Date();
+    let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
+    var oldHistory = curEvent.event.extendedProps.history;
+    if (oldHistory == undefined) {
+    	oldHistory = "";
     }
-   
-    //shipTicketFiles.length > 0 means we uploaded
 
- 		
-		
-		let now = new Date();
-		let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
-		var oldHistory = curEvent.event.extendedProps.history;
-		if (oldHistory == undefined) {
-			oldHistory = "";
-		}
-		
-		var newHistory = "";
+    var newHistory = "";
 		//compile history changes
 		if (shipTicketFiles.length > 0) {
 			newHistory += `<li>${$("#currentUser").html()}  uploaded ${shipTicketFiles.length} new file(s) - ${nowStr}</li>`;
@@ -535,32 +514,32 @@ $("#paperworkUpdateBtn").click(async function() {
 		}
 		//update the document based on new/deleted files
 		return curEventRef.update({shipTicketRefs: origRefs, shipTicketNames: origNames, shipTicketUrls: origURLs, 
-								   history: newHistory + oldHistory})
+			history: newHistory + oldHistory})
 		.then(function() {
-    		console.log("Document successfully updated!");
+			console.log("Document successfully updated!");
     		//calendar eventWorker will handle the frontend changes.
     		removed.forEach((shipFile) => {
-            	let shipRef = storageRef.child(shipFile);
-            		shipRef.delete().then(function() {
+    			let shipRef = storageRef.child(shipFile);
+    			shipRef.delete().then(function() {
               		// File deleted successfully
               		console.log("file deleted");
-          		}).catch(function(error) {
-		          	alert(`Something went wrong: ${error}. Please try again.`);
-		          	return;
-		      	});
-      		});
-      		$("#updatingPaperworkText").hide();
-      		$("#managePaperworkModal").modal("hide");
-      		document.getElementById("paperworkUpdateBtn").disabled = false;
-      		$("#clearNewPaperworkBtn").click();
+              	}).catch(function(error) {
+              		alert(`Something went wrong: ${error}. Please try again.`);
+              		return;
+              	});
+              });
+    		$("#updatingPaperworkText").hide();
+    		$("#managePaperworkModal").modal("hide");
+    		document.getElementById("paperworkUpdateBtn").disabled = false;
+    		$("#clearNewPaperworkBtn").click();
 
-		})
+    	})
 		.catch(function(error) {
 	    	// The document probably doesn't exist.
 	    	alert("Error updating document: ", error);
-		});
+	    });
 		//frontend snapshot handler will handle updating the calendar if we just update the database
-});
+	});
 
 
 //delete file on click
@@ -575,14 +554,14 @@ $("#deleteShipmentBtn").click(function() {
             shipFiles = doc.data().shipTicketRefs;
             shipFiles.forEach((shipFile) => {
             	let shipRef = storageRef.child(shipFile);
-            		shipRef.delete().then(function() {
+            	shipRef.delete().then(function() {
               		// File deleted successfully
               		console.log(`${shipFile} deleted`);
-          		}).catch(function(error) {
-		          	alert(`Something went wrong: ${error}. Please try again.`);
-		          	return;
-		      	});
-      		});
+              	}).catch(function(error) {
+              		alert(`Something went wrong: ${error}. Please try again.`);
+              		return;
+              	});
+              });
         //hide the modal
         $("#myModal").modal("hide");
 
