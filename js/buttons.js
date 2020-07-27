@@ -21,16 +21,6 @@ $("#dropdownbtn").click(function() {
 	}
 });
 
-window.onclick = function(event) {
-
-  if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
-  		if ($("#myDropdown").css("opacity") === 0.0) {
-  			return;
-  		}
-		$("#myDropdown").css("opacity", 0.0);
-		$("#myDropdown").css("visibility" , "hidden");
-  }
-}
 // END DROPDOWN MENU
 ///////////////////////////////////////////////////////////////////////////////////////
 $("#incomingbtn").click(function() {
@@ -183,14 +173,15 @@ $("#clearTruckFormBtn").click(function() {
 	var notesWrapper = {}
 	let now = new Date();
 	if (response.trim().length > 0) {
-		notesWrapper.notes = `RESOLVED by ${$("#currentUser").html()}, ${now.toDateString()} ${now.toLocaleTimeString()}.<br>Resolve Notes: ${response}\n${$("#modalComments").html()}`;
-	}
-	else {
-		notesWrapper.notes = `RESOLVED by ${$("#currentUser").html()}, ${now.toDateString()} ${now.toLocaleTimeString()}.<br>${$("#modalComments").html()}`;
+		notesWrapper.notes = `}.<br>Resolve Notes: ${response}\n${$("#modalComments").html()}`;
 	}
 	var changesWrapper = {};
-	var resolveWrapper = {resolved: true};
-	
+	var oldHistory = curEvent.event.extendedProps.history;
+	if (oldHistory == undefined) {
+		oldHistory = "";
+	}
+	var resolveWrapper = {resolved: true, 
+						  history: `<li>${$("#currentUser").html()} marked resolved - ${now.toDateString()} ${now.toLocaleTimeString()}</li>` + oldHistory};
 	let changes = Object.assign(changesWrapper, notesWrapper, resolveWrapper);
 
 	var eventRef = db.collection("events").doc($("#eventId").html());
@@ -280,7 +271,8 @@ $("#clearTruckFormBtn").click(function() {
  */
 $("#confirmEditBtn").click(function() {
 	//determine which inputs have a change include and compile them into a changes object to be pushed to database
-	
+	document.getElementById("paperworkUpdateBtn").disabled = true;
+	$("#updatingEventText").show();
 	var isOutgoingChange = {};
 	var dateChange = {};
 	var startTimeChange = {};
@@ -297,6 +289,9 @@ $("#confirmEditBtn").click(function() {
 	let arrivalWindow =  $("#modalTime").html().split("-");
 	let origStart;
 	let origEnd;
+
+	var wasRescheduled = false;
+	var wasEdited = false;
 	if (arrivalWindow.length == 1) {
 		origStart = "";
 		origEnd = "";
@@ -308,7 +303,6 @@ $("#confirmEditBtn").click(function() {
 		wasAllDay = false;
 	}	
 	let origOutgoingStatus = $("#modalTitle").html().substring($("#modalTitle").html().length - 1 - 16);
-	
 
 	//detect all changes for compilation
 	if (origOutgoingStatus === "OUTGOING SHIPMENT") {
@@ -316,6 +310,7 @@ $("#confirmEditBtn").click(function() {
 		if ($("#editoutgoingbtn").attr("class") != "btn btn-primary") {
 			//change to incoming occurred
 			isOutgoingChange.isOutgoing = false;
+			wasEdited = true;
 		}
 	}
 	else {
@@ -323,6 +318,7 @@ $("#confirmEditBtn").click(function() {
 		if ($("#editoutgoingbtn").attr("class") == "btn btn-primary") {
 			//change to incoming occurred
 			isOutgoingChange.isOutgoing = true;
+			wasEdited = true;
 		}
 	}
 	//convert dates to the same format
@@ -331,6 +327,7 @@ $("#confirmEditBtn").click(function() {
 	let newDate = `${newDateComponents[1]}/${newDateComponents[2]}/${newDateComponents[0]}`;
 	if (newDate != $("#modalDate").html()) {
 		dateChange.date = newDate;
+		wasRescheduled = true;
 	}
 	//FIXME: is not thorough enough.
 	if ($("#editStartTime").val() != "" && $("#editEndTime").val() != "") {
@@ -340,33 +337,53 @@ $("#confirmEditBtn").click(function() {
 		isNowAllDay = true;
 	} 
 	if (isNowAllDay != wasAllDay) {
-			allDayChange.allDay = isNowAllDay;
+		allDayChange.allDay = isNowAllDay;
+		wasRescheduled = true;
 	}
 	if ($("#editStartTime").val() != origStart) {
 		startTimeChange.startTime = $("#editStartTime").val();
+		wasRescheduled = true;
 	}
 	if ($("#editEndTime").val() != origEnd) {
 		endTimeChange.endTime = $("#editEndTime").val();
+		wasRescheduled = true;
 	}
 	if ($("#editTitleBox").val() != "") {
 		titleChange.title = $("#editTitleBox").val();
+		wasEdited = true;
 	}
 	if ($("#editVendorBox").val() != "") {
 		vendorChange.vendorName = $("#editVendorBox").val();
+		wasEdited = true;
 	}
 	if ($("#editCustomerBox").val() != "") {
 		customerChange.customerName = $("#editCustomerBox").val();
+		wasEdited = true;
 	}
 	if ($("#editDestinationBox").val() != "") {
 		destinationChange.destination = $("#editDestinationBox").val();
+		wasEdited = true;
 	}
 	if ($("#editNotesArea").val() != "") {
 		let result  = $("#editNotesArea").val().replace(/\n/g, "<br>");
-		console.log(result, $("#editNotesArea").val().indexOf("\n"));
 		notesChange.notes = result;
+		wasEdited = true;
 	}
-
-	//wrap any changes into 
+	let now = new Date();
+	let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
+	var newHistory = "";
+	var oldHistory = curEvent.event.extendedProps.history;
+	if (oldHistory == undefined) {
+		oldHistory = "";
+	}
+	if (wasRescheduled) {
+		newHistory += `<li>${$("#currentUser").html()} rescheduled - ${nowStr}</li>`;
+	}
+	if (wasEdited) {
+		newHistory += `<li>${$("#currentUser").html()} edited - ${nowStr}</li>`;
+	}
+	let historyChange = { history: newHistory + oldHistory };
+	//wrap any changes into simple object
 	var changeWrapper = {};
 	var changes = Object.assign(changeWrapper, 
 								isOutgoingChange, 
@@ -378,13 +395,18 @@ $("#confirmEditBtn").click(function() {
 								vendorChange,
 								customerChange,
 								destinationChange,
-								notesChange);
+								notesChange, 
+								historyChange);
 	console.log(changes);
+	//update history accordingly (X edited, X rescheduled)
+
 	if (Object.keys(changes).length > 0) {
 		let eventId = $("#eventId").html();
 		let curEventRef = db.collection("events").doc(eventId);
 		return curEventRef.update(changes)
 		.then(function() {
+			document.getElementById("paperworkUpdateBtn").disabled = false;
+			$("#updatingEventText").hide();
     		console.log("Document successfully updated!");
     		//calendar eventWorker will handle the frontend changes.
 			$("#editModal").modal("hide");
@@ -392,7 +414,9 @@ $("#confirmEditBtn").click(function() {
 		})
 		.catch(function(error) {
 	    	// The document probably doesn't exist.
-	    	console.error("Error updating document: ", error);
+	    	document.getElementById("paperworkUpdateBtn").disabled = false;
+			$("#updatingEventText").hide();
+	    	alert(`Error updating document: ${error}. Check your connection and try again.`);
 		});
 	}
 
@@ -407,7 +431,7 @@ $("#managePaperworkBtn").click(function() {
             populatePdfManager(curEvent.event.extendedProps.shipTicketNames[i]);
         }
 	} else {
-		alert("This appointment was created in an outdated version and does not support this functionality." +
+		alert("This appointment was created in an outdated version and does not support this functionality. " +
 			  "If you need to edit paperwork, you'll have to recreate the event. New events will allow you to manage paperwork.");
 		return;
 	}
@@ -430,12 +454,12 @@ $("#paperworkUpdateBtn").click(async function() {
 	var list = document.getElementById("fileList");
 	var children = list.children;
 	var removed = [];
+	//grab initial files
 	var origURLs = [...curEvent.event.extendedProps.shipTicketUrls];
 	var origRefs = [...curEvent.event.extendedProps.shipTicketRefs];
 	var origNames = [...curEvent.event.extendedProps.shipTicketNames];
 	for (var i = children.length - 1; i >= 0; i--) {
 		var child = children[i];
-	    console.log(child.lastElementChild.checked);
 	    if (child.lastElementChild.checked) {
 	    	console.log(i);
 	    	//add to list of files to remove
@@ -446,18 +470,20 @@ $("#paperworkUpdateBtn").click(async function() {
 
 	    }
 	}
+	//get new files
 	let shipTicketFiles = document.getElementById('newPaperworkFileArea').files;
     //confirm all file types are ok before uploading any
     for (var i = 0; i < shipTicketFiles.length; i++) {
         if (shipTicketFiles[i].type != "application/pdf") {
             alert('Uploaded files must be saved as PDF.');
-            //$("#uploadNewText").hide();
+            //cancel upload
+
             $("#updatingPaperworkText").hide();
             document.getElementById("paperworkUpdateBtn").disabled = false;
             return;
         }
     } 
-    //upload files
+    //upload any new files
     for (var i = 0; i < shipTicketFiles.length; i++) {
     	await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
             origURLs.push(response.downloadURL);
@@ -465,12 +491,51 @@ $("#paperworkUpdateBtn").click(async function() {
             origNames.push((response.name != undefined) ? response.name : response.ref);
         });
     };
-   
- 	//alert(`To be removed: ${removed}... To be added: ${orig}`);
 
- 		let eventId = $("#eventId").html();
-		let curEventRef = db.collection("events").doc(eventId);
-		return curEventRef.update({shipTicketRefs: origRefs, shipTicketNames: origNames, shipTicketUrls: origURLs})
+
+
+    let eventId = $("#eventId").html();
+    let curEventRef = db.collection("events").doc(eventId);
+
+    if (shipTicketFiles.length > 0) {
+    	let now = new Date();
+		let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
+		var oldHistory = curEvent.event.extendedProps.history;
+		if (oldHistory == undefined) {
+			oldHistory = "";
+		}
+		let newHistory =  + oldHistory;
+		curEventRef.update({history: newHistory})
+		.then(function() {
+			$("#eventHistoryBtn").attr("data-content", newHistory);
+		})
+		.catch(function(error) {
+			alert(`An error occured: ${error}. Check your connection.`);
+		});
+    }
+   
+    //shipTicketFiles.length > 0 means we uploaded
+
+ 		
+		
+		let now = new Date();
+		let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
+		var oldHistory = curEvent.event.extendedProps.history;
+		if (oldHistory == undefined) {
+			oldHistory = "";
+		}
+		
+		var newHistory = "";
+		//compile history changes
+		if (shipTicketFiles.length > 0) {
+			newHistory += `<li>${$("#currentUser").html()}  uploaded ${shipTicketFiles.length} new file(s) - ${nowStr}</li>`;
+		}
+		if (removed.length > 0) {
+			newHistory += `<li>${$("#currentUser").html()}  removed ${removed.length} file(s) - ${nowStr}</li>`;
+		}
+		//update the document based on new/deleted files
+		return curEventRef.update({shipTicketRefs: origRefs, shipTicketNames: origNames, shipTicketUrls: origURLs, 
+								   history: newHistory + oldHistory})
 		.then(function() {
     		console.log("Document successfully updated!");
     		//calendar eventWorker will handle the frontend changes.
@@ -488,12 +553,11 @@ $("#paperworkUpdateBtn").click(async function() {
       		$("#managePaperworkModal").modal("hide");
       		document.getElementById("paperworkUpdateBtn").disabled = false;
       		$("#clearNewPaperworkBtn").click();
-      		alert("Paperwork updated.");
 
 		})
 		.catch(function(error) {
 	    	// The document probably doesn't exist.
-	    	console.error("Error updating document: ", error);
+	    	alert("Error updating document: ", error);
 		});
 		//frontend snapshot handler will handle updating the calendar if we just update the database
 });

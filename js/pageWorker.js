@@ -2,7 +2,9 @@
  * pageWorker.js - dynamic DOM elements controller
  */
 
-//if 
+/*
+ *  Maintains basic visual cue for when event data are scrollable
+ */ 
 $('#infoModalContainer').on('scroll', function() {
     let PADDING = 5;
         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight - PADDING) {
@@ -15,6 +17,27 @@ $('#infoModalContainer').on('scroll', function() {
           $("#infoModalContainer").css("border-bottom-width", "3px");
         } 
 })
+
+$('body').on('click', function (e) {
+        if ($(e.target).data('toggle') !== 'popover'
+        && $(e.target).parents('.popover.in').length === 0) { 
+          $('[data-toggle="popover"]').popover('hide');
+        }
+    });
+
+
+window.onclick = function(event) {
+
+  if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
+      if ($("#myDropdown").css("opacity") === 0.0) {
+        return;
+      }
+    $("#myDropdown").css("opacity", 0.0);
+    $("#myDropdown").css("visibility" , "hidden");
+  }
+
+  //TODO: Make popover hide when clicked outside
+}
 
 /*
  * addTicketPdfElement - Adds a PDFObject div and its containing carousel element to the document

@@ -154,13 +154,11 @@ button:hover {
 .fc-event-container:hover {
 	cursor: pointer;
 }
-/*
-div {
-	word-wrap: break-word;
-	word-break: break-all;
-}
-*/
 
+.popover-body {
+	overflow: scroll;
+	max-height: 50vh;
+}
 
 #modal-body {
 }
@@ -269,9 +267,20 @@ small {
     color: #082a40; 
     border-color: #082a40;
 }
-#resendEmailBtn {
-
+#modalTitle, #managePaperworkTitle, #editInfoTitle {
+	overflow: scroll;
+    max-height: 100%;
 }
+
+#eventHistoryBtn {
+	line-height: 0px;
+	border-radius: 30px;
+	padding: .65em;
+	padding-top: .75em;
+	padding-bottom: .75em;
+	font-size: 12px;
+}
+
 .centered-container {
 	height: 87%;
 	margin: 0;

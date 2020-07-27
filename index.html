@@ -44,6 +44,9 @@
         var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
         document.addEventListener('DOMContentLoaded', function() {
+            $("[data-toggle=popover]").popover({
+                html: true
+            });
             var today = new Date();
             var todayDate = `${weekdays[today.getDay()]} ${(today.getMonth()+1)}/${today.getDate()}/${today.getFullYear()}`;
             $("#dateAlert").html(`Selected Date: <b>${todayDate}</b>`);
@@ -91,7 +94,7 @@
                     }, //end dateClick
                     eventClick: function(info) {
                         //console.log(document.getElementById("modalComments").style.overflow);
-
+                        console.log(info);
                         curEvent = info;
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
@@ -111,6 +114,11 @@
                         $("#modalComments").html(`${info.event.extendedProps.comments.replace(/\n/g, "<br>")}`);
                         $("#eventId").html(info.event.extendedProps.docId);
                         $("#creator").html(`Scheduled by: ${info.event.extendedProps.creator}`);
+
+                        let historyContent = (info.event.extendedProps.history == undefined ? 
+                            "No history yet. Any new changes made will still be recorded." : `<ul>${info.event.extendedProps.history}</ul>`)
+                        $("#eventHistoryBtn").attr("data-content", historyContent);
+
                         //dynamically add pdf containers and embed accordingly
                         for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
                             //If paperwork present, create a pdf container and associate it with the respective PDF url
@@ -139,7 +147,6 @@
                         let element = document.getElementById("infoModalContainer");
                         
                         $("#myModal").modal("show");
-                        console.log(element.offsetHeight, element.scrollHeight);
                         if (element.offsetHeight < element.scrollHeight ||
                             element.offsetWidth < element.scrollWidth) {
                             // your element have overflow
@@ -218,7 +225,8 @@
                  } 
                  setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
                  $("#formArrow").css("transform", "rotate(90deg)");
-
+                 let now = new Date();
+                 let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
                     db.collection("events").add({
                         allDay: allDay,
                         date: date,
@@ -234,7 +242,8 @@
                         shipTicketRefs: shipTicketRefs,
                         shipTicketNames: shipTicketNames,
                         creator: $("#currentUser").html(),
-                        resolved: false
+                        resolved: false,
+                        history: `<li>${$("#currentUser").html()} created - ${nowStr}</li>`
 
                     }).then(function(docRef) {
                         console.log(`Document ${docRef.id} successfully written`);
@@ -441,7 +450,6 @@
                 <label for="notesArea">Description/Notes</label>
                 <textarea class="form-control" id="notesArea" rows="3" placeholder="Shipment Updates/Issues, Special Instructions/Notes, Pallet Count, Product Type, etc."></textarea>
             </div>
-
             <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment</button>
             
             <small id = "uploadText" style = "display: none;">Uploading...</small>
@@ -514,6 +522,9 @@
         </div>
         </div>
         <div class="modal-footer">
+            <button id = "eventHistoryBtn" type="button" class="btn btn-secondary" data-html = "true" data-container="body" data-toggle="popover" data-placement="right" data-content="HISTORY ERROR. TELL SPENCER.">
+            i
+            </button>
             <small id = "creator" style = "text-align: left;">Truck Scheduled by: </small>
             <small id="eventId" style = "display: none;"> Event ID Error</small>
             <button type="button" class="btn btn-success" id = "resolveShipmentBtn">Mark as Resolved</button>
@@ -589,6 +600,7 @@
             </div> 
         </div>
         <div class="modal-footer">
+            <small id = "updatingEventText" style = "display: none;">Updating...</small>
             <button type="button" class="btn btn-primary" id = "confirmEditBtn">Save Changes</button>
             <button type="button" class="btn btn-danger" id = "cancelEditBtn">Cancel</button>
         </div>
@@ -619,9 +631,9 @@
               <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="newPaperworkFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearNewPaperworkBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
         </div>
         <div class="modal-footer">
-            <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes</button>
-            <button type="button" class="btn btn-danger" data-dismiss = "modal" id = "closeManagerBtn">Back</button>
             <small id = "updatingPaperworkText" style = "display: none;">Updating...</small>
+            <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes</button>
+            <button type="button" class="btn btn-danger" data-dismiss = "modal" id = "closeManagerBtn">Back</button>            
         </div>
     </div>
 </div>
