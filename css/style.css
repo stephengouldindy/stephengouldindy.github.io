@@ -268,8 +268,7 @@ small {
     border-color: #082a40;
 }
 #modalTitle, #managePaperworkTitle, #editInfoTitle {
-	overflow: scroll;
-    max-height: 100%;
+	
 }
 
 #eventHistoryBtn {
