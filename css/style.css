@@ -1,6 +1,13 @@
 button {
 
 }
+
+#loadingSpinner {
+	margin-top: 50vh;
+	margin-left: 50vw;
+	
+}
+
 .container {
 	word-wrap: break-word;
 	word-break: break-all;
@@ -25,7 +32,9 @@ button {
 }
 button:hover {
 	filter: brightness(90%);
-
+}
+#resolveShipmentBtn:hover {
+	filter: brightness(100%) !important;
 }
 
 #blueLogo {
@@ -164,6 +173,7 @@ button:hover {
 }
 
 #formcontainer {
+	display: none;
 	padding: 20px;
 	background-color: rgba(0,0,0,.1);
 	border-width: 20px;

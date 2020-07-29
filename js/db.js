@@ -6,39 +6,29 @@
  $(document).ready(function() {
   let today = new Date();
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v2.8.1");
+  $("#version").html("BETA v2.9");
   //hide the event form on pageload
-  $("#formcontainer").hide();
 
 
   firebase.auth().onAuthStateChanged(async function(user) {
     if (user) {
       console.log("logged in");
       if (!user.emailVerified) {
-      //TOOD: If user logs in without emailVerification, get a log
-      await firebase.auth().signOut().then(function() {
-        console.log("logged out");
-
+        //TODO: If user logs in without emailVerification, get a log
+        await firebase.auth().signOut().then(function() {
+            console.log("logged out");
       }).catch(function(error) {
         // An error happened.
       });
       return;
     }
-    $("#loginApplet").fadeOut();
-    $("#signOutBtn").show();
-    $("#signOutBtn").css("display", "inline-block");
-    $("#currentUser").html(user.displayName);
-    $("#currentUser").show();
-    $("#blueLogo").fadeIn();
-    $("#hamburger").fadeIn();
-    $("footer").hide();
+    
 
 
     db.collection("events").onSnapshot(snapshot => {
       let changes = snapshot.docChanges();
-      console.log(changes);
       changes.forEach(change => {
-
+        //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
         if (change.type === "removed") {
           let event = calendar.getEventById(change.doc.id);
           event.remove();
@@ -54,13 +44,33 @@
           
         });
       //set all event colors based on status
-      eventColorWorker(true);
+        eventColorWorker(true);
+        //TODO: FIND A BETTER WAY TO OPTIMIZE THIS!
+        if ($("#calendarApplet").css("display") == "none") {
+            $("#calendarApplet").fadeIn();
+            $("#loginApplet").fadeOut();
+            $("#signOutBtn").show();
+            $("#signOutBtn").css("display", "inline-block");
+            $("#currentUser").html(user.displayName);
+            $("#currentUser").show();
+            $("#blueLogo").fadeIn();
+            $("#hamburger").fadeIn();
+            $("footer").hide();
+            $("#signInSpinner").hide();
+            $("#formArrow").css("transform", "rotate(90deg)");
+            document.getElementById("signInBtn").disabled = false;
+            $("#loadingSpinner").hide();
+            calendar.render();
+            //if it is one of our cleanup days, we need to wipe events
+            let date = (new Date()).getDate();
+            console.log(date);
+            if (date == 15 || date == 1 || date == 28) {
+                noCountryForOldEvents(14);
+            }
+
+        }
     }); //END FIRESTORE EVENT CHANGE LISTENER
-
-
-    $("#calendarApplet").fadeIn();
-    calendar.render();
-
+    
   } else {
     // User is signed out.
     $("#calendarApplet").fadeOut();
@@ -85,7 +95,7 @@
    }).catch(function(error) {
   	  // An error happened.
   	});
- }r4
+ }
 });
 
 
@@ -150,30 +160,31 @@ $("#forgotPassword").click(function() {
  * Attempts to sign the user in.
  */
  $("#signInBtn").click(async function() {
-  var email = $("#loginEmail").val();
-  var password = $("#loginPass").val();
-  var signInAttempt; 
-  try {
-    signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
-
-    if (signInAttempt.user) {
-      if (signInAttempt.user.emailVerified === false) {
-        alert(`Please check your email for a verification link to be able to view and manage appointments. If you need a new confirmation email, `
-          + `you may request one in the 'Resend Verification' tab.` );
-      }
-    }
-
-  }
-  catch(error) {
+    $("#signInSpinner").fadeIn();
+    document.getElementById("signInBtn").disabled = true;
+    var email = $("#loginEmail").val();
+    var password = $("#loginPass").val();
+    var signInAttempt; 
+    try {
+        signInAttempt = await firebase.auth().signInWithEmailAndPassword(email, password);
+        if (signInAttempt.user) {
+          if (signInAttempt.user.emailVerified === false) {
+            $("#signInSpinner").hide();
+            alert(`Please check your email for a verification link to be able to view and manage appointments. If you need a new confirmation email, `
+              + `you may request one in the 'Resend Verification' tab.` );
+          }
+        }
+    } catch(error) {
   		// Handle Errors here.
-  		console.log('caught err');
+        $("#signInSpinner").hide();
+        document.getElementById("signInBtn").disabled = false;
   		var errorCode = error.code;
   		var errorMessage = error.message;
   		if (errorCode === 'auth/wrong-password') {
-        alert('Wrong password.');
-      } else {
-        alert(errorMessage);
-      }
+            alert('Wrong password.');
+        } else {
+            alert(errorMessage);
+        }
     }
 
 }); // end signInBtn
@@ -258,6 +269,7 @@ $("#forgotPassword").click(function() {
 }
 /*
  * Found on stack overflow. Generates a (extremely likely to be) unique key. If it's not, it was the fate of God. Sorry about your lost file.
+ * @return uid token
  */
  function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

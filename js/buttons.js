@@ -7,7 +7,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 // DROPDOWN MENU
 $("#dropdownbtn").click(function() {
-	console.log($("#myDropdown").css("opacity"));
 	if ($("#myDropdown").css("opacity") < 1.0) {
 
 		$("#myDropdown").css("visibility" , "visible");
@@ -165,6 +164,20 @@ $("#incomingbtn").click(function() {
 
 
  $("#resolveShipmentBtn").click(function() {
+ 	if (curEvent.event.extendedProps.resolved) {
+ 		if(confirm("Event has already been resolved. If this was a mistake, confirm you would like to unresolve it. " +
+ 					"Note that if you associated any resolve notes originally, this action will not remove them for you.")) {
+ 			var eventRef = db.collection("events").doc(curEvent.event.id);
+ 			var oldHistory = curEvent.event.extendedProps.history;
+			if (oldHistory == undefined) {
+				oldHistory = "";
+			}
+			let now = new Date();
+			let newHistory = `<li>${$("#currentUser").html()} unresolved - ${now.toDateString()} ${now.toLocaleTimeString()}</li>` + oldHistory;
+			return eventRef.update({resolved: false, history: newHistory})
+			.then($("#myModal").modal("hide"));
+ 		}
+ 	}
 	//curEvent is set on eventClick, representing our FullCalendar event object
 	if (!confirm(`Please confirm you would like to mark truck from ${curEvent.event.title} for ${curEvent.event.extendedProps.customerName} as resolved.`)) {
 		return;
@@ -184,13 +197,13 @@ $("#incomingbtn").click(function() {
 		history: `<li>${$("#currentUser").html()} marked resolved - ${now.toDateString()} ${now.toLocaleTimeString()}</li>` + oldHistory};
 		let changes = Object.assign(changesWrapper, notesWrapper, resolveWrapper);
 
-		var eventRef = db.collection("events").doc($("#eventId").html());
+		var eventRef = db.collection("events").doc(curEvent.event.id);
 		console.log(changes);
 		return eventRef.update(changes).then(function() {
 			console.log("Document successfully updated!");
-			calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
-			calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
-			calendar.getEventById(curEvent.event.id).setExtendedProp("resolved", true);
+			// calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
+			// calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
+			// calendar.getEventById(curEvent.event.id).setExtendedProp("resolved", true);
 			$("#myModal").modal("hide");
 		})
 		.catch(function(error) {
@@ -443,6 +456,18 @@ $("#incomingbtn").click(function() {
  });
 
  $("#closeManagerBtn").click(function() {
+ 	for (var i = 0; i < curEvent.event.extendedProps.shipTicketUrls.length; i++) {
+                            //If paperwork present, create a pdf container and associate it with the respective PDF url
+                            addTicketPdfElement(`shipTicketPdfContainer${i}`);
+                            PDFObject.embed(curEvent.event.extendedProps.shipTicketUrls[i], `#shipTicketPdfContainer${i}`);
+	}
+	if (curEvent.event.extendedProps.shipTicketUrls.length == 0){
+                            $("#pdfInterface").hide();
+                        }
+                        else {
+                            document.getElementById("pdfCarousel-inner").firstElementChild.setAttribute("class", "carousel-item active");
+                            $("#pdfInterface").show();
+                        }
  	$("#myModal").modal("show");
  });
 

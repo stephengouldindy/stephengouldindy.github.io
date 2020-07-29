@@ -9,6 +9,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
 
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -32,6 +33,7 @@
     <link href="css/style.css" rel = "stylesheet">
     <script src = "js/eventWorker.js" async></script>
     <script src = "js/pageWorker.js" async></script>
+    <script src = "js/mailWorker.js" async></script>
     <script src = "js/db.js" async></script>
     <script src = "js/buttons.js" async></script>
     
@@ -64,9 +66,9 @@
                 defaultView: 'timeGridWeek',
                 selectable: false,
                 header: {
-                    left: 'prev,next, today',
+                    right: 'prev,next, today',
                     center: 'title',
-                    right: 'timeGridDay, timeGridWeek, dayGridMonth'
+                    left: 'timeGridDay, timeGridWeek, dayGridMonth'
                 },
                     //Date clicking handling 
                     dateClick: function(info) {
@@ -81,20 +83,22 @@
                         curYear = info.date.getFullYear();
                         //display new shipment form
                         $("#formArrow").css("transform", "rotate(-90deg)");
-                        $("#formcontainer").slideDown(0); 
+                        $("#formcontainer").slideDown(100); 
 
                         $("#dateAlert").html(`Selected Date: <b>${weekdays[info.date.getDay()]} ${curMonth}/${curDay}/${curYear}</b>`);
                         //flash selection colour
                         let oldColor = info.dayEl.style.backgroundColor;
                         info.dayEl.style.backgroundColor = '#c7c7c7';
-                        setTimeout(function() {info.dayEl.style.backgroundColor = oldColor;}, 100);
+                        setTimeout(function() {
+                            info.dayEl.style.backgroundColor = oldColor;
+                            document.getElementById('formcontainer').scrollIntoView({ behavior: "smooth", block: 'nearest'});
+                        }, 100);
                         //window.scrollTo((document.getElementById('formcontainer').scrollTop));
-                        document.getElementById('formcontainer').scrollIntoView({ behavior: "smooth", block: 'nearest'});
+                        
              
                     }, //end dateClick
                     eventClick: function(info) {
                         //console.log(document.getElementById("modalComments").style.overflow);
-                        console.log(info);
                         curEvent = info;
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
@@ -136,12 +140,13 @@
                         
                         //enable/disable resolve button based on event status
                         if (info.event.extendedProps.resolved == true) {
-                            document.getElementById("resolveShipmentBtn").disabled = true;
                             $("#resolveShipmentBtn").html("Shipment Resolved");
+                            $("#resolveShipmentBtn").css("filter", "brightness(70%)");
                         }
                         else {
                             document.getElementById("resolveShipmentBtn").disabled = false;
                             $("#resolveShipmentBtn").html("Mark as Resolved");
+                            $("#resolveShipmentBtn").css("filter", "");
                         }
                         let element = document.getElementById("infoModalContainer");
                         
@@ -222,8 +227,8 @@
                         shipTicketNames[i] = (response.name != undefined) ? response.name : response.ref;
                     });
                  } 
-                 setTimeout(function() {$("#formcontainer").slideUp(300)}, 100);
-                 $("#formArrow").css("transform", "rotate(90deg)");
+                 
+                 
                  let now = new Date();
                  let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
                     db.collection("events").add({
@@ -246,28 +251,26 @@
                     }).then(function(docRef) {
                         console.log(`Document ${docRef.id} successfully written`);
                         $("#uploadText").hide();
+                        $("#formArrow").css("transform", "rotate(90deg)");
+                        setTimeout(function() {$("#formcontainer").slideUp(300)}, 0);
+                        document.getElementById("submitTruckBtn").disabled = false;
+                        
                     }).catch(function(error) {
                         alert("Error writing document: ", error);
                         $("#formcontainer").slideDown(300);
+                        document.getElementById("submitTruckBtn").disabled = false;
                     });
 
                     //scroll to top
-                    document.getElementById("submitTruckBtn").disabled = false;
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
+                    
                     
                  }); //end submit truck button handling
             }); //end DOM content loaded event listener
 
-
-        
-
       // Your web app's Firebase configuration
 
       // Initialize Firebase
-      let firebaseConfig = {
+    let firebaseConfig = {
         apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
         authDomain: "sgci-rds.firebaseapp.com",
         databaseURL: "https://sgci-rds.firebaseio.com",
@@ -287,12 +290,12 @@
         appId: "1:61711519733:web:dd9dd75680058d4002dabc",
         measurementId: "G-RRY0NKY921"
     };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      //firebase.initializeApp(testBranchConfig);
-      firebase.analytics();
-      var db = firebase.firestore();
-      var storageRef = firebase.storage().ref();
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        //firebase.initializeApp(testBranchConfig);
+        firebase.analytics();
+        var db = firebase.firestore();
+        var storageRef = firebase.storage().ref();
 
    </script>
 <!--End Calendar Framework-->
@@ -313,6 +316,7 @@
 </div>
 
         <img src = "img/bluelogo.svg" id = "blueLogo"> <text id = "currentUser">Current User</text></header>
+
     <div id = "loginApplet" >
         <div class = "container centered-container">
             <p class = "sg-font-hdr">Stephen Gould Indianapolis Shipping and Receiving</p>
@@ -338,7 +342,9 @@
                             <label for = "password">Password</label>
                             <input id = "loginPass" type="password" class="form-control" placeholder = "Password" autocomplete="password" />
                         </div>
-                        <button type="button" class="btn btn-primary login-btn" id = "signInBtn">Sign In</button>
+                        <button type="button" class="btn btn-primary login-btn" id = "signInBtn">Sign In
+                            <span id = "signInSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                  style = "display: none;"></span></button>
                         <p class="forgot-password text-center">
                          <a href="#" id = "forgotPassword">Forgot Password?</a>
                      </p>
@@ -387,7 +393,10 @@
     </div>
 </div>
 
-
+<div>
+  <span id = "loadingSpinner" class="spinner-border text-light" role="status" aria-hidden="true" 
+                                   ></span>
+</div>
 <div class ="container" id = "calendarApplet">
     <h3 id = "instructions" style="text-align: center;">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
 
