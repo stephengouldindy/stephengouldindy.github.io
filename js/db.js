@@ -6,7 +6,7 @@
  $(document).ready(function() {
   let today = new Date();
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v2.9");
+  $("#version").html("BETA v2.9.1");
   //hide the event form on pageload
 
 
@@ -27,6 +27,7 @@
 
     db.collection("events").onSnapshot(snapshot => {
       let changes = snapshot.docChanges();
+      console.log(changes);
       changes.forEach(change => {
         //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
         if (change.type === "removed") {
@@ -57,9 +58,10 @@
             $("#hamburger").fadeIn();
             $("footer").hide();
             $("#signInSpinner").hide();
+            $("#loadingSpinner").hide();
             $("#formArrow").css("transform", "rotate(90deg)");
             document.getElementById("signInBtn").disabled = false;
-            $("#loadingSpinner").hide();
+
             calendar.render();
             //if it is one of our cleanup days, we need to wipe events
             let date = (new Date()).getDate();

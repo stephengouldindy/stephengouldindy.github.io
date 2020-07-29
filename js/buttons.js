@@ -164,6 +164,8 @@ $("#incomingbtn").click(function() {
 
 
  $("#resolveShipmentBtn").click(function() {
+ 	$(this).attr("disabled", true);
+ 	$("#resolveSpinner").show();
  	if (curEvent.event.extendedProps.resolved) {
  		if(confirm("Event has already been resolved. If this was a mistake, confirm you would like to unresolve it. " +
  					"Note that if you associated any resolve notes originally, this action will not remove them for you.")) {
@@ -200,6 +202,8 @@ $("#incomingbtn").click(function() {
 		var eventRef = db.collection("events").doc(curEvent.event.id);
 		console.log(changes);
 		return eventRef.update(changes).then(function() {
+			document.getElementById("resolveShipmentBtn").disabled = false;
+			$("#resolveSpinner").hide();
 			console.log("Document successfully updated!");
 			// calendar.getEventById(curEvent.event.id).setProp("backgroundColor", "green");
 			// calendar.getEventById(curEvent.event.id).setProp("borderColor", "white");
@@ -207,8 +211,10 @@ $("#incomingbtn").click(function() {
 			$("#myModal").modal("hide");
 		})
 		.catch(function(error) {
-	    // The document probably doesn't exist.
-	    console.error("Error updating document: ", error);
+			document.getElementById("resolveShipmentBtn").disabled = false;
+			$("#resolveSpinner").hide();
+		    // The document probably doesn't exist.
+		    console.error("Error updating document: ", error);
 	});
 	});
 
@@ -284,8 +290,8 @@ $("#incomingbtn").click(function() {
  */
  $("#confirmEditBtn").click(function() {
 	//determine which inputs have a change include and compile them into a changes object to be pushed to database
-	document.getElementById("paperworkUpdateBtn").disabled = true;
-	$("#updatingEventText").show();
+	$(this).attr("disabled", true);
+	$("#updateSpinner").show();
 	var isOutgoingChange = {};
 	var dateChange = {};
 	var startTimeChange = {};
@@ -418,8 +424,8 @@ $("#incomingbtn").click(function() {
 		let curEventRef = db.collection("events").doc(eventId);
 		return curEventRef.update(changes)
 		.then(function() {
-			document.getElementById("paperworkUpdateBtn").disabled = false;
-			$("#updatingEventText").hide();
+			document.getElementById("confirmEditBtn").disabled = false;
+			$("#updateSpinner").hide();
 			console.log("Document successfully updated!");
     		//calendar eventWorker will handle the frontend changes.
     		$("#editModal").modal("hide");
@@ -427,11 +433,12 @@ $("#incomingbtn").click(function() {
     	})
 		.catch(function(error) {
 	    	// The document probably doesn't exist.
-	    	document.getElementById("paperworkUpdateBtn").disabled = false;
-	    	$("#updatingEventText").hide();
+	    	document.getElementById("confirmEditBtn").disabled = false;
+	    	$("#updateSpinner").hide();
 	    	alert(`Error updating document: ${error}. Check your connection and try again.`);
 	    });
 	}
+
 
 });
 /*
@@ -472,7 +479,7 @@ $("#incomingbtn").click(function() {
  });
 
  $("#paperworkUpdateBtn").click(async function() {
- 	$("#updatingPaperworkText").show();
+ 	$("#paperworkSpinner").show();
  	document.getElementById("paperworkUpdateBtn").disabled = true;
 	//document.getElementById("paperworkUpdateBtn").disabled = true;
 	//determine which boxes are unchecked
@@ -503,7 +510,7 @@ $("#incomingbtn").click(function() {
     		alert('Uploaded files must be saved as PDF.');
             //cancel upload
 
-            $("#updatingPaperworkText").hide();
+            $("#paperworkSpinner").hide();
             document.getElementById("paperworkUpdateBtn").disabled = false;
             return;
         }
@@ -553,7 +560,7 @@ $("#incomingbtn").click(function() {
               		return;
               	});
               });
-    		$("#updatingPaperworkText").hide();
+    		$("#paperworkSpinner").hide();
     		$("#managePaperworkModal").modal("hide");
     		document.getElementById("paperworkUpdateBtn").disabled = false;
     		$("#clearNewPaperworkBtn").click();
@@ -569,6 +576,8 @@ $("#incomingbtn").click(function() {
 
 //delete file on click
 $("#deleteShipmentBtn").click(function() {
+	$(this).attr("disabled", true);
+	$("#cancelSpinner").show();
 	if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
         //delete the db entry
         let docRef = db.collection("events").doc($("#eventId").html());
@@ -588,10 +597,12 @@ $("#deleteShipmentBtn").click(function() {
               	});
               });
         //hide the modal
+        document.getElementById("deleteShipmentBtn").disabled = false;
+		$("#cancelSpinner").hide();
         $("#myModal").modal("hide");
 
     }).catch(function(error) {
-    	alert(`Something went wrong: ${error}. Please try again.`);
+    	alert(`Something went wrong: ${error}. Please contact dougla55@purdue.edu.`);
     	return;
     });
 });

@@ -3,6 +3,7 @@
  */
 
  $(document).ready(function() {
+    $("#loadingSpinner").show();
    setInterval(function() {
       eventColorWorker(false)
   }, 60 * 1000); 

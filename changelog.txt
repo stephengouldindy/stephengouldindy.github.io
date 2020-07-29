@@ -1,12 +1,15 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
 
+BETA 2.9.1
+	- Loading cues for all action buttons
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.9
 	- Added automatic shipment logs and mailer functionality (does not yet clean up events out of precaution)
 	- Changed resolve button behavior so that the action is reversible
 	- Fixed bug where paperwork would not display properly when hitting "Back" from the paperwork manager
 	- Improved page loadtimes and added more loading visual cues
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.8.1
 	- Hotfixes
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

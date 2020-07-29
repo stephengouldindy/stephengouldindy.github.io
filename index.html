@@ -171,7 +171,7 @@
                 * Schedule truck: collect form data, wrap into event obj, and place it in the calendar and hide the form.
                 */
                 $("#submitTruckBtn").click(async function() {
-                    $("#uploadText").show();
+                    $("#uploadSpinner").show();
                     document.getElementById("submitTruckBtn").disabled = true;
                     var startTime = $("#startTime").val();
                     var endTime = $("#endTime").val();
@@ -211,7 +211,7 @@
                     for (var i = 0; i < shipTicketFiles.length; i++) {
                         if (shipTicketFiles[i].type != "application/pdf") {
                             alert('Uploaded files must be saved as PDF.');
-                            $("#uploadText").hide();
+                            $("#uploadSpinner").hide();
                             document.getElementById("submitTruckBtn").disabled = false;
                             return;
                         }
@@ -250,7 +250,7 @@
 
                     }).then(function(docRef) {
                         console.log(`Document ${docRef.id} successfully written`);
-                        $("#uploadText").hide();
+                        $("#uploadSpinner").hide();
                         $("#formArrow").css("transform", "rotate(90deg)");
                         setTimeout(function() {$("#formcontainer").slideUp(300)}, 0);
                         document.getElementById("submitTruckBtn").disabled = false;
@@ -457,9 +457,9 @@
                 <label for="notesArea">Description/Notes</label>
                 <textarea class="form-control" id="notesArea" rows="3" placeholder="Shipment Updates/Issues, Special Instructions/Notes, Pallet Count, Product Type, etc."></textarea>
             </div>
-            <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment</button>
+            <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment <span id = "uploadSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                  style = "display: none;"></span></button>
             
-            <small id = "uploadText" style = "display: none;">Uploading...</small>
         </form>
     </div>
 </div>
@@ -533,9 +533,11 @@
             i
             </button>
             <small id="eventId" style = "display: none;"> Event ID Error</small>
-            <button type="button" class="btn btn-success" id = "resolveShipmentBtn">Mark as Resolved</button>
+            <button type="button" class="btn btn-success" id = "resolveShipmentBtn">Mark as Resolved <span id = "resolveSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                  style = "display: none;"></span></button>
             <button type="button" class="btn btn-primary" id = "editInfoBtn" href = "#editModal">Edit Info</button>
-            <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Cancel Truck</button>
+            <button type="button" class="btn btn-danger" id = "deleteShipmentBtn">Cancel Truck <span id = "cancelSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                  style = "display: none;"></span></button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
     </div>
@@ -601,13 +603,12 @@
                         <textarea class="form-control" id="editNotesArea" rows="3"></textarea> <button class = "btn btn-primary" id = "copyNotesBtn" type = "button">Copy Current Value</button>
                     </div>
 
-                    <small id = "updateText" style = "display: none;">Updating...</small>
                 </form>
             </div> 
         </div>
         <div class="modal-footer">
-            <small id = "updatingEventText" style = "display: none;">Updating...</small>
-            <button type="button" class="btn btn-primary" id = "confirmEditBtn">Save Changes</button>
+            <button type="button" class="btn btn-primary" id = "confirmEditBtn">Save Changes <span id = "updateSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                  style = "display: none;"></span></button>
             <button type="button" class="btn btn-danger" id = "cancelEditBtn">Cancel</button>
         </div>
     </div>
@@ -637,8 +638,8 @@
               <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="newPaperworkFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearNewPaperworkBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
         </div>
         <div class="modal-footer">
-            <small id = "updatingPaperworkText" style = "display: none;">Updating...</small>
-            <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes</button>
+            <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes <span id = "paperworkSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                  style = "display: none;"></span></button>
             <button type="button" class="btn btn-danger" data-dismiss = "modal" id = "closeManagerBtn">Back</button>            
         </div>
     </div>
