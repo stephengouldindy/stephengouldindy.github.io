@@ -94,9 +94,10 @@ function addCalendarEvent(change) {
                       shipTicketRefs: data.shipTicketRefs,
                       shipTicketNames: data.shipTicketNames,
                       resolved: data.resolved,
+                      creator: data.creator,
                       history: data.history
 
-                  }; 
+                    }; 
 
               } else /* allDay new event */{
                 let dateObj = new Date(year, month, day);
@@ -123,8 +124,9 @@ function addCalendarEvent(change) {
                     shipTicketRefs: data.shipTicketRefs,
                     shipTicketNames: data.shipTicketNames,
                     resolved: data.resolved,
+                    creator: data.creator,
                     history: data.history
-                    }; //newEvent
+                }; //newEvent
                 } //end else
                 calendar.addEvent(newEvent);
 
@@ -197,6 +199,10 @@ async function noCountryForOldEvents(maxNumDays) {
     marked.forEach(function(event){
         let title = event.title;
         let date = event.extendedProps.eventDate;
+        var creator = event.extendedProps.creator;
+        if (creator == undefined) {
+            creator = "N/A, event made during invalid version"
+        }
         let carrier = event.extendedProps.vendorName;
         let customerName = event.extendedProps.customerName;
         let destination = event.extendedProps.destination;
@@ -211,7 +217,7 @@ async function noCountryForOldEvents(maxNumDays) {
         } else {
             shipTicketStr = "None.";
         }
-        let entry = `<br>${date}: ${title}<br>Carrier: ${carrier}<br>Customer Name: ${customerName}<br>Destination: ${destination}<br>Notes: ${notes}<br>Document URLS: ${shipTicketStr}` +
+        let entry = `<br>${date}: ${title}<br>Creator: ${creator}<br>Carrier: ${carrier}<br>Customer Name: ${customerName}<br>Destination: ${destination}<br>Notes: ${notes}<br>Document URLS: ${shipTicketStr}` +
                     "<br>---------------------------------------------------------------------------------------------------------------";
         if (event.extendedProps.resolved) {
             resolvedList.push(entry);

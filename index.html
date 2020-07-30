@@ -233,6 +233,7 @@
                  let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
                     db.collection("events").add({
                         allDay: allDay,
+                        creator: $("#currentUser").html(),
                         date: date,
                         customerName: customerName,
                         destination: destination,
