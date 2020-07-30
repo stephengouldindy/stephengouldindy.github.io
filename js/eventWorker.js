@@ -136,14 +136,12 @@ function addCalendarEvent(change) {
  */
 
 function getFridays(year, month){
-    console.log(year, month);
     // Convert date to moment (month 0-11)
     var myMonth = moment({year: year, month: month});
     var fridays = [];
     // Get first Friday of the first week of the month
     var firstFriday = myMonth.weekday(5);
     var nWeeks = 2;
-    console.log(firstFriday.month(), month);
     // Check if first Friday is in the given month
     if( firstFriday.month() != month ){
         firstFriday.add(1, 'weeks');
