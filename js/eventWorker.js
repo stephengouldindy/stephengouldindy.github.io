@@ -201,7 +201,7 @@ async function noCountryForOldEvents(maxNumDays) {
         let date = event.extendedProps.eventDate;
         var creator = event.extendedProps.creator;
         if (creator == undefined) {
-            creator = "N/A, event made during invalid version"
+            creator = "N/A, event made during invalid version";
         }
         let carrier = event.extendedProps.vendorName;
         let customerName = event.extendedProps.customerName;
