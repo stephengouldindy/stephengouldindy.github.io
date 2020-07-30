@@ -4,9 +4,9 @@
 
 
  $(document).ready(function() {
-  let today = new Date();
+  
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v2.9.1");
+  $("#version").html("BETA v3.0");
   //hide the event form on pageload
 
 
@@ -64,10 +64,12 @@
 
             calendar.render();
             //if it is one of our cleanup days, we need to wipe events
-            let date = (new Date()).getDate();
-            console.log(date);
-            if (date == 15 || date == 1 || date == 28) {
-                noCountryForOldEvents(14);
+            let date = moment();
+            //console.log(date.getFullYear(), date.getMonth());
+            let cleanUpDates = getFridays(date.year(), date.month());
+            let numDays = 14;
+            if (cleanUpDates.includes(date.format("DD MMMM YYYY"))) {
+                noCountryForOldEvents(numDays);
             }
 
         }

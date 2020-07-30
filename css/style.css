@@ -40,8 +40,7 @@ button:hover {
 #blueLogo {
 	height: 100%;
 	width: 20%;
-	left: 50%;
-	transform: translate(181.25%);
+	transform: translate(181%);
 	padding: 6px;
 	display: none;
 }

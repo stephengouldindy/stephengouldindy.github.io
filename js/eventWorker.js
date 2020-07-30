@@ -26,7 +26,7 @@
 			return;
 		}
 		if (event.allDay === true) {
-			if (event.start < now && event.start.getDate() < now.getDate()) {
+			if (event.start < now && event.start.getDate() <= now.getDate()) {
 
 				event.setProp("backgroundColor", "red");
 				event.setProp("borderColor", "red");
@@ -131,22 +131,54 @@ function addCalendarEvent(change) {
 } //addCalendarEvent
 
 /*
- * Clean up events that are older than the prefered time and email their data.
+ * Helper function for noCountryForOldEvents()
+ * @return array of the first and third fridays of the provided month, as well as the fifth, if there is one.
+ */
+
+function getFridays(year, month){
+    console.log(year, month);
+    // Convert date to moment (month 0-11)
+    var myMonth = moment({year: year, month: month});
+    var fridays = [];
+    // Get first Friday of the first week of the month
+    var firstFriday = myMonth.weekday(5);
+    var nWeeks = 2;
+    console.log(firstFriday.month(), month);
+    // Check if first Friday is in the given month
+    if( firstFriday.month() != month ){
+        firstFriday.add(1, 'weeks');
+    }
+    fridays.push(firstFriday.format("DD MMMM YYYY"));
+
+    let thirdFriday = firstFriday.add(nWeeks, 'weeks');
+    fridays.push(thirdFriday.format("DD MMMM YYYY"));
+    //if there is a fifth friday in the month, go ahead and add it
+    let fifthFriday = thirdFriday.add(nWeeks, 'weeks');
+    if (fifthFriday.month() == month) {
+        fridays.push(fifthFriday.format("DD MMMM YYYY"));
+    }
+    console.log(fridays);
+    return fridays;
+}
+
+
+
+
+/*
+ * Clean up events that are older than the prefered time and email their data to relevant personnel.
  */ 
-function noCountryForOldEvents(maxNumDays) {
+async function noCountryForOldEvents(maxNumDays) {
+    console.log("looking for events to clean up");
     //Not inclusive--the calculated minimum date will not see any of its events marked for cleanup
-    if (maxNumDays == undefined)
-        maxNumDays = 14
     let dayDiff = 1000*60*60*24;
     let events = calendar.getEvents();
-      //console.log(events);
     let now = new Date();
     let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
     console.log(minimumDate, new Date(minimumDate));
     var marked = [];
     events.forEach(function(event) {
         if (event.allDay === true) {
-            if (event.start < minimumDate && event.start.getDate() < minimumDate.getDate()) {
+            if (event.start < minimumDate) {
                 marked.push(event);
             }
         } else {
@@ -161,7 +193,7 @@ function noCountryForOldEvents(maxNumDays) {
             }
         }
     });
-    console.log(marked);
+    console.log("found", marked.length);
     var unresolvedList = [];
     var resolvedList = [];
     marked.forEach(function(event){
@@ -172,13 +204,12 @@ function noCountryForOldEvents(maxNumDays) {
         let destination = event.extendedProps.destination;
         let notes = event.extendedProps.comments;
         let shipTicketUrls = event.extendedProps.shipTicketUrls;
-        console.log(title, date, carrier, customerName,destination,notes, shipTicketUrls);
         var shipTicketStr = "";
         shipTicketUrls.forEach(function(url) {
             shipTicketStr += `${url}, <br>`
         });
         if (shipTicketStr.length) {
-            shipTicketStr = shipTicketStr.substring(0, shipTicketStr.length - 6); // trim the excess ', '
+            shipTicketStr = shipTicketStr.substring(0, shipTicketStr.length - 6); // trim the excess ', <br>'
         } else {
             shipTicketStr = "None.";
         }
@@ -199,13 +230,37 @@ function noCountryForOldEvents(maxNumDays) {
        bodyString += entry;
     })
     bodyString += "</text></html>";
+    var resolvedSent = false;
+    var unresolvedSent = false;
+    let supervisor = "bmbarnhart@stephengould.com";
+    // let supervisor = "sawdouglas7@gmail.com";
     if (unresolvedList.length) {
-        sendEmail("S&R Calendar - UNRESOLVED SHIPMENTS", bodyString, ["sgi.shippingreceiving@gmail.com", "sawdouglas7@gmail.com"]);
+        unresolvedSent = await sendEmail("S&R Calendar - UNRESOLVED SHIPMENTS NEED ATTN", bodyString, ["sgi.shippingreceiving@gmail.com", supervisor]);
     }
     else if (resolvedList.length) {
-        sendEmail(`${now.toDateString()} Shipment Log`, bodyString, "sgi.shippingreceiving@gmail.com");
+        resolvedSent = await sendEmail(`${now.toDateString()} Shipment Log`, bodyString, "sgi.shippingreceiving@gmail.com");
     }
-    console.log(bodyString);
-    //
-    
+    if (unresolvedSent || resolvedSent) {
+        //remove the events from the database
+        marked.forEach(function(event) {
+            let docRef = db.collection("events").doc(event.id);
+            docRef.get().then(function(doc) {
+                docRef.delete().then(function() {
+                    console.log("Document deleted.");
+                    //delete any paperwork
+                    shipFiles = event.extendedProps.shipTicketRefs;
+                    shipFiles.forEach((shipFile) => {
+                        let shipRef = storageRef.child(shipFile);
+                        shipRef.delete().then(function() {
+                            // File deleted successfully
+                            console.log(`${shipFile} deleted`);
+                        }).catch(function(error) {
+                            alert(`Something went wrong: ${error}. Please try again.`);
+                            return;
+                        });
+                    });
+                });
+            });
+        });
+    }   
   }
