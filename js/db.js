@@ -6,11 +6,12 @@
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.0");
+  $("#version").html("BETA v3.1");
   //hide the event form on pageload
 
 
   firebase.auth().onAuthStateChanged(async function(user) {
+    console.log("changed");
     if (user) {
       console.log("logged in");
       if (!user.emailVerified) {
@@ -24,26 +25,27 @@
     }
     
 
-
+    var isInit = true;
     db.collection("events").onSnapshot(snapshot => {
-      let changes = snapshot.docChanges();
-      console.log(changes);
-      changes.forEach(change => {
-        //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
-        if (change.type === "removed") {
-          let event = calendar.getEventById(change.doc.id);
-          event.remove();
-        }
-        else if (change.type === "modified") {
-            //replace event
-            calendar.getEventById(change.doc.id).remove();
-            addCalendarEvent(change);
-          }
-          else if (change.type === "added") {
-            addCalendarEvent(change)
-          } 
-          
+        let changes = snapshot.docChanges();
+        //console.log(changes);
+        changes.forEach(change => {
+            //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
+            if (change.type === "removed") {
+              let event = calendar.getEventById(change.doc.id);
+              event.remove();
+            } else if (change.type === "modified") {
+                //replace event
+                calendar.getEventById(change.doc.id).remove();
+                events.push(createCalendarEvent(change));
+            } else if (change.type === "added") {
+                events.push(createCalendarEvent(change));
+            } 
         });
+
+        // calendar.events = events;
+        // calendar.refetchEvents();
+
       //set all event colors based on status
         eventColorWorker(true);
         //TODO: FIND A BETTER WAY TO OPTIMIZE THIS!
@@ -85,6 +87,7 @@
     $("footer").fadeIn();
     $("#hamburger").fadeOut();
     $("#loginApplet").fadeIn();
+    $("#loadingSpinner").hide();
 
     // ...
   }

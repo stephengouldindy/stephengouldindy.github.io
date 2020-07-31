@@ -26,6 +26,7 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-performance.js"></script>
     <!------------------------------------------------------------------------------------>
     
     <!--SGI Calendar Scripts and CSS-->
@@ -42,6 +43,7 @@
 
         var _DEBUG = false;
         var calendar;
+        var events = [];
         var curEvent;
         var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -56,6 +58,7 @@
 
             calendar = new FullCalendar.Calendar(calendarEl, {
                 height: "auto",
+                events: events,
                 aspectRatio: 1.7,
                 weekends: false,
                 eventTextColor: 'white',
@@ -271,7 +274,7 @@
       // Your web app's Firebase configuration
 
       // Initialize Firebase
-    let firebaseConfig = {
+    let ACTIVEfirebaseConfig = {
         apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
         authDomain: "sgci-rds.firebaseapp.com",
         databaseURL: "https://sgci-rds.firebaseio.com",
@@ -292,11 +295,13 @@
         measurementId: "G-RRY0NKY921"
     };
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(ACTIVEfirebaseConfig);
+
         //firebase.initializeApp(testBranchConfig);
         firebase.analytics();
         var db = firebase.firestore();
         var storageRef = firebase.storage().ref();
+        var perf = firebase.performance();
 
    </script>
 <!--End Calendar Framework-->
@@ -410,42 +415,42 @@
                 Date Alert
             </div>
             <form id = "newTruckForm">
-                <div class="form-group">
-                 <div class="btn-group" role="group">
+                <div class="form-group" id = "buttonformgroup">
+                 <div id = "inout-btngroup" class="btn-group" role="group">
                      <button type="button" class="btn btn-primary" id = "outgoingbtn">Outgoing Shipment</button> 
                      <button type="button" class="btn btn-outline-primary" id = "incomingbtn">Incoming Delivery</button>
                  </div>
              </div>
              <!-- -->
              <div class = "form-group">
-                <label for="startTime">Arrival Window:</label>
-                <div class = "row" style = "padding-left: 20px;"><input type="time" id="startTime" name="startTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
+                <label class = "formlabel" for="startTime">Arrival Window:</label>
+                <div class = "row" style = "padding-left: 15px;"><input type="time" id="startTime" name="startTime" min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
                 <input type="time" id="endTime" name="endTime"  min= "06:30" max = "16:00" aria-describedby="timeHelpBlock">
                 <div class = "col"><button type = "button" id = "clearTimeBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
-                <small id="timeHelpBlock" class="form-text text-muted">Leave blank if there is no specified time.</small>
+                <small id="timeHelpBlock" class="form-text text-muted" style = "color: white !important;">Leave blank if there is no specified time.</small>
 
             </div>
             <div class="form-group">
-                <label for="titleBox">Appointment Title</label>
+                <label class = "formlabel" for="titleBox">Appointment Title</label>
                 <input type="text" class="form-control" id="titleBox" placeholder="Calendar Event Title">
             </div>
             <div class="form-group">
-                <label for="vendorBox">Carrier</label>
+                <label class = "formlabel" for="vendorBox">Carrier</label>
                 <input type="text" class="form-control" id="vendorBox" placeholder="Carrier/Vendor Name">
             </div>
             <div class="form-group">
-                <label for="customerBox">Customer</label>
+                <label class = "formlabel" for="customerBox">Customer</label>
                 <input type="text" class="form-control" id="customerBox" placeholder="Customer Name">
             </div>
             <div class="form-group">
-                <label for="destinationBox">Destination Address</label>
+                <label class = "formlabel" for="destinationBox">Destination Address</label>
                 <input type="text" class="form-control" id="destinationBox" placeholder="123 Easy St, Whitestown, IN 46075">
             </div>
             <!-- -->
 
             <!--PAPERWORK FILE SELECTION-->
             <div class="form-group">
-                <label for="shipTicketFileArea">Paperwork (must be .pdf)</label>
+                <label class = "formlabel" for="shipTicketFileArea">Paperwork (must be .pdf)</label>
 
                <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="shipTicketFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearFilesBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
 
@@ -455,7 +460,7 @@
 
             <!--COMMENTS TEXT AREA-->
             <div class="form-group">
-                <label for="notesArea">Description/Notes</label>
+                <label class = "formlabel" for="notesArea">Description/Notes</label>
                 <textarea class="form-control" id="notesArea" rows="3" placeholder="Shipment Updates/Issues, Special Instructions/Notes, Pallet Count, Product Type, etc."></textarea>
             </div>
             <button type="button" class="btn btn-primary" id = "submitTruckBtn">Schedule Outgoing Shipment <span id = "uploadSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 

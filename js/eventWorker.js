@@ -8,6 +8,17 @@
       eventColorWorker(false)
   }, 60 * 1000); 
 });
+
+const isSameDay = (date1, date2) => {
+    if (date1 == undefined || date2 == undefined) {
+        return false;
+    }
+  return date1.getDate() == date2.getDate() &&
+    date1.getMonth() == date2.getMonth() &&
+    date1.getFullYear() == date2.getFullYear()
+}
+
+
 //mark events that are past their end time
 
 /*
@@ -26,8 +37,7 @@
 			return;
 		}
 		if (event.allDay === true) {
-			if (event.start < now && event.start.getDate() <= now.getDate()) {
-
+			if (event.start < now && !isSameDay(event.start, now)) {
 				event.setProp("backgroundColor", "red");
 				event.setProp("borderColor", "red");
 			}
@@ -47,7 +57,7 @@
 	});
 }
 
-function addCalendarEvent(change) {
+function createCalendarEvent(change) {
 	let data = change.doc.data();
 	let day = data.date.split('/')[1];
     let month = data.date.split('/')[0] - 1;
@@ -68,36 +78,34 @@ function addCalendarEvent(change) {
         let endMinute = data.endTime.split(':')[1];
         let startDate = new Date(year, month, day, startHour, startMinute);
         var endDate = new Date(year, month, day, endHour, endMinute);
-
-                    //newEvent that has a start and end
-                    newEvent = {
-                      title: prefix + data.title,
-                      vendorName: data.vendorName,
-                      id: change.doc.id,
-                      eventTextColor: eventTextColor,
-                      start: startDate,
-                      end: endDate,
-                      allDay: data.allDay,
-                      editable: false,
-                      backgroundColor: bkgColor,
-                      borderColor: borderColor,
-                      displayEventEnd: true,
-                      isOutgoing: data.isOutgoing,
-                      customerName: data.customerName,
-                      eventDate: data.date,
-                      destination: data.destination,
-                      eventStartTime: data.startTime,
-                      eventEndTime: data.endTime,
-                      comments: data.notes,
-                      docId: change.doc.id,
-                      shipTicketUrls: data.shipTicketUrls,
-                      shipTicketRefs: data.shipTicketRefs,
-                      shipTicketNames: data.shipTicketNames,
-                      resolved: data.resolved,
-                      creator: data.creator,
-                      history: data.history
-
-                    }; 
+            //newEvent that has a start and end
+            newEvent = {
+                title: prefix + data.title,
+                vendorName: data.vendorName,
+                id: change.doc.id,
+                eventTextColor: eventTextColor,
+                start: startDate,
+                end: endDate,
+                allDay: data.allDay,
+                editable: false,
+                backgroundColor: bkgColor,
+                borderColor: borderColor,
+                displayEventEnd: true,
+                isOutgoing: data.isOutgoing,
+                customerName: data.customerName,
+                eventDate: data.date,
+                destination: data.destination,
+                eventStartTime: data.startTime,
+                eventEndTime: data.endTime,
+                comments: data.notes,
+                docId: change.doc.id,
+                shipTicketUrls: data.shipTicketUrls,
+                shipTicketRefs: data.shipTicketRefs,
+                shipTicketNames: data.shipTicketNames,
+                resolved: data.resolved,
+                creator: data.creator,
+                history: data.history
+            }; 
 
               } else /* allDay new event */{
                 let dateObj = new Date(year, month, day);
@@ -128,9 +136,10 @@ function addCalendarEvent(change) {
                     history: data.history
                 }; //newEvent
                 } //end else
-                calendar.addEvent(newEvent);
+        // return newEvent;
+        calendar.addEvent(newEvent);
 
-} //addCalendarEvent
+} //createCalendarEvent
 
 /*
  * Helper function for noCountryForOldEvents()
@@ -169,26 +178,24 @@ function getFridays(year, month){
  */ 
 async function noCountryForOldEvents(maxNumDays) {
     console.log("looking for events to clean up");
-    //Not inclusive--the calculated minimum date will not see any of its events marked for cleanup
+    //Inclusive--the calculated minimum date will also see its events marked for cleanup
     let dayDiff = 1000*60*60*24;
     let events = calendar.getEvents();
     let now = new Date();
+    /////////////////////////////////
+        //check if the event time is before a certain date to see if it should be there
+    ///////////
+
     let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
     console.log(minimumDate, new Date(minimumDate));
     var marked = [];
     events.forEach(function(event) {
-        if (event.allDay === true) {
-            if (event.start < minimumDate) {
+        if (event.allDay === true || event.end == undefined) {
+            if (event.start < minimumDate || isSameDay(event.start, minimumDate)) {
                 marked.push(event);
             }
         } else {
-            //check for start == end case where end is set to null. FullCalendar quirk
-            if (event.end === null) {
-                if (event.start < minimumDate) {
-                    marked.push(event);
-                } 
-            }
-            else if (event.end < minimumDate) {
+            if (event.end < minimumDate || isSameDay(event.end, minimumDate)) {
                 marked.push(event);
             }
         }
@@ -237,7 +244,7 @@ async function noCountryForOldEvents(maxNumDays) {
     var resolvedSent = false;
     var unresolvedSent = false;
     let supervisor = "bmbarnhart@stephengould.com";
-    // let supervisor = "sawdouglas7@gmail.com";
+    //let supervisor = "sawdouglas7@gmail.com";
     if (unresolvedList.length) {
         unresolvedSent = await sendEmail("S&R Calendar - UNRESOLVED SHIPMENTS NEED ATTN", bodyString, ["sgi.shippingreceiving@gmail.com", supervisor]);
     }
@@ -253,6 +260,7 @@ async function noCountryForOldEvents(maxNumDays) {
                     console.log("Document deleted.");
                     //delete any paperwork
                     shipFiles = event.extendedProps.shipTicketRefs;
+                    console.log(shipFiles);
                     shipFiles.forEach((shipFile) => {
                         let shipRef = storageRef.child(shipFile);
                         shipRef.delete().then(function() {

@@ -1,16 +1,63 @@
-button {
-
+body {
+	font-family: Post Grotesk,Helvetica,Arial,sans-serif;
+	word-break: break-word !important;
+	word-wrap: break-word !important;
 }
 
 #loadingSpinner {
 	margin-top: 50vh;
 	margin-left: 50vw;
-	
+
 }
 
+.formgroup {
+	background-color: #082a40;
+}
+.formlabel {
+	color: white;
+    font-weight: bold;
+    font-size: 2.5vh;
+}
+
+#dateAlert {
+	font-weight: 400;
+	font-size: 2.5vh;
+	text-align: center;
+	border-radius: 30px;
+	line-height: 1em;
+	width: 75%;
+	margin: auto;
+	margin-bottom: .75rem;
+	margin-top: .75rem;
+	background-color: #F24E1B !important;
+	color: white;
+	border-color: white;
+	border-width: 2px;
+}
+
+#inout-btngroup {
+	width: 100%;
+}
+#buttonformgroup {
+	background-color: white;
+	border: solid #F24E1B;
+    padding: .5em;
+    margin: auto;
+    border-radius: 10px;
+    width: 50%;
+}
+
+#outgoingbtn {
+	width: 50%;
+}
+#incomingbtn {
+	width: 50%;
+}
+
+
 .container {
-	word-wrap: break-word;
-	word-break: break-all;
+	word-wrap: break-word !important;
+	word-break: break-word !important;
   	padding-top: 20px;
   	padding-right: 30px;
     padding-bottom: 20px;
@@ -49,9 +96,17 @@ button:hover {
 	margin-bottom: 0px !important;
 }
 #submitTruckBtn {
-	background-color: #F24E1B !important;
-	border-color: transparent;
-	color: white;
+	font-size: 2.5vh;
+    margin: auto;
+    font-family: Post Grotesk,Helvetica,Arial,sans-serif;
+    background-color: #F24E1B !important;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-weight: bold;
+    word-break: break-word;
+    margin-left: 30%;
+    margin-right: 30%;
+    width: 40%;
 }
 .eventDataItem {
 	padding-right: 3px;
@@ -116,6 +171,7 @@ button:hover {
 	margin-bottom: auto;
 	margin-right: 10px;
 	line-height: 0px;
+	font-weight: bold;
 }
 #managePaperworkBtn {
 	background-color: #F24E1B !important;
@@ -142,6 +198,7 @@ button:hover {
 	height: 80%;
 	width: 95% !important;
 	max-width: 100% !important;
+	padding: 1em;
 
 }
 #loginApplet {
@@ -174,11 +231,16 @@ button:hover {
 #formcontainer {
 	display: none;
 	padding: 20px;
-	background-color: rgba(0,0,0,.1);
+	background-color: #082a40;
 	border-width: 20px;
 	border-bottom-left-radius: 25px;
 	border-bottom-right-radius: 25px;
+	border-radius: 25px;
 	margin-bottom: 15px;
+	max-width: 100%;
+	margin-top: .25em;
+	margin-bottom: .25em;
+
 }
 
 .modal-content {
@@ -414,7 +476,7 @@ footer > * {
 }
 
 #shipTicketFileArea, #newPaperworkFileArea {
-	outline: dashed grey;
+	outline: dashed #F24E1B;
 	margin-left: 20px;
 	background-color: lightgrey;
 }
