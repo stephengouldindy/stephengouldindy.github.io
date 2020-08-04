@@ -222,7 +222,7 @@ $("#reportIssueBtn").click(function() {
 	$("#sendIssueEmailModal").modal("show");
 }); // reportIssueBtn
 
-$("#sendIssueEmailBtn").click(function() {
+$("#sendIssueEmailBtn").click(async function() {
 	$("#issueSpinner").show();
 	$(this).attr("disabled", true);
 	let shouldSendEmail = $("#sendEmailCheckbox").prop("checked");
@@ -232,15 +232,15 @@ $("#sendIssueEmailBtn").click(function() {
 	}
 	let now = new Date();
 	let issue = `<b>${now.toDateString()} ${now.toLocaleTimeString()}</b> ${firebase.auth().currentUser.email} reported an issue: ${$("#issueBodyArea").val()}`;
-	
-	if (reportIssue(issue, curEvent, curEmails, shouldSendEmail)) {
+	let success = await reportIssue(issue, curEvent, curEmails, shouldSendEmail)
+	if (success) {
 		$("#sendIssueEmailModal").modal("hide");
 	}
 	$("#issueSpinner").hide();
 	$(this).attr("disabled", false);
 }); // click sendEmailIssueBtn
 
-function reportIssue(issue, event, recipients, shouldSendEmail) {
+async function reportIssue(issue, event, recipients, shouldSendEmail) {
 	let result;
 	var eventRef = db.collection("events").doc(event.event.id);
 	return eventRef.update({issues: firebase.firestore.FieldValue.arrayUnion(issue)})
