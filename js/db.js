@@ -6,12 +6,11 @@
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.1");
+  $("#version").html("BETA v3.2");
   //hide the event form on pageload
 
 
   firebase.auth().onAuthStateChanged(async function(user) {
-    console.log("changed");
     if (user) {
       console.log("logged in");
       if (!user.emailVerified) {
@@ -28,7 +27,7 @@
     var isInit = true;
     db.collection("events").onSnapshot(snapshot => {
         let changes = snapshot.docChanges();
-        //console.log(changes);
+        console.log(changes);
         changes.forEach(change => {
             //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
             if (change.type === "removed") {
@@ -47,7 +46,7 @@
         // calendar.refetchEvents();
 
       //set all event colors based on status
-        eventColorWorker(true);
+        eventColorWorker();
         //TODO: FIND A BETTER WAY TO OPTIMIZE THIS!
         if ($("#calendarApplet").css("display") == "none") {
             $("#calendarApplet").fadeIn();

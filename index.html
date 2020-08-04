@@ -32,9 +32,10 @@
     <!--SGI Calendar Scripts and CSS-->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel = "stylesheet">
+    <script src = "js/mailWorker.js" async></script>
     <script src = "js/eventWorker.js" async></script>
     <script src = "js/pageWorker.js" async></script>
-    <script src = "js/mailWorker.js" async></script>
+    
     <script src = "js/db.js" async></script>
     <script src = "js/buttons.js" async></script>
     
@@ -101,7 +102,6 @@
              
                     }, //end dateClick
                     eventClick: function(info) {
-                        //console.log(document.getElementById("modalComments").style.overflow);
                         curEvent = info;
                         //populate event info modal with event data
                         var time = (info.event.allDay) ? "No window specified." : `${info.event.extendedProps.eventStartTime}-${info.event.extendedProps.eventEndTime}`;
@@ -124,6 +124,19 @@
                         let historyContent = (info.event.extendedProps.history == undefined ? 
                             "No history yet. Any new changes made will still be recorded." : `<ul>${info.event.extendedProps.history}</ul>`)
                         $("#eventHistoryBtn").attr("data-content", historyContent);
+                        if (info.event.extendedProps.resolvedIssues != undefined) {
+                            //event has 1+ issue(s)
+                            for (var i = info.event.extendedProps.resolvedIssues.length - 1; i >= 0; i--) {
+                                addResolvedIssueAlert(info.event.extendedProps.resolvedIssues[i]);
+                            }
+                        }
+                        if (info.event.extendedProps.issues != undefined) {
+                            //event has 1+ issue(s)
+                            for (var i = info.event.extendedProps.issues.length - 1; i >= 0; i--) {
+                                addIssueAlert(info.event.extendedProps.issues[i]);
+                            }
+                        }
+                        
 
                         //dynamically add pdf containers and embed accordingly
                         for (var i = 0; i < info.event.extendedProps.shipTicketUrls.length; i++) {
@@ -236,7 +249,7 @@
                  let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
                     db.collection("events").add({
                         allDay: allDay,
-                        creator: $("#currentUser").html(),
+                        creator: firebase.auth().currentUser.email,
                         date: date,
                         customerName: customerName,
                         destination: destination,
@@ -404,6 +417,7 @@
                                    ></span>
 </div>
 <div class ="container" id = "calendarApplet">
+    <div><span id = "issueCount">&#9888;&#65039; Total Issues: 0</div>
     <h3 id = "instructions" style="text-align: center;">Click a date to schedule a truck. Click an event to view/edit its information.</h2>
 
 
@@ -538,6 +552,7 @@
             <button id = "eventHistoryBtn" type="button" class="btn btn-secondary" data-html = "true" data-container="body" data-toggle="popover" data-placement="left" data-content="HISTORY ERROR. TELL SPENCER.">
             i
             </button>
+            <button type="button" class="btn btn-warning" id = "reportIssueBtn">Note Issue</button>
             <small id="eventId" style = "display: none;"> Event ID Error</small>
             <button type="button" class="btn btn-success" id = "resolveShipmentBtn">Mark as Resolved <span id = "resolveSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
                                   style = "display: none;"></span></button>
@@ -642,14 +657,50 @@
               </div> 
               <h4>Attach New</h4>
               <div class = "row"><div class = "col" style = "padding-left: 0px;"><input type="file" class="form-control-file" id="newPaperworkFileArea" accept=".pdf" multiple = "true"></div><div class = "col"><button type = "button" id = "clearNewPaperworkBtn" class = "xButton"><span class = "xButtonText">&times;</span></button></div></div>
-        </div>
-        <div class="modal-footer">
-            <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes <span id = "paperworkSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
-                                  style = "display: none;"></span></button>
-            <button type="button" class="btn btn-danger" data-dismiss = "modal" id = "closeManagerBtn">Back</button>            
+            </div>
+            <div class="modal-footer">
+                <button type = "button" class = "btn btn-primary" id = "paperworkUpdateBtn">Confirm Changes <span id = "paperworkSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                      style = "display: none;"></span></button>
+                <button type="button" class="btn btn-danger" data-dismiss = "modal" id = "closeManagerBtn">Back</button>            
+            </div>
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id= "sendIssueEmailModal">
+
+ <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id = "sendEmailTitle">&#9888;&#65039; Reporting Issue</h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id = "closeModal">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <div>
+                  <b>Issue</b><br>
+                  <textarea id = "issueBodyArea" rows="3" placeholder="Issue Summary" style = "width: 100%"></textarea>
+               </div>
+               Send Notification Email <input id = "sendEmailCheckbox" type = "checkbox">
+                             <div id = "emailModalContainer" class = "container modalContainer" style = "padding: 0; border-bottom-color: transparent;">
+                <b style = "width: 100%;">Recipient(s)</b><button id = "clearRecipientsBtn" type = "button" class = "btn btn-danger">Clear All</button>
+                <ul id = "recipientList">
+                    None specified.
+                </ul>
+                <small style = "color: black;">Add New</small>
+                <input id = "newRecipientInput" type = "text" style = "margin-bottom: 5px; width: 90%" placeholder="recipient@stephengould.com">
+                <button id = "newIssueRecipientBtn" class = "xButton">+</button>
+              </div> 
+            <div class="modal-footer">
+                <button type = "button" class = "btn btn-primary" id = "sendIssueEmailBtn">Record Issue <span id = "issueSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
+                                      style = "display: none;"></span></button> 
+                <button type = "button" class = "btn btn-danger" id = "cancelEmailBtn" class="close" data-dismiss="modal" aria-label="Close">Cancel</button>           
+            </div>
+        </div>
+    </div>
 </div>
+
 
 </html>

@@ -24,18 +24,24 @@ const isSameDay = (date1, date2) => {
 /*
  *	Marks events with their proper colors. Only colors. Runs on applet launch, then once every minute.
  */
- function eventColorWorker(isInitial) {
-   let now = new Date();
-   let events = calendar.getEvents();
-   events.forEach(function(event) {
+function eventColorWorker() {
+    let numIssues = 0;
+    let now = new Date();
+    let events = calendar.getEvents();
+    events.forEach(function(event) {
 		//skip resolved events, but color them if this is the first time they have been considered.
 		if (event.extendedProps.resolved == true) {
-			if (isInitial) {
-				event.setProp("backgroundColor", "green");
-				event.setProp("borderColor", "white");
-			}
+			event.setProp("backgroundColor", "green");
+			event.setProp("borderColor", "white");
 			return;
 		}
+        if (event.extendedProps.issues != undefined && event.extendedProps.issues.length > 0) {
+            event.setProp("backgroundColor", "#FFCC00");
+            event.setProp("borderColor", "#FFCC00");
+            event.setProp("textColor", "black");
+            numIssues += event.extendedProps.issues.length;
+            return;
+        }
 		if (event.allDay === true) {
 			if (event.start < now && !isSameDay(event.start, now)) {
 				event.setProp("backgroundColor", "red");
@@ -54,7 +60,10 @@ const isSameDay = (date1, date2) => {
 				event.setProp("borderColor", "red");
 			}
 		}
-	});
+        //if event has an issue marked
+
+    });
+    $("#issueCount").html(`&#9888;&#65039; Total Issues: ${numIssues}`)
 }
 
 function createCalendarEvent(change) {
@@ -104,7 +113,9 @@ function createCalendarEvent(change) {
                 shipTicketNames: data.shipTicketNames,
                 resolved: data.resolved,
                 creator: data.creator,
-                history: data.history
+                history: data.history,
+                issues: data.issues,
+                resolvedIssues: data.resolvedIssues
             }; 
 
               } else /* allDay new event */{
@@ -133,7 +144,9 @@ function createCalendarEvent(change) {
                     shipTicketNames: data.shipTicketNames,
                     resolved: data.resolved,
                     creator: data.creator,
-                    history: data.history
+                    history: data.history,
+                    issues: data.issues,
+                    resolvedIssues: data.resolvedIssues
                 }; //newEvent
                 } //end else
         // return newEvent;

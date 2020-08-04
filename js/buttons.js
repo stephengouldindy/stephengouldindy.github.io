@@ -162,6 +162,123 @@ $("#incomingbtn").click(function() {
  	$("#outgoingbtn").click(); 
  });
 
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////// ISSUE REPORTING FOR EVENTS ///////////////////////
+////////////////////////////////////////////////////////////////////////////
+var curEmails = [];
+
+function ValidateEmail(email) {
+	if (email == undefined) {
+		return false;
+	}
+	return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
+}
+
+/*
+ * Clean up list and email array on click
+ */
+$("#clearRecipientsBtn").click(function() {
+	curEmails = [];
+	document.getElementById("recipientList").innerHTML = "None specified.";
+}); // clearRecipientsBtn click
+
+$("#newIssueRecipientBtn").click(function() {
+	//add a new recipient to the list
+	let newEmail = $("#newRecipientInput").val();
+	if (!ValidateEmail(newEmail)) {
+		alert("Invalid email; check your submitted email.");
+		return;
+	}
+	else if (curEmails.includes(newEmail)) {
+		alert("Recipient already selected.");
+		return;
+	}
+	$("#newRecipientInput").val("")
+	addEmailRecipient(newEmail);
+	curEmails.push(newEmail);
+
+}); // click newIssueRecipientBtn
+
+/*
+ * Sends email based on custom content.
+ */
+
+
+
+$("#reportIssueBtn").click(function() {
+	$("#myModal").modal("hide");
+	//if there is a creator, check the box and add it to the mailing list
+	let currentUserEmail = firebase.auth().currentUser.email;
+	if (ValidateEmail(curEvent.event.extendedProps.creator) && curEvent.event.extendedProps.creator != currentUserEmail) {
+		$('#sendEmailCheckbox').prop('checked', true);
+		$('#emailModalContainer').show();
+		addEmailRecipient(curEvent.event.extendedProps.creator);
+	}
+	else {
+		$('#sendEmailCheckbox').prop('checked', false);
+		$('#emailModalContainer').hide();
+	}
+
+	$("#sendIssueEmailModal").modal("show");
+}); // reportIssueBtn
+
+$("#sendIssueEmailBtn").click(function() {
+	$("#issueSpinner").show();
+	$(this).attr("disabled", true);
+	let shouldSendEmail = $("#sendEmailCheckbox").prop("checked");
+	if (shouldSendEmail && !curEmails.length) {
+		alert("No recipients selected. If you don't want to send an email for this issue, unselect the 'Send Email' checkbox.");
+		return;
+	}
+	let now = new Date();
+	let issue = `<b>${now.toDateString()} ${now.toLocaleTimeString()}</b> ${firebase.auth().currentUser.email} reported an issue: ${$("#issueBodyArea").val()}`;
+	
+	if (reportIssue(issue, curEvent, curEmails, shouldSendEmail)) {
+		$("#sendIssueEmailModal").modal("hide");
+	}
+	$("#issueSpinner").hide();
+	$(this).attr("disabled", false);
+}); // click sendEmailIssueBtn
+
+function reportIssue(issue, event, recipients, shouldSendEmail) {
+	let result;
+	var eventRef = db.collection("events").doc(event.event.id);
+	return eventRef.update({issues: firebase.firestore.FieldValue.arrayUnion(issue)})
+	.then(async function() {
+		//email the creator of the event to report that there is an issue
+		var bodyString = `<html><h4>Issue Summary for Event '${event.event.title.substring(4)}' (${event.event.id}):</h4>${issue}<br><br><small><i>Contact the issue reporter directly ` +  
+						  `if you have questions. ` +
+						  `This is an auto-generated message from the SGI Shipping and Receiving application. ` + 
+						  `Please do not reply to this message.</i></small></html>`;
+		if (!shouldSendEmail) {
+			return true;
+		}
+		result = await sendEmail("ATTN: Truck Issue Reported", bodyString, recipients);
+		if (result == true) {
+			alert("Recipient notified of issue.");
+		}
+		else {
+			alert("Email failed to send.");
+		}
+	}).catch(function(err){
+		alert("An error occured; failed to report issue. Check your connection.");
+		console.log(err);
+		return false;
+	});
+	return result;
+}
+
+////----------------------------------!-------------------------------------///
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////// END ISSUE REPORTING FOR EVENTS /////////////////////
+////////////////////////////////////////////////////////////////////////////
+////---------------------------------!----------------------------------///
+
+
+//////////////////////////////////////////////////////////////////////////////
+////////////////////////////// RESOLVE EVENTS ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+
 
  $("#resolveShipmentBtn").click(function() {
  	$(this).attr("disabled", true);
@@ -182,6 +299,8 @@ $("#incomingbtn").click(function() {
  	}
 	//curEvent is set on eventClick, representing our FullCalendar event object
 	if (!confirm(`Please confirm you would like to mark truck from ${curEvent.event.title} for ${curEvent.event.extendedProps.customerName} as resolved.`)) {
+		 $(this).attr("disabled", false);
+ 		$("#resolveSpinner").hide();
 		return;
 	}
 	let response = prompt("If you would like to associate any relevant notes with the appointment, you may enter them below.");
@@ -216,7 +335,7 @@ $("#incomingbtn").click(function() {
 		    // The document probably doesn't exist.
 		    console.error("Error updating document: ", error);
 	});
-	});
+}); // resolveShipmentBtn
 
 
 
@@ -289,6 +408,16 @@ $("#incomingbtn").click(function() {
  * Wraps any changes detected and attempts to push them out
  */
  $("#confirmEditBtn").click(function() {
+
+ 	//ERROR CHECKING
+ 	let selectedDateComponents = ($("#editDatePicker").val()).split('-');
+	let selectedDate = new Date(selectedDateComponents[0], selectedDateComponents[1] - 1, selectedDateComponents[2])
+ 	if (selectedDate.getDay() == 0 || selectedDate.getDay() == 6 ) {
+ 		alert ("You have selected a weekend for the new date. Try changing your selected date.");
+ 		return;
+ 	}
+
+	//END ERROR CHECKING
 	//determine which inputs have a change include and compile them into a changes object to be pushed to database
 	$(this).attr("disabled", true);
 	$("#updateSpinner").show();
@@ -480,8 +609,7 @@ $("#incomingbtn").click(function() {
 
  $("#paperworkUpdateBtn").click(async function() {
  	$("#paperworkSpinner").show();
- 	document.getElementById("paperworkUpdateBtn").disabled = true;
-	//document.getElementById("paperworkUpdateBtn").disabled = true;
+ 	document.getElementById("paperworkUpdateBtn").disabled = true;;
 	//determine which boxes are unchecked
 	var list = document.getElementById("fileList");
 	var children = list.children;
@@ -568,6 +696,8 @@ $("#incomingbtn").click(function() {
     	})
 		.catch(function(error) {
 	    	// The document probably doesn't exist.
+	    	$("#paperworkSpinner").hide();
+    		document.getElementById("paperworkUpdateBtn").disabled = false;
 	    	alert("Error updating document: ", error);
 	    });
 		//frontend snapshot handler will handle updating the calendar if we just update the database
@@ -608,6 +738,9 @@ $("#deleteShipmentBtn").click(function() {
 });
         
 
+    } else {
+    	document.getElementById("deleteShipmentBtn").disabled = false;
+		$("#cancelSpinner").hide();
     } 
 });
 

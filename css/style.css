@@ -80,8 +80,27 @@ body {
 button:hover {
 	filter: brightness(90%);
 }
+.tiny-btn {
+	line-height: 1em;
+	border-radius: 30px;
+}
 #resolveShipmentBtn:hover {
 	filter: brightness(100%) !important;
+}
+#clearRecipientsBtn {
+	line-height: .5em;
+	margin-left: .2em;
+	border-radius: 30px;
+}
+#recipientList {
+	border: solid lightgrey;
+	border-width: 1px;
+	margin-top: .2em;
+}
+#reportIssueBtn {
+	background-color: #FFCC00 !important;
+    color: black;
+    border-color: #FFCC00 !important;
 }
 
 #blueLogo {
@@ -214,7 +233,7 @@ button:hover {
 	padding-bottom: 5px !important; 
 }
 #infoModalContainer {
-	max-height: 30vh;
+	max-height: 50vh;
 }
 .fc-event-container:hover {
 	cursor: pointer;
@@ -349,8 +368,8 @@ small {
 	padding-top: .75em;
 	padding-bottom: .75em;
 	font-size: 12px;
-	background-color: #F24E1B;
-	border-color: #F24E1B;
+	background-color: grey;
+	border-color: grey;
 }
 
 .centered-container {

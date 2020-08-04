@@ -27,7 +27,6 @@ $('body').on('click', function (e) {
 
 
 window.onclick = function(event) {
-
   if (!event.target.matches('#dropdownbtn') && !event.target.matches('#hamburger')) {
       if ($("#myDropdown").css("opacity") === 0.0) {
         return;
@@ -48,7 +47,6 @@ function addTicketPdfElement(id) {
     newElement.setAttribute('class', "carousel-item");
     newElement.setAttribute('id', id);
     p.appendChild(newElement);
-
 }
 
 /*
@@ -70,22 +68,121 @@ function populatePdfManager(file, storageName) {
 	list.appendChild(newRow);
 }
 
+function addEmailRecipient(email) {
+    //assumes email is formatted properly
+    if (!curEmails.length) {
+        $("#recipientList").html("");
+    }
+    let emailList = document.getElementById("recipientList");
+    var newEmailElement = document.createElement("li");
+    newEmailElement.innerHTML = email;
+    emailList.appendChild(newEmailElement);
+}
+
+
+
+function addIssueAlert(issueText) {
+    let warningAlert = document.createElement("div");
+    warningAlert.setAttribute("class", "alert alert-danger");
+    var resolveButton = document.createElement("button");
+    resolveButton.setAttribute("class", "btn btn-success tiny-btn alert-resolver");
+    resolveButton.innerHTML = "Resolve Issue ";
+    warningAlert.addEventListener("click", resolveIssue);
+    warningAlert.appendChild(resolveButton);
+    warningAlert.innerHTML = warningAlert.innerHTML + "<br>" + issueText;
+    $("#infoModalContainer").prepend(warningAlert); 
+}
+function addResolvedIssueAlert(issueText) {
+    let resolvedAlert = document.createElement("div");
+    resolvedAlert.setAttribute("class", "alert alert-success");
+    resolvedAlert.innerHTML = issueText;
+    $("#infoModalContainer").prepend(resolvedAlert); 
+}
+
+function resolveIssue(event) {
+
+    if(!event.target.matches(".alert-resolver")) {
+        return;
+    }
+
+    if (!confirm("Are you sure you would like to mark this issue as resolved? This is irreversible.")) {
+        return;
+    }
+    let button = $(event.target).parent().prevObject[0];
+    let spinner = document.createElement("span");
+    spinner.setAttribute("class", "spinner-border spinner-border-sm");
+    spinner.setAttribute("role", "status");
+    spinner.setAttribute("aria-hidden", "true");
+    button.appendChild(spinner);
+    var eventRef = db.collection("events").doc(curEvent.event.id);
+    //grab issue text from the alert parent's html, ignoring its
+    let alertText = $(event.target).parent().html();
+    let issue = alertText.split("<br>")[1];
+    return eventRef.update({issues: firebase.firestore.FieldValue.arrayRemove(issue)})
+    .then(function() {
+        return eventRef.update({resolvedIssues: firebase.firestore.FieldValue.arrayUnion(`(Resolved by ${$("#currentUser").html()}) ${issue}`)})
+    })
+    .then(async function() {
+        //grab the alert from the event in order to clean it up
+        var alert = button.parentElement;  
+        alert.removeChild(button);
+        alert.setAttribute("class", "alert alert-success");
+        alert.innerHTML = `(Resolved by ${$("#currentUser").html()}) ${issue}`;
+    }).catch(function(err){
+        alert("An error occured; failed to resolve issue. Check your connection.");
+        console.log(err);
+    });
+}
+
+
+
+
+$('#sendEmailCheckbox').change(function() {
+    if(this.checked) {
+        $("#emailModalContainer").slideDown(200);
+    } else {
+        $("#emailModalContainer").slideUp(200);
+    }        
+});
+
+
+
+/*
+ * Cleans up issue email recipients on modal close so they don't accumulate.
+ */
+$('#sendIssueEmailModal').on('hidden.bs.modal', function() {
+    var p = document.getElementById("recipientList");
+    var child = p.lastElementChild;  
+        while (child) { 
+            p.removeChild(child); 
+            child = p.lastElementChild; 
+        }
+    curEmails = [];
+    $("#recipientList").html("None specified.");
+    $("#issueBodyArea").val("");
+});
 
 /*
  * Cleans up pdf viewers on modal close so they don't accumulate.
  */
-$('#myModal').on('hidden.bs.modal', function () {
-  var p = document.getElementById("pdfCarousel-inner");
-  var child = p.lastElementChild;  
+$('#myModal').on('hidden.bs.modal', function() {
+    var p = document.getElementById("pdfCarousel-inner");
+        var child = p.lastElementChild;  
         while (child) { 
             p.removeChild(child); 
             child = p.lastElementChild; 
         } 
+    let modalContainer = document.getElementById("infoModalContainer");
+    var alerts = modalContainer.getElementsByClassName("alert");
+    for (var i = alerts.length - 1; i >= 0; i--) {
+        modalContainer.removeChild(alerts[i]);
+    }
+
 });
 /*
  * Cleans up fileList on modal close so files don't accumulate.
  */
-$('#managePaperworkModal').on('hidden.bs.modal', function () {
+$('#managePaperworkModal').on('hidden.bs.modal', function() {
   var p = document.getElementById("fileList");
   var child = p.lastElementChild;  
         while (child) { 
