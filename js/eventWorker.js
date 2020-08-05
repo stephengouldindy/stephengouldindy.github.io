@@ -29,35 +29,35 @@ function eventColorWorker() {
     let now = new Date();
     let events = calendar.getEvents();
     events.forEach(function(event) {
+        if (event.extendedProps.issues != undefined && event.extendedProps.issues.length > 0) {
+            event.setProp("backgroundColor", "#FFCC00");
+            event.setProp("borderColor", "white");
+            event.setProp("textColor", "black");
+            numIssues += event.extendedProps.issues.length;
+            return;
+        }
 		//skip resolved events, but color them if this is the first time they have been considered.
 		if (event.extendedProps.resolved == true) {
 			event.setProp("backgroundColor", "green");
 			event.setProp("borderColor", "white");
 			return;
 		}
-        if (event.extendedProps.issues != undefined && event.extendedProps.issues.length > 0) {
-            event.setProp("backgroundColor", "#FFCC00");
-            event.setProp("borderColor", "#FFCC00");
-            event.setProp("textColor", "black");
-            numIssues += event.extendedProps.issues.length;
-            return;
-        }
 		if (event.allDay === true) {
 			if (event.start < now && !isSameDay(event.start, now)) {
 				event.setProp("backgroundColor", "red");
-				event.setProp("borderColor", "red");
+				event.setProp("borderColor", "white");
 			}
 		} else {
 			//check for start == end case where end is set to null. FullCalendar quirk
 			if (event.end === null) {
 				if (event.start < now) {
 					event.setProp("backgroundColor", "red");
-					event.setProp("borderColor", "red");
+					event.setProp("borderColor", "white");
 				} 
 			}
 			else if (event.end < now) {
 				event.setProp("backgroundColor", "red");
-				event.setProp("borderColor", "red");
+				event.setProp("borderColor", "white");
 			}
 		}
         //if event has an issue marked
@@ -267,7 +267,7 @@ async function noCountryForOldEvents(maxNumDays) {
     if (unresolvedSent || resolvedSent) {
         //remove the events from the database
         marked.forEach(function(event) {
-            let docRef = db.collection("events").doc(event.id);
+            let docRef = eventCollection.doc(event.id);
             docRef.get().then(function(doc) {
                 docRef.delete().then(function() {
                     console.log("Document deleted.");

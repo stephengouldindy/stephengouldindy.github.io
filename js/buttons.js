@@ -242,7 +242,7 @@ $("#sendIssueEmailBtn").click(async function() {
 
 async function reportIssue(issue, event, recipients, shouldSendEmail) {
 	let result;
-	var eventRef = db.collection("events").doc(event.event.id);
+	var eventRef = eventCollection.doc(event.event.id);
 	return eventRef.update({issues: firebase.firestore.FieldValue.arrayUnion(issue)})
 	.then(async function() {
 		//email the creator of the event to report that there is an issue
@@ -286,7 +286,7 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
  	if (curEvent.event.extendedProps.resolved) {
  		if(confirm("Event has already been resolved. If this was a mistake, confirm you would like to unresolve it. " +
  					"Note that if you associated any resolve notes originally, this action will not remove them for you.")) {
- 			var eventRef = db.collection("events").doc(curEvent.event.id);
+ 			var eventRef = eventCollection.doc(curEvent.event.id);
  			var oldHistory = curEvent.event.extendedProps.history;
 			if (oldHistory == undefined) {
 				oldHistory = "";
@@ -318,7 +318,7 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 		history: `<li>${$("#currentUser").html()} marked resolved - ${now.toDateString()} ${now.toLocaleTimeString()}</li>` + oldHistory};
 		let changes = Object.assign(changesWrapper, notesWrapper, resolveWrapper);
 
-		var eventRef = db.collection("events").doc(curEvent.event.id);
+		var eventRef = eventCollection.doc(curEvent.event.id);
 		console.log(changes);
 		return eventRef.update(changes).then(function() {
 			document.getElementById("resolveShipmentBtn").disabled = false;
@@ -550,7 +550,7 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 
 	if (Object.keys(changes).length > 0) {
 		let eventId = $("#eventId").html();
-		let curEventRef = db.collection("events").doc(eventId);
+		let curEventRef = eventCollection.doc(eventId);
 		return curEventRef.update(changes)
 		.then(function() {
 			document.getElementById("confirmEditBtn").disabled = false;
@@ -655,7 +655,7 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 
 
     let eventId = $("#eventId").html();
-    let curEventRef = db.collection("events").doc(eventId);
+    let curEventRef = eventCollection.doc(eventId);
 
     let now = new Date();
     let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
@@ -707,10 +707,11 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 //delete file on click
 $("#deleteShipmentBtn").click(function() {
 	$(this).attr("disabled", true);
-	$("#cancelSpinner").show();
+
 	if (confirm("Are you sure you wish to delete the event? This cannot be undone.")) {
+		$("#cancelSpinner").show();
         //delete the db entry
-        let docRef = db.collection("events").doc($("#eventId").html());
+        let docRef = eventCollection.doc($("#eventId").html());
         docRef.get().then(function(doc) {
         	docRef.delete().then(function() {
         		console.log("Document deleted.");
@@ -732,6 +733,8 @@ $("#deleteShipmentBtn").click(function() {
         $("#myModal").modal("hide");
 
     }).catch(function(error) {
+    	$("#cancelSpinner").hide();
+    	document.getElementById("deleteShipmentBtn").disabled = false;
     	alert(`Something went wrong: ${error}. Please contact dougla55@purdue.edu.`);
     	return;
     });

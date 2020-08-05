@@ -41,7 +41,6 @@
     
     <!--INTIALIZE CALENDAR-->         
     <script>    
-
         var _DEBUG = false;
         var calendar;
         var events = [];
@@ -237,17 +236,17 @@
                     var shipTicketNames = [];
 
                     for (var i = 0; i < shipTicketFiles.length; i++) {
-                     await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
-                        shipTicketUrls[i] = response.downloadURL;
-                        shipTicketRefs[i] = response.ref;
-                        shipTicketNames[i] = (response.name != undefined) ? response.name : response.ref;
-                    });
-                 } 
+                         await uploadTaskPromise(shipTicketFiles[i]).then((response) => {
+                            shipTicketUrls[i] = response.downloadURL;
+                            shipTicketRefs[i] = response.ref;
+                            shipTicketNames[i] = (response.name != undefined) ? response.name : response.ref;
+                        });
+                    } 
                  
                  
                  let now = new Date();
                  let nowStr = `${now.toDateString()}, ${now.toLocaleTimeString()}`;
-                    db.collection("events").add({
+                 let newEvent = {
                         allDay: allDay,
                         creator: firebase.auth().currentUser.email,
                         date: date,
@@ -264,8 +263,10 @@
                         shipTicketNames: shipTicketNames,
                         resolved: false,
                         history: `<li>${$("#currentUser").html()} created - ${nowStr}</li>`
-
-                    }).then(function(docRef) {
+                    };
+                    db.collection("events").add(newEvent).then(function(docRef) {
+                        let after = new Date();
+                        console.log('before', now.toLocaleTimeString(), now.getMilliseconds(), 'after', after.toLocaleTimeString(), after.getMilliseconds());
                         console.log(`Document ${docRef.id} successfully written`);
                         $("#uploadSpinner").hide();
                         $("#formArrow").css("transform", "rotate(90deg)");
@@ -313,8 +314,10 @@
         //firebase.initializeApp(testBranchConfig);
         firebase.analytics();
         var db = firebase.firestore();
+        let eventCollection = db.collection("events");
         var storageRef = firebase.storage().ref();
         var perf = firebase.performance();
+
 
    </script>
 <!--End Calendar Framework-->

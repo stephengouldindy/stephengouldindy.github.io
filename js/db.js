@@ -24,8 +24,10 @@
     }
     
 
+
+
     var isInit = true;
-    db.collection("events").onSnapshot(snapshot => {
+    eventCollection.onSnapshot(snapshot => {
         let changes = snapshot.docChanges();
         console.log(changes);
         changes.forEach(change => {
@@ -36,9 +38,9 @@
             } else if (change.type === "modified") {
                 //replace event
                 calendar.getEventById(change.doc.id).remove();
-                events.push(createCalendarEvent(change));
+                createCalendarEvent(change);
             } else if (change.type === "added") {
-                events.push(createCalendarEvent(change));
+                createCalendarEvent(change);
             } 
         });
 

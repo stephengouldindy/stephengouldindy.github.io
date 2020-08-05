@@ -114,7 +114,7 @@ function resolveIssue(event) {
     spinner.setAttribute("role", "status");
     spinner.setAttribute("aria-hidden", "true");
     button.appendChild(spinner);
-    var eventRef = db.collection("events").doc(curEvent.event.id);
+    var eventRef = eventCollection.doc(curEvent.event.id);
     //grab issue text from the alert parent's html, ignoring its
     let alertText = $(event.target).parent().html();
     let issue = alertText.split("<br>")[1];

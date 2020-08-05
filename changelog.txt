@@ -33,13 +33,6 @@ BETA 2.8
 	- Added visual cue for editing screen submission
 	- Fixed visual issue with info titles
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-BETA 2.8
-	- Added event history--when a user creates, reschedules, resolves, or edits a truck appointment/its paperwork, 
-	  it is recorded in the event history with the user, action, and time
-	- Added visual cue for editing screen submission
-	- Fixed visual issue with info titles
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 2.7.1
 	- Added basic scroll visual cue
 	- Fixed bug with event colorer
