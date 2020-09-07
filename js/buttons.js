@@ -204,10 +204,9 @@ $("#newIssueRecipientBtn").click(function() {
  */
 
 
-
-$("#reportIssueBtn").click(function() {
+$("#recordNoteBtn").click(function() {
 	$("#myModal").modal("hide");
-	
+	$("#issueBodyArea").html("");
 	//if there is a creator, check the box and add it to the mailing list
 	let currentUserEmail = firebase.auth().currentUser.email;
 	if (ValidateEmail(curEvent.event.extendedProps.creator) && curEvent.event.extendedProps.creator != currentUserEmail) {
@@ -219,7 +218,32 @@ $("#reportIssueBtn").click(function() {
 		$('#sendEmailCheckbox').prop('checked', false);
 		$('#emailModalContainer').hide();
 	}
+	$("#sendEmailTitle").html("&#128394; Recording Note");
+	$("#alertSummaryHeader").html("Note");
+	$("#issueBodyArea").attr("placeholder", "Note Summary");
+	$("#sendIssueEmailBtn").html("Record Note");
+	$("#sendIssueEmailModal").modal("show");
+}); // reportIssueBtn
 
+
+$("#reportIssueBtn").click(function() {
+	$("#myModal").modal("hide");
+	$("#issueBodyArea").html("");
+	//if there is a creator, check the box and add it to the mailing list
+	let currentUserEmail = firebase.auth().currentUser.email;
+	if (ValidateEmail(curEvent.event.extendedProps.creator) && curEvent.event.extendedProps.creator != currentUserEmail) {
+		$('#sendEmailCheckbox').prop('checked', true);
+		$('#emailModalContainer').show();
+		addEmailRecipient(curEvent.event.extendedProps.creator);
+	}
+	else {
+		$('#sendEmailCheckbox').prop('checked', false);
+		$('#emailModalContainer').hide();
+	}
+	$("#sendEmailTitle").html("&#9888;&#65039; Reporting Issue");
+	$("#alertSummaryHeader").html("Issue");
+	$("#issueBodyArea").attr("placeholder", "Issue Summary");
+	$("#sendIssueEmailBtn").html("Report Issue");
 	$("#sendIssueEmailModal").modal("show");
 }); // reportIssueBtn
 
@@ -228,17 +252,40 @@ $("#sendIssueEmailBtn").click(async function() {
 	$(this).attr("disabled", true);
 	let shouldSendEmail = $("#sendEmailCheckbox").prop("checked");
 	if (shouldSendEmail && !curEmails.length) {
-		alert("No recipients selected. If you don't want to send an email for this issue, unselect the 'Send Email' checkbox.");
+		alert("No recipients selected. If you don't want to send a notification email to anyone, unselect the 'Send Email' checkbox.");
 		return;
 	}
 	let now = new Date();
-	let issue = `<b>${now.toDateString()} ${now.toLocaleTimeString()}</b> ${firebase.auth().currentUser.email} reported an issue: ${$("#issueBodyArea").val()}`;
-	let success = await reportIssue(issue, curEvent, curEmails, shouldSendEmail)
-	if (success) {
-		$("#sendIssueEmailModal").modal("hide");
+	if ($("#alertSummaryHeader").html() === "Issue") {
+		let issue = `<b>${now.toDateString()} ${now.toLocaleTimeString()}</b> ${firebase.auth().currentUser.email} reported an issue: ${$("#issueBodyArea").val()}`;
+		let success = await reportIssue(issue, curEvent, curEmails, shouldSendEmail)
+		if (success) {
+			$("#sendIssueEmailModal").modal("hide");
+			if (shouldSendEmail) {
+				alert("Recipient notified of issue.");
+			}
+		}
+		$("#issueSpinner").hide();
+		$(this).attr("disabled", false);
 	}
-	$("#issueSpinner").hide();
-	$(this).attr("disabled", false);
+	else if ($("#alertSummaryHeader").html() === "Note") {
+		let note = `<b>${now.toDateString()} ${now.toLocaleTimeString()}</b> ${firebase.auth().currentUser.email} recorded a note: ${$("#issueBodyArea").val()}`;
+		let success = await recordNote(note, curEvent, curEmails, shouldSendEmail);
+		if (success) {
+			$("#sendIssueEmailModal").modal("hide");
+			if (shouldSendEmail) {
+				alert("Recipient notified of note.");
+			}
+		}
+		else {
+			console.log(success);
+		}
+		$("#issueSpinner").hide();
+		$(this).attr("disabled", false);
+	}
+	else {
+		alert("Something went wrong. Please notify dougla55@purdue.edu.")
+	}
 }); // click sendEmailIssueBtn
 
 async function reportIssue(issue, event, recipients, shouldSendEmail) {
@@ -247,7 +294,7 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 	return eventRef.update({issues: firebase.firestore.FieldValue.arrayUnion(issue)})
 	.then(async function() {
 		//email the creator of the event to report that there is an issue
-		var bodyString = `<html><h4>Issue Summary for Event '${event.event.title.substring(4)}' (${event.event.id}):</h4>${issue}<br><br><small><i>Contact the issue reporter directly ` +  
+		var bodyString = `<html><h4>Issue Summary for Event '${event.event.title.substring(4)}' (${event.event.id}):</h4>${issue}<br><br><small><i>Contact the reporter directly ` +  
 						  `if you have questions. ` +
 						  `This is an auto-generated message from the SGI Shipping and Receiving application. ` + 
 						  `Please do not reply to this message.</i></small></html>`;
@@ -256,7 +303,7 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 		}
 		result = await sendEmail("ATTN: Truck Issue Reported", bodyString, recipients);
 		if (result == true) {
-			alert("Recipient notified of issue.");
+			return true;
 		}
 		else {
 			alert("Email failed to send.");
@@ -269,9 +316,37 @@ async function reportIssue(issue, event, recipients, shouldSendEmail) {
 	return result;
 }
 
+async function recordNote(note, event, recipients, shouldSendEmail) {
+	let result;
+	var eventRef = eventCollection.doc(event.event.id);
+	return eventRef.update({specialNotes: firebase.firestore.FieldValue.arrayUnion(note)})
+	.then(async function() {
+		//email the creator of the event to report that there is an issue
+		var bodyString = `<html><h4>Note Summary for Event '${event.event.title.substring(4)}' (${event.event.id}):</h4>${note}<br><br><small><i>Contact the reporter directly ` +  
+						  `if you have questions. ` +
+						  `This is an auto-generated message from the SGI Shipping and Receiving application. ` + 
+						  `Please do not reply to this message.</i></small></html>`;
+		if (!shouldSendEmail) {
+			return true;
+		}
+		result = await sendEmail("ATTN: Truck Note Recorded", bodyString, recipients);
+		if (result == true) {
+			return true;
+		}
+		else {
+			alert("Email failed to send.");
+		}
+	}).catch(function(err){
+		alert("An error occured; failed to record note. Check your connection.");
+		console.log(err);
+		return false;
+	});
+	return result;
+}
+
 ////----------------------------------!-------------------------------------///
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////// END ISSUE REPORTING FOR EVENTS /////////////////////
+//////////////////////// END ALERT REPORTING FOR EVENTS /////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////---------------------------------!----------------------------------///
 

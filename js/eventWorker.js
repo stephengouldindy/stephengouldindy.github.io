@@ -113,7 +113,8 @@ function createCalendarEvent(change) {
                 creator: data.creator,
                 history: data.history,
                 issues: data.issues,
-                resolvedIssues: data.resolvedIssues
+                resolvedIssues: data.resolvedIssues,
+                specialNotes: data.specialNotes
             }; 
 
               } else /* allDay new event */{
@@ -144,7 +145,8 @@ function createCalendarEvent(change) {
                     creator: data.creator,
                     history: data.history,
                     issues: data.issues,
-                    resolvedIssues: data.resolvedIssues
+                    resolvedIssues: data.resolvedIssues,
+                    specialNotes: data.specialNotes
                 }; //newEvent
                 } //end else
         // return newEvent;
@@ -188,7 +190,9 @@ function getFridays(year, month){
  * Clean up events that are older than the prefered time and email their data to relevant personnel.
  */ 
 async function noCountryForOldEvents(maxNumDays) {
-    console.log("looking for events to clean up");
+    if (maxNumDays != 14) {
+        return;
+    }
     //Inclusive--the calculated minimum date will also see its events marked for cleanup
     let dayDiff = 1000*60*60*24;
     let events = calendar.getEvents();

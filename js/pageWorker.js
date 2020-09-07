@@ -150,13 +150,13 @@ function deleteNote(event) {
     var eventRef = eventCollection.doc(curEvent.event.id);
     //grab issue text from the alert parent's html, ignoring its header
     let alertText = $(event.target).parent().html();
-    let issue = alertText.split("<br>")[1];
+    let summary = alertText.split("<br>")[1];
     let alert = $(event.target).parent();
 
     //if the alert is green, then it is a resolved issue and we should update resolvedIssues, not issues
 
     if (alert.hasClass("alert-success")) {
-        return eventRef.update({resolvedIssues: firebase.firestore.FieldValue.arrayRemove(issue)})
+        return eventRef.update({resolvedIssues: firebase.firestore.FieldValue.arrayRemove(summary)})
         .then(async function() {
             alert.parent()[0].removeChild(alert[0]);
         }).catch(function(err){
@@ -164,8 +164,17 @@ function deleteNote(event) {
             console.log(err);
         });
     }
-    else {
-        return eventRef.update({issues: firebase.firestore.FieldValue.arrayRemove(issue)})
+    else if (alert.hasClass("alert-danger")) {
+        return eventRef.update({issues: firebase.firestore.FieldValue.arrayRemove(summary)})
+        .then(async function() {
+            alert.parent()[0].removeChild(alert[0]);
+        }).catch(function(err){
+            alert("An error occured; failed to remove the alert. Check your connection.");
+            console.log(err);
+        });
+    }
+    else if (alert.hasClass("alert-info")) {
+        return eventRef.update({specialNotes: firebase.firestore.FieldValue.arrayRemove(summary)})
         .then(async function() {
             alert.parent()[0].removeChild(alert[0]);
         }).catch(function(err){
@@ -206,7 +215,8 @@ function resolveIssue(event) {
         var alert = button.parentElement;  
         alert.removeChild(button);
         alert.setAttribute("class", "alert alert-success");
-        alert.innerHTML = `(Resolved by ${$("#currentUser").html()}) ${issue}`;
+        alert.parentElement.removeChild(alert);
+        addResolvedIssueAlert(issue);
     }).catch(function(err){
         alert("An error occured; failed to resolve issue. Check your connection.");
         console.log(err);

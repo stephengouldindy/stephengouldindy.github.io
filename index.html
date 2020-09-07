@@ -130,6 +130,13 @@
                                 addResolvedIssueAlert(info.event.extendedProps.resolvedIssues[i]);
                             }
                         }
+
+                        if (info.event.extendedProps.specialNotes != undefined) {
+                            //event has 1+ issue(s)
+                            for (var i = info.event.extendedProps.specialNotes.length - 1; i >= 0; i--) {
+                                addNoteAlert(info.event.extendedProps.specialNotes[i]);
+                            }
+                        }
                         if (info.event.extendedProps.issues != undefined) {
                             //event has 1+ issue(s)
                             for (var i = info.event.extendedProps.issues.length - 1; i >= 0; i--) {
@@ -310,7 +317,7 @@
         measurementId: "G-RRY0NKY921"
     };
         // Initialize Firebase
-        if (1) {
+        if(1) {
         	firebase.initializeApp(ACTIVEfirebaseConfig);
         }
         else {
@@ -559,7 +566,15 @@
             <button id = "eventHistoryBtn" type="button" class="btn btn-secondary" data-html = "true" data-container="body" data-toggle="popover" data-placement="left" data-content="HISTORY ERROR. TELL SPENCER.">
             i
             </button>
-            <button type="button" class="btn btn-warning" id = "reportIssueBtn">Note Issue</button>
+            <div class="dropdown">
+			  <button class="btn btn-warning dropdown-toggle" type="button" id="alertDropdownBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			    Record New...
+			  </button>
+			  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			    <a class="dropdown-item" id = "recordNoteBtn" href="#">Note</a>
+			    <a class="dropdown-item" id = "reportIssueBtn" href="#">Issue</a>
+			  </div>
+			</div>
             <small id="eventId" style = "display: none;"> Event ID Error</small>
             <button type="button" class="btn btn-success" id = "resolveShipmentBtn">Mark as Resolved <span id = "resolveSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" 
                                   style = "display: none;"></span></button>
@@ -687,7 +702,7 @@
             </div>
             <div class="modal-body">
               <div>
-                  <b>Issue</b><br>
+                  <b id = "alertSummaryHeader">Issue</b><br>
                   <textarea id = "issueBodyArea" rows="3" placeholder="Issue Summary" style = "width: 100%"></textarea>
                </div>
                Send Notification Email <input id = "sendEmailCheckbox" type = "checkbox">
