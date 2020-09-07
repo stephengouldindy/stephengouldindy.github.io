@@ -284,7 +284,9 @@ $("#sendIssueEmailBtn").click(async function() {
 		$(this).attr("disabled", false);
 	}
 	else {
-		alert("Something went wrong. Please notify dougla55@purdue.edu.")
+		alert("Something went wrong. Please notify dougla55@purdue.edu.");
+		$("#issueSpinner").hide();
+		$(this).attr("disabled", false);
 	}
 }); // click sendEmailIssueBtn
 
