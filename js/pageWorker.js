@@ -80,27 +80,105 @@ function addEmailRecipient(email) {
 }
 
 
+/*
+ * Adds a generic alert with the @param issueText to the info modal. Can be deleted with its appended deleted button
+ */
+function addNoteAlert(issueText) {
+    let noteAlert = document.createElement("div");
+    noteAlert.setAttribute("class", "alert alert-info");
+    //add a button which permanently deletes the alert
+    var deleteButton = document.createElement("button");
+    deleteButton.setAttribute("class", "btn btn-danger tiny-btn alert-delete");
+    deleteButton.innerHTML = "Delete ";
+    noteAlert.addEventListener("click", deleteNote);
+    noteAlert.appendChild(deleteButton);
+
+    noteAlert.innerHTML = noteAlert.innerHTML + "<br>" + issueText;
+    $("#infoModalContainer").prepend(noteAlert); 
+}
+
 
 function addIssueAlert(issueText) {
     let warningAlert = document.createElement("div");
-    warningAlert.setAttribute("class", "alert alert-danger");
+    warningAlert.setAttribute("class", "alert alert-danger")
+    //add a button which resolves the alert
     var resolveButton = document.createElement("button");
     resolveButton.setAttribute("class", "btn btn-success tiny-btn alert-resolver");
     resolveButton.innerHTML = "Resolve Issue ";
     warningAlert.addEventListener("click", resolveIssue);
     warningAlert.appendChild(resolveButton);
+    //add a button to permanently delete the alert
+    var deleteButton = document.createElement("button");
+    deleteButton.setAttribute("class", "btn btn-danger tiny-btn alert-delete");
+    deleteButton.innerHTML = "Delete ";
+    warningAlert.addEventListener("click", deleteNote);
+    warningAlert.appendChild(deleteButton);
+
     warningAlert.innerHTML = warningAlert.innerHTML + "<br>" + issueText;
     $("#infoModalContainer").prepend(warningAlert); 
 }
 function addResolvedIssueAlert(issueText) {
     let resolvedAlert = document.createElement("div");
     resolvedAlert.setAttribute("class", "alert alert-success");
-    resolvedAlert.innerHTML = issueText;
+    // resolvedAlert.innerHTML = issueText;
+    //add a button to permanently delete the alert
+    var deleteButton = document.createElement("button");
+    deleteButton.setAttribute("class", "btn btn-danger tiny-btn alert-delete");
+    deleteButton.innerHTML = "Delete ";
+    resolvedAlert.addEventListener("click", deleteNote);
+    $(resolvedAlert).prepend($(deleteButton));
+    resolvedAlert.innerHTML = resolvedAlert.innerHTML + "<br>" + issueText;
     $("#infoModalContainer").prepend(resolvedAlert); 
 }
 
-function resolveIssue(event) {
 
+function deleteNote(event) {
+
+    if(!event.target.matches(".alert-delete")) {
+        return;
+    }
+
+    if (!confirm("Are you sure you would like to delete this alert? This is irreversible.")) {
+        return;
+    }
+    let button = $(event.target).parent().prevObject[0];
+    let spinner = document.createElement("span");
+    spinner.setAttribute("class", "spinner-border spinner-border-sm");
+    spinner.setAttribute("role", "status");
+    spinner.setAttribute("aria-hidden", "true");
+    button.appendChild(spinner);
+    var eventRef = eventCollection.doc(curEvent.event.id);
+    //grab issue text from the alert parent's html, ignoring its header
+    let alertText = $(event.target).parent().html();
+    let issue = alertText.split("<br>")[1];
+    let alert = $(event.target).parent();
+
+    //if the alert is green, then it is a resolved issue and we should update resolvedIssues, not issues
+
+    if (alert.hasClass("alert-success")) {
+        return eventRef.update({resolvedIssues: firebase.firestore.FieldValue.arrayRemove(issue)})
+        .then(async function() {
+            alert.parent()[0].removeChild(alert[0]);
+        }).catch(function(err){
+            alert("An error occured; failed to remove the alert. Check your connection.");
+            console.log(err);
+        });
+    }
+    else {
+        return eventRef.update({issues: firebase.firestore.FieldValue.arrayRemove(issue)})
+        .then(async function() {
+            alert.parent()[0].removeChild(alert[0]);
+        }).catch(function(err){
+            alert("An error occured; failed to remove the alert. Check your connection.");
+            console.log(err);
+        });
+    }
+
+}
+
+
+
+function resolveIssue(event) {
     if(!event.target.matches(".alert-resolver")) {
         return;
     }
@@ -120,6 +198,7 @@ function resolveIssue(event) {
     let issue = alertText.split("<br>")[1];
     return eventRef.update({issues: firebase.firestore.FieldValue.arrayRemove(issue)})
     .then(function() {
+        //if the alert is not just being resolved, we want to leave it removed
         return eventRef.update({resolvedIssues: firebase.firestore.FieldValue.arrayUnion(`(Resolved by ${$("#currentUser").html()}) ${issue}`)})
     })
     .then(async function() {

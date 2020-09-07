@@ -21,7 +21,7 @@ $("#dropdownbtn").click(function() {
 });
 
 // END DROPDOWN MENU
-///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////d////////////////////////////////////////
 $("#incomingbtn").click(function() {
 	$("#incomingbtn").attr("class", function(i, origValue){
 		//if button not selected, switch
@@ -207,6 +207,7 @@ $("#newIssueRecipientBtn").click(function() {
 
 $("#reportIssueBtn").click(function() {
 	$("#myModal").modal("hide");
+	
 	//if there is a creator, check the box and add it to the mailing list
 	let currentUserEmail = firebase.auth().currentUser.email;
 	if (ValidateEmail(curEvent.event.extendedProps.creator) && curEvent.event.extendedProps.creator != currentUserEmail) {

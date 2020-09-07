@@ -6,7 +6,7 @@
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.2");
+  $("#version").html("BETA v3.3");
   //hide the event form on pageload
 
 

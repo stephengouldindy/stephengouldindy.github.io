@@ -4,9 +4,7 @@
 
  $(document).ready(function() {
     $("#loadingSpinner").show();
-   setInterval(function() {
-      eventColorWorker(false)
-  }, 60 * 1000); 
+    //FIXME: REWORK THE TIMER WHICH WILL MARK EVENTS WHEN THEY ARE LATE
 });
 
 const isSameDay = (date1, date2) => {
@@ -216,7 +214,7 @@ async function noCountryForOldEvents(maxNumDays) {
     console.log("found", marked.length);
     var unresolvedList = [];
     var resolvedList = [];
-    marked.forEach(function(event){
+    marked.forEach(function(event) {
         let title = event.title;
         let date = event.extendedProps.eventDate;
         var creator = event.extendedProps.creator;

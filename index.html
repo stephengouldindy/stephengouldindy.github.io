@@ -310,9 +310,12 @@
         measurementId: "G-RRY0NKY921"
     };
         // Initialize Firebase
-        firebase.initializeApp(ACTIVEfirebaseConfig);
-
-        //firebase.initializeApp(testBranchConfig);
+        if (1) {
+        	firebase.initializeApp(ACTIVEfirebaseConfig);
+        }
+        else {
+        	firebase.initializeApp(testBranchConfig);
+        }
         firebase.analytics();
         var db = firebase.firestore();
         let eventCollection = db.collection("events");
