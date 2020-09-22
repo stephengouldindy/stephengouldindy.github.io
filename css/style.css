@@ -239,6 +239,7 @@ button:hover {
 	cursor: pointer;
 }
 
+
 .popover-body {
 	overflow: scroll;
 	max-height: 50vh;

@@ -1,11 +1,14 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
-
+BETA 3.4
+	-OPTIMIZATION, AT LONG LAST: Only the events which are visible in the current view are loaded. Greatly improved loadtimes, and 
+	the laggy site should forever be a thing of the past.
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 3.3
 	-Added a second kind of alert: notes, which do not require resolution, but still appear at the top of an trucks's information page
 	-All alerts can now be deleted
 	-Temporarily disabled a function which was causing intermittent freezes and freezing when page is running in background
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 BETA 3.2
 	- Issue Reporting and emailing
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -44,6 +44,7 @@
     <script>    
         var _DEBUG = false;
         var calendar;
+        var curSnapshot;
         var events = [];
         var curEvent;
         var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -74,6 +75,7 @@
                     center: 'title',
                     left: 'timeGridDay, timeGridWeek, dayGridMonth'
                 },
+                datesRender: loadNewView,
                     //Date clicking handling 
                     dateClick: function(info) {
                         curDay = `${info.date.getDate()}`;

@@ -64,8 +64,8 @@ function eventColorWorker() {
     $("#issueCount").html(`&#9888;&#65039; Total Issues: ${numIssues}`)
 }
 
-function createCalendarEvent(change) {
-	let data = change.doc.data();
+function createCalendarEvent(doc) {
+	let data = doc.data();
 	let day = data.date.split('/')[1];
     let month = data.date.split('/')[0] - 1;
     let year = data.date.split('/')[2];
@@ -89,7 +89,7 @@ function createCalendarEvent(change) {
             newEvent = {
                 title: prefix + data.title,
                 vendorName: data.vendorName,
-                id: change.doc.id,
+                id: doc.id,
                 eventTextColor: eventTextColor,
                 start: startDate,
                 end: endDate,
@@ -105,7 +105,7 @@ function createCalendarEvent(change) {
                 eventStartTime: data.startTime,
                 eventEndTime: data.endTime,
                 comments: data.notes,
-                docId: change.doc.id,
+                docId: doc.id,
                 shipTicketUrls: data.shipTicketUrls,
                 shipTicketRefs: data.shipTicketRefs,
                 shipTicketNames: data.shipTicketNames,
@@ -122,7 +122,7 @@ function createCalendarEvent(change) {
                 newEvent = {
                     title: prefix + data.title,
                     vendorName: data.vendorName,
-                    id: change.doc.id,
+                    id: doc.id,
                     start: dateObj,
                     eventTextColor: eventTextColor,
                     allDay: data.allDay,
@@ -137,7 +137,7 @@ function createCalendarEvent(change) {
                     eventStartTime: data.startTime,
                     eventEndTime: data.endTime,
                     comments: data.notes,
-                    docId: change.doc.id,
+                    docId: doc.id,
                     shipTicketUrls: data.shipTicketUrls,
                     shipTicketRefs: data.shipTicketRefs,
                     shipTicketNames: data.shipTicketNames,

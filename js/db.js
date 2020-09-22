@@ -1,12 +1,43 @@
 /*
  * db.js - intializes page based on firebase/firestore states; handles firestore communication
  */
+function loadNewView() {
+    calendar.getEvents().forEach(event => event.remove());
+    initCurrentCalendarViewEvents();
+    if ($("#calendarApplet").css("display") == "none") {
+        console.log("true");
+    }
+    else {
+        console.log("trying");
+        calendar.destroy();
+        calendar.render();
+        calendar.rerenderEvents();
+    }
+}
 
+function initCurrentCalendarViewEvents() {
+    if (curSnapshot == undefined) {
+        return;
+    }
+    curSnapshot.forEach(function(doc) {
+        let start = calendar.view.currentStart;
+        let end = calendar.view.currentEnd;
+        let startDate = new Date(start);
+        let endDate = new Date(end);
+        let eventDate = new Date(doc.data().date);
+        if (eventDate >= startDate && eventDate <= endDate) {
+            createCalendarEvent(doc);
+        }  
+    });
+    eventColorWorker();
+    calendar.render();
+    calendar.rerenderEvents();
+}
 
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.3");
+  $("#version").html("BETA v3.4");
   //hide the event form on pageload
 
 
@@ -25,24 +56,52 @@
     
 
 
-
+    calendar.render();
     var isInit = true;
     eventCollection.onSnapshot(snapshot => {
-        let changes = snapshot.docChanges();
-        console.log(changes);
+        curSnapshot = snapshot;
+        let changes = curSnapshot.docChanges();
+        let start = calendar.view.currentStart;
+        let end = calendar.view.currentEnd;
+        let now = new Date();
+        let startDate = new Date(start);
+        let endDate = new Date(end);
         changes.forEach(change => {
+            let eventDate = new Date(change.doc.data().date);
+            if (eventDate >= startDate && eventDate <= endDate) {
+                if (change.type === "removed") {
+                  let event = calendar.getEventById(change.doc.id);
+                  event.remove();
+                } else if (change.type === "modified") {
+                    //replace event
+                    calendar.getEventById(change.doc.id).remove();
+                    createCalendarEvent(change.doc);
+                } else if (change.type === "added") {
+                    createCalendarEvent(change.doc);
+                }
+            }                 
+
             //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
-            if (change.type === "removed") {
-              let event = calendar.getEventById(change.doc.id);
-              event.remove();
-            } else if (change.type === "modified") {
-                //replace event
-                calendar.getEventById(change.doc.id).remove();
-                createCalendarEvent(change);
-            } else if (change.type === "added") {
-                createCalendarEvent(change);
-            } 
+            calendar.rerenderEvents();
         });
+        calendar.destroy();
+        calendar.render();
+        calendar.rerenderEvents();
+        // let changes = snapshot.docChanges();
+        // //initCurrentCalendarViewEvents(snapshot);
+        // changes.forEach(change => {
+        //     //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
+        //     if (change.type === "removed") {
+        //       let event = calendar.getEventById(change.doc.id);
+        //       event.remove();
+        //     } else if (change.type === "modified") {
+        //         //replace event
+        //         calendar.getEventById(change.doc.id).remove();
+        //         createCalendarEvent(change);
+        //     } else if (change.type === "added") {
+        //         createCalendarEvent(change);
+        //     } 
+        // });
 
         // calendar.events = events;
         // calendar.refetchEvents();
@@ -64,8 +123,9 @@
             $("#loadingSpinner").hide();
             $("#formArrow").css("transform", "rotate(90deg)");
             document.getElementById("signInBtn").disabled = false;
+            calendar.hydrate();
 
-            calendar.render();
+            
             //if it is one of our cleanup days, we need to wipe events
             let date = moment();
             //console.log(date.getFullYear(), date.getMonth());
