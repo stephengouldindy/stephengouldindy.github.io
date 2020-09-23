@@ -4,11 +4,7 @@
 function loadNewView() {
     calendar.getEvents().forEach(event => event.remove());
     initCurrentCalendarViewEvents();
-    if ($("#calendarApplet").css("display") == "none") {
-        console.log("true");
-    }
-    else {
-        console.log("trying");
+    if ($("#calendarApplet").css("display") != "none") {
         calendar.destroy();
         calendar.render();
         calendar.rerenderEvents();
