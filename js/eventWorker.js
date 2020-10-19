@@ -219,9 +219,6 @@ function getFridays(year, month){
  * Clean up events that are older than the prefered time and email their data to relevant personnel.
  */ 
 async function noCountryForOldEvents(maxNumDays) {
-    curSnapshot.forEach(function(doc) {
-        //FIXME: NEED TO MAKE IT SO THAT EVENTS THAT ARE NOT ON THE CALENDAR ARE INCLUDED IN THE CONSIDERATION AS WELL
-    });
     if (maxNumDays != 14) {
         return;
     }
@@ -305,9 +302,6 @@ async function noCountryForOldEvents(maxNumDays) {
     else if (resolvedList.length) {
         resolvedSent = await sendEmail(`${now.toDateString()} Shipment Log`, bodyString, "sgi.shippingreceiving@gmail.com");
     }
-    console.log(marked);
-    unresolvedSent = true;
-    resolvedSent = true;
     if (unresolvedSent || resolvedSent) {
         //remove the events from the database
         marked.forEach(function(event) {
