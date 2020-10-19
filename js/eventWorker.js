@@ -154,6 +154,36 @@ function createCalendarEvent(doc) {
 
 } //createCalendarEvent
 
+
+function initAllEvents() {
+    calendar.removeAllEvents();
+    curSnapshot.forEach(function(doc) {
+        createCalendarEvent(doc);
+    });
+    eventColorWorker();
+    calendar.render();
+    calendar.rerenderEvents();
+}
+function initCurrentCalendarViewEvents() {
+    if (curSnapshot == undefined) {
+        return;
+    }
+    curSnapshot.forEach(function(doc) {
+        let start = calendar.view.currentStart;
+        let end = calendar.view.currentEnd;
+        let startDate = new Date(start);
+        let endDate = new Date(end);
+        let eventDate = new Date(doc.data().date);
+        if (eventDate >= startDate && eventDate <= endDate) {
+            createCalendarEvent(doc);
+        }  
+    });
+    eventColorWorker();
+    calendar.render();
+    calendar.rerenderEvents();
+}
+
+
 /*
  * Helper function for noCountryForOldEvents()
  * @return array of the first and third fridays of the provided month, as well as the fifth, if there is one.
@@ -179,7 +209,6 @@ function getFridays(year, month){
     if (fifthFriday.month() == month) {
         fridays.push(fifthFriday.format("DD MMMM YYYY"));
     }
-    console.log(fridays);
     return fridays;
 }
 
@@ -190,10 +219,14 @@ function getFridays(year, month){
  * Clean up events that are older than the prefered time and email their data to relevant personnel.
  */ 
 async function noCountryForOldEvents(maxNumDays) {
+    curSnapshot.forEach(function(doc) {
+        //FIXME: NEED TO MAKE IT SO THAT EVENTS THAT ARE NOT ON THE CALENDAR ARE INCLUDED IN THE CONSIDERATION AS WELL
+    });
     if (maxNumDays != 14) {
         return;
     }
     //Inclusive--the calculated minimum date will also see its events marked for cleanup
+    initAllEvents();
     let dayDiff = 1000*60*60*24;
     let events = calendar.getEvents();
     let now = new Date();
@@ -202,7 +235,6 @@ async function noCountryForOldEvents(maxNumDays) {
     ///////////
 
     let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
-    console.log(minimumDate, new Date(minimumDate));
     var marked = [];
     events.forEach(function(event) {
         if (event.allDay === true || event.end == undefined) {
@@ -216,8 +248,15 @@ async function noCountryForOldEvents(maxNumDays) {
         }
     });
     console.log("found", marked.length);
+    if (marked.length < 1) {
+        return;
+    }
+    setTimeout(function() { alert('Cleaning up old shipments! Please close this alert & you will be alerted when you can resume using the calendar.'); }, 1);
     var unresolvedList = [];
     var resolvedList = [];
+    marked.forEach(function(event) {
+        event.remove();
+    });
     marked.forEach(function(event) {
         let title = event.title;
         let date = event.extendedProps.eventDate;
@@ -266,6 +305,9 @@ async function noCountryForOldEvents(maxNumDays) {
     else if (resolvedList.length) {
         resolvedSent = await sendEmail(`${now.toDateString()} Shipment Log`, bodyString, "sgi.shippingreceiving@gmail.com");
     }
+    console.log(marked);
+    unresolvedSent = true;
+    resolvedSent = true;
     if (unresolvedSent || resolvedSent) {
         //remove the events from the database
         marked.forEach(function(event) {
@@ -289,5 +331,6 @@ async function noCountryForOldEvents(maxNumDays) {
                 });
             });
         });
-    }   
+    }
+    setTimeout(function() { alert('Cleanup finished. You may resume your activity.'); }, 1);   
   }

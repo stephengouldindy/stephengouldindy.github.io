@@ -1,5 +1,7 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
+BETA 3.5
+	-old event/file cleanup optimization: old events will be removed much more quickly and should not slow down your browser
 BETA 3.4
 	-OPTIMIZATION, AT LONG LAST: Only the events which are visible in the current view are loaded. Greatly improved loadtimes, and 
 	the laggy site should forever be a thing of the past.

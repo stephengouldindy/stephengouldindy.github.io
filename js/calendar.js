@@ -209,35 +209,34 @@
 
 
       
-  // Your web app's Firebase configuration
+  // // Your web app's Firebase configuration
 
-  // Initialize Firebase
-    var firebaseConfig = {
-    apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
-    authDomain: "sgci-rds.firebaseapp.com",
-    databaseURL: "https://sgci-rds.firebaseio.com",
-    projectId: "sgci-rds",
-    storageBucket: "sgci-rds.appspot.com",
-    messagingSenderId: "184884483557",
-    appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
-    measurementId: "G-WVCBC8FL46"
-  };
-    var TESTfirebaseConfig = {
-    apiKey: "AIzaSyAQbpyy6atOm9Nw6wRokl6dhedyqPFSDg0",
-    authDomain: "sgi-testbranch.firebaseapp.com",
-    databaseURL: "https://sgi-testbranch.firebaseio.com",
-    projectId: "sgi-testbranch",
-    storageBucket: "sgi-testbranch.appspot.com",
-    messagingSenderId: "61711519733",
-    appId: "1:61711519733:web:dd9dd75680058d4002dabc",
-    measurementId: "G-RRY0NKY921"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(TESTfirebaseConfig);
-  firebase.analytics();
-   console.log(firebase.auth().currentUser);
-  var db = firebase.firestore();
-  var storageRef = firebase.storage().ref();
+  // // Initialize Firebase
+  //   var firebaseConfig = {
+  //   apiKey: "AIzaSyBo4nl7Mdie9miskxI6zIC91fkqAjlZqn8",
+  //   authDomain: "sgci-rds.firebaseapp.com",
+  //   databaseURL: "https://sgci-rds.firebaseio.com",
+  //   projectId: "sgci-rds",
+  //   storageBucket: "sgci-rds.appspot.com",
+  //   messagingSenderId: "184884483557",
+  //   appId: "1:184884483557:web:6ccaf82fe8987830c3cb0c",
+  //   measurementId: "G-WVCBC8FL46"
+  // };
+  //   var TESTfirebaseConfig = {
+  //   apiKey: "AIzaSyAQbpyy6atOm9Nw6wRokl6dhedyqPFSDg0",
+  //   authDomain: "sgi-testbranch.firebaseapp.com",
+  //   databaseURL: "https://sgi-testbranch.firebaseio.com",
+  //   projectId: "sgi-testbranch",
+  //   storageBucket: "sgi-testbranch.appspot.com",
+  //   messagingSenderId: "61711519733",
+  //   appId: "1:61711519733:web:dd9dd75680058d4002dabc",
+  //   measurementId: "G-RRY0NKY921"
+  // };
+  // // Initialize Firebase
+  // firebase.initializeApp(firebaseConfig);
+  // firebase.analytics();
+  // var db = firebase.firestore();
+  // var storageRef = firebase.storage().ref();
   /*
    * PRIMARY EVENT POPULATION LISTENER
    */

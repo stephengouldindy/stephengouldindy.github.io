@@ -1,16 +1,10 @@
 /*
  * db.js - intializes page based on firebase/firestore states; handles firestore communication
  */
-function loadNewView() {
-    calendar.getEvents().forEach(event => event.remove());
-    initCurrentCalendarViewEvents();
-    if ($("#calendarApplet").css("display") != "none") {
-        calendar.destroy();
-        calendar.render();
-        calendar.rerenderEvents();
-    }
-}
 
+function initAllEvents() {
+
+}
 function initCurrentCalendarViewEvents() {
     if (curSnapshot == undefined) {
         return;
@@ -33,13 +27,22 @@ function initCurrentCalendarViewEvents() {
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.4");
+  $("#version").html("BETA v3.5");
   //hide the event form on pageload
 
 
   firebase.auth().onAuthStateChanged(async function(user) {
     if (user) {
       console.log("logged in");
+      //TODO:
+
+
+      ///initAllEvents()
+      
+
+
+
+      //
       if (!user.emailVerified) {
         //TODO: If user logs in without emailVerification, get a log
         await firebase.auth().signOut().then(function() {
@@ -66,11 +69,16 @@ function initCurrentCalendarViewEvents() {
             let eventDate = new Date(change.doc.data().date);
             if (eventDate >= startDate && eventDate <= endDate) {
                 if (change.type === "removed") {
-                  let event = calendar.getEventById(change.doc.id);
-                  event.remove();
+                    let event = calendar.getEventById(change.doc.id);
+                    if (event != undefined) {
+                        event.remove();
+                    }
                 } else if (change.type === "modified") {
                     //replace event
-                    calendar.getEventById(change.doc.id).remove();
+                    let event = calendar.getEventById(change.doc.id);
+                    if (event != undefined) {
+                        calendar.getEventById(change.doc.id).remove();
+                    }
                     createCalendarEvent(change.doc);
                 } else if (change.type === "added") {
                     createCalendarEvent(change.doc);
