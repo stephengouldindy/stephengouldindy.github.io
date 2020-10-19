@@ -2,27 +2,6 @@
  * db.js - intializes page based on firebase/firestore states; handles firestore communication
  */
 
-function initAllEvents() {
-
-}
-function initCurrentCalendarViewEvents() {
-    if (curSnapshot == undefined) {
-        return;
-    }
-    curSnapshot.forEach(function(doc) {
-        let start = calendar.view.currentStart;
-        let end = calendar.view.currentEnd;
-        let startDate = new Date(start);
-        let endDate = new Date(end);
-        let eventDate = new Date(doc.data().date);
-        if (eventDate >= startDate && eventDate <= endDate) {
-            createCalendarEvent(doc);
-        }  
-    });
-    eventColorWorker();
-    calendar.render();
-    calendar.rerenderEvents();
-}
 
  $(document).ready(function() {
   
