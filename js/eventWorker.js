@@ -214,117 +214,98 @@ function getFridays(year, month){
 
 
 
-
 /*
+ *
  * Clean up events that are older than the prefered time and email their data to relevant personnel.
  */ 
 async function noCountryForOldEvents(maxNumDays) {
     if (maxNumDays != 14) {
         return;
     }
-    //Inclusive--the calculated minimum date will also see its events marked for cleanup
-    initAllEvents();
-    let dayDiff = 1000*60*60*24;
-    let events = calendar.getEvents();
-    let now = new Date();
-    /////////////////////////////////
-        //check if the event time is before a certain date to see if it should be there
-    ///////////
 
-    let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
-    var marked = [];
-    events.forEach(function(event) {
-        if (event.allDay === true || event.end == undefined) {
-            if (event.start < minimumDate || isSameDay(event.start, minimumDate)) {
-                marked.push(event);
-            }
-        } else {
-            if (event.end < minimumDate || isSameDay(event.end, minimumDate)) {
-                marked.push(event);
-            }
-        }
-    });
-    console.log("found", marked.length);
-    if (marked.length < 1) {
-        return;
-    }
-    setTimeout(function() { alert('Cleaning up old shipments! Please close this alert & you will be alerted when you can resume using the calendar.'); }, 1);
-    var unresolvedList = [];
-    var resolvedList = [];
-    marked.forEach(function(event) {
-        event.remove();
-    });
-    marked.forEach(function(event) {
-        let title = event.title;
-        let date = event.extendedProps.eventDate;
-        var creator = event.extendedProps.creator;
-        if (creator == undefined) {
-            creator = "N/A, event made during invalid version";
-        }
-        let carrier = event.extendedProps.vendorName;
-        let customerName = event.extendedProps.customerName;
-        let destination = event.extendedProps.destination;
-        let notes = event.extendedProps.comments;
-        let shipTicketUrls = event.extendedProps.shipTicketUrls;
-        var shipTicketStr = "";
-        shipTicketUrls.forEach(function(url) {
-            shipTicketStr += `${url}, <br>`
-        });
-        if (shipTicketStr.length) {
-            shipTicketStr = shipTicketStr.substring(0, shipTicketStr.length - 6); // trim the excess ', <br>'
-        } else {
-            shipTicketStr = "None.";
-        }
-        let entry = `<br>${date}: ${title}<br>Creator: ${creator}<br>Carrier: ${carrier}<br>Customer Name: ${customerName}<br>Destination: ${destination}<br>Notes: ${notes}<br>Document URLS: ${shipTicketStr}` +
-                    "<br>---------------------------------------------------------------------------------------------------------------";
-        if (event.extendedProps.resolved) {
-            resolvedList.push(entry);
-        } else {
-            unresolvedList.push(entry);
-        }
-    });
-    var bodyString = `<html><h2>UNRESOLVED SHIPMENTS (${unresolvedList.length})</h2><text>`
-    unresolvedList.forEach(function(entry) {
-        bodyString += entry;
-    })
-    bodyString +=  `<br></text><h2>RESOLVED SHIPMENTS (${resolvedList.length})</h2><text>`
-    resolvedList.forEach(function(entry) {
-       bodyString += entry;
-    })
-    bodyString += "</text></html>";
-    var resolvedSent = false;
-    var unresolvedSent = false;
-    let supervisor = "bmbarnhart@stephengould.com";
-    //let supervisor = "sawdouglas7@gmail.com";
-    if (unresolvedList.length) {
-        unresolvedSent = await sendEmail("S&R Calendar - UNRESOLVED SHIPMENTS NEED ATTN", bodyString, ["sgi.shippingreceiving@gmail.com", supervisor]);
-    }
-    else if (resolvedList.length) {
-        resolvedSent = await sendEmail(`${now.toDateString()} Shipment Log`, bodyString, "sgi.shippingreceiving@gmail.com");
-    }
-    if (unresolvedSent || resolvedSent) {
-        //remove the events from the database
-        marked.forEach(function(event) {
-            let docRef = eventCollection.doc(event.id);
-            docRef.get().then(function(doc) {
-                docRef.delete().then(function() {
-                    console.log("Document deleted.");
-                    //delete any paperwork
-                    shipFiles = event.extendedProps.shipTicketRefs;
-                    console.log(shipFiles);
-                    shipFiles.forEach((shipFile) => {
-                        let shipRef = storageRef.child(shipFile);
-                        shipRef.delete().then(function() {
-                            // File deleted successfully
-                            console.log(`${shipFile} deleted`);
-                        }).catch(function(error) {
-                            alert(`Something went wrong: ${error}. Please try again.`);
-                            return;
-                        });
-                    });
+    calendar.removeAllEvents();
+    //Want to query all events, then remove all those older than 14 days.
+    //This will be done before adding any events to the calendar, so we can do this quickly
+    db.collection("events").get().then(async (events) => {
+        //calculate oldest date allowable (inclusive):
+        //the calculated minimum date will also see its events marked for cleanup
+        alert('Happy Friday! Cleanup on old trucks must occur. Please press OK and wait...');
+        let dayDiff = 1000*60*60*24;
+        let now = new Date();
+        let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
+        var results = {successes: 0, fails: 0, total: 0};
+        let numEvents = events.size; // number of events in the collection
+        var index = 0;
+        console.log("size:", numEvents);
+        events.forEach(async function(eventData) {
+            let event = eventData.data();
+            index++;
+            if (new Date (event.date) <= minimumDate) {
+                results.total++;
+                eventData.ref.delete().then(() => {
+                    results.successes++;
+                }).catch(() => {
+                    results.fails++;
                 });
-            });
-        });
+
+            }
+            if (index == numEvents) {
+
+            }
+
+
+            // if (event.allDay === true || event.end == undefined) {
+            //     if (event.start < minimumDate || isSameDay(event.start, minimumDate)) {
+            //         console.log("that is 1")
+            //         eventData.delete();
+            //         removed++;
+            //     }
+            // } else {
+            //     if (event.end < minimumDate || isSameDay(event.end, minimumDate)) {
+            //         console.log("that is 2")
+            //         eventData.delete();
+            //         removed++;
+            //     }
+            // }
+            
+        })
+        console.log(results.successes, results.fails, results.total, "that's them")
+        await waitForRemoval(results);
+        console.log("after");
+        calendar.removeAllEvents();
+        initCurrentCalendarViewEvents();
+        // while (removed && successes + fails < removed) {
+        //     console.log("we got", successes, fails, removed);
+        // }
+        if (results.total) {
+            alert(`Cleanup of old events complete! Removed ${results.successes} of ${numEvents} trucks. You may resume your activity!`);
+        }
+        else {
+            alert("Cleanup finished. No trucks needed removed. You may resume your activity!")
+        }
+    });
+
+
+
+}
+
+function waitForRemoval(results) {
+  return new Promise(resolve => {
+    function check() {
+      if (results.successes + results.fails == results.total) {
+        console.log('met');
+        resolve();
+      } else {
+        window.setTimeout(check, 200); 
+      }
     }
-    setTimeout(function() { alert('Cleanup finished. You may resume your activity.'); }, 1);   
-  }
+    check();
+  });
+}
+
+async function run() {
+  console.log('before');
+  await waitForRemoval()
+  console.log('after');
+}
+run();

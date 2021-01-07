@@ -6,22 +6,14 @@
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.5");
+  $("#version").html("BETA v3.6");
   //hide the event form on pageload
 
 
   firebase.auth().onAuthStateChanged(async function(user) {
     if (user) {
       console.log("logged in");
-      //TODO:
 
-
-      ///initAllEvents()
-      
-
-
-
-      //
       if (!user.emailVerified) {
         //TODO: If user logs in without emailVerification, get a log
         await firebase.auth().signOut().then(function() {
@@ -36,6 +28,15 @@
 
     calendar.render();
     var isInit = true;
+    //if it is one of our cleanup days, we need to wipe events
+    let date = moment();
+    //console.log(date.getFullYear(), date.getMonth());
+    let cleanUpDates = getFridays(date.year(), date.month());
+    let numDays = 14;
+    if (cleanUpDates.includes(date.format("DD MMMM YYYY"))) {
+        noCountryForOldEvents(numDays);
+    }
+
     eventCollection.onSnapshot(snapshot => {
         curSnapshot = snapshot;
         let changes = curSnapshot.docChanges();
@@ -70,24 +71,6 @@
         calendar.destroy();
         calendar.render();
         calendar.rerenderEvents();
-        // let changes = snapshot.docChanges();
-        // //initCurrentCalendarViewEvents(snapshot);
-        // changes.forEach(change => {
-        //     //todo: for removed and modified, if the curEvent was edited, check if the user is editing or viewing it and close it and alert them
-        //     if (change.type === "removed") {
-        //       let event = calendar.getEventById(change.doc.id);
-        //       event.remove();
-        //     } else if (change.type === "modified") {
-        //         //replace event
-        //         calendar.getEventById(change.doc.id).remove();
-        //         createCalendarEvent(change);
-        //     } else if (change.type === "added") {
-        //         createCalendarEvent(change);
-        //     } 
-        // });
-
-        // calendar.events = events;
-        // calendar.refetchEvents();
 
       //set all event colors based on status
         eventColorWorker();
@@ -109,14 +92,7 @@
             calendar.hydrate();
 
             
-            //if it is one of our cleanup days, we need to wipe events
-            let date = moment();
-            //console.log(date.getFullYear(), date.getMonth());
-            let cleanUpDates = getFridays(date.year(), date.month());
-            let numDays = 14;
-            if (cleanUpDates.includes(date.format("DD MMMM YYYY"))) {
-                noCountryForOldEvents(numDays);
-            }
+
 
         }
     }); //END FIRESTORE EVENT CHANGE LISTENER
@@ -319,12 +295,51 @@ $("#forgotPassword").click(function() {
       }); 
 }
 /*
- * Found on stack overflow. Generates a (extremely likely to be) unique key. If it's not, it was the fate of God. Sorry about your lost file.
+ * Found on stack overflow. Generates a (overwhelmingly likely to be) unique key. If it's not, it was the will of God. Sorry about your lost file.
  * @return uid token
  */
- function uuidv4() {
+function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
 }
+
+
+
+
+/*
+ * Accepts a date object and returns a firestore formatted string 
+ */
+function convertToFirestoreDate(dateStr) {
+  let date = new Date(dateStr)
+  if (date != undefined) {
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let firestoreDate;
+    //if the date is 1-9, want to add a leading zero
+    if (day < 10) {
+      firestoreDate = `${year}/${month}/0${day}`;
+    }
+    else {
+      firestoreDate = `${year}/${month}/${day}`;
+    }
+    return firestoreDate;
+  }
+  else return undefined;
+}
+
+/*
+ *  Converts date field to US locality for readiblity.
+ */
+
+function firestoreDateToUSDate(dateStr) {
+  let components = dateStr.split("/");
+  if (components.length != 3) {
+    return undefined;
+  }
+
+  return `${components[1]}/${components[2]}/${components[0]}`;
+}
+

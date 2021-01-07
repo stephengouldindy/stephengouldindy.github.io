@@ -45,7 +45,7 @@
     <!--INTIALIZE CALENDAR-->         
     <script>    
     	function loadNewView() {
-		    calendar.getEvents().forEach(event => event.remove());
+		    calendar.removeAllEvents();
 		    initCurrentCalendarViewEvents();
 		    if ($("#calendarApplet").css("display") != "none") {
 		        calendar.destroy();
@@ -330,7 +330,7 @@
         measurementId: "G-RRY0NKY921"
     };
         // Initialize Firebase
-        if(1) {
+        if(0) {
         	firebase.initializeApp(ACTIVEfirebaseConfig);
         }
         else {
@@ -353,10 +353,7 @@
     <header><div class="dropdown">
   <button id = "dropdownbtn"><img src = "img/menu.svg" id = "hamburger"></button>
   <div id="myDropdown" class="dropdown-content">
-    <a href="#">Under Construction...</a>
-    <a href="#">More Stuff...</a>
-    <a href="#">To Come!</a>
-    <a href="#">Aimee's Fob Activation</a>
+    <div class = "dropdown-item" id = "userSettings">[DISABLED]</div>
     <btn id = "signOutBtn" class = "btn btn-secondary">Sign Out</btn>
   </div>
 </div>
@@ -735,6 +732,27 @@
             </div>
         </div>
     </div>
+</div>
+
+<!--Edit User Settings-->
+<<div class="modal" tabindex="-1" role="dialog" id = "userSettingsModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
