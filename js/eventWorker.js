@@ -219,7 +219,7 @@ function getFridays(year, month){
  * Clean up events that are older than the prefered time and email their data to relevant personnel.
  */ 
 async function noCountryForOldEvents(maxNumDays) {
-    if (maxNumDays != 14) {
+    if (maxNumDays != 56) {
         return;
     }
 
@@ -229,7 +229,7 @@ async function noCountryForOldEvents(maxNumDays) {
     db.collection("events").get().then(async (events) => {
         //calculate oldest date allowable (inclusive):
         //the calculated minimum date will also see its events marked for cleanup
-        alert('Happy Friday! Cleanup on old trucks must occur. Please press OK and wait...');
+        alert('Hello There! Cleanup on old trucks must occur. All trucks may momentarily disappear. Please confirm and wait patiently while I clean up...');
         let dayDiff = 1000*60*60*24;
         let now = new Date();
         let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
@@ -246,39 +246,22 @@ async function noCountryForOldEvents(maxNumDays) {
                     results.successes++;
                 }).catch(() => {
                     results.fails++;
+                    cleanupActive = false;
                 });
 
             }
-            if (index == numEvents) {
-
-            }
-
-
-            // if (event.allDay === true || event.end == undefined) {
-            //     if (event.start < minimumDate || isSameDay(event.start, minimumDate)) {
-            //         console.log("that is 1")
-            //         eventData.delete();
-            //         removed++;
-            //     }
-            // } else {
-            //     if (event.end < minimumDate || isSameDay(event.end, minimumDate)) {
-            //         console.log("that is 2")
-            //         eventData.delete();
-            //         removed++;
-            //     }
-            // }
             
         })
         console.log(results.successes, results.fails, results.total, "that's them")
         await waitForRemoval(results);
-        console.log("after");
         calendar.removeAllEvents();
+        cleanupActive = false;
         initCurrentCalendarViewEvents();
-        // while (removed && successes + fails < removed) {
-        //     console.log("we got", successes, fails, removed);
-        // }
         if (results.total) {
             alert(`Cleanup of old events complete! Removed ${results.successes} of ${numEvents} trucks. You may resume your activity!`);
+            db.collection("bookkeeping").doc("cleanup").set({
+                lastCleanupDate: new Date().toDateString()
+            });
         }
         else {
             alert("Cleanup finished. No trucks needed removed. You may resume your activity!")
@@ -302,10 +285,3 @@ function waitForRemoval(results) {
     check();
   });
 }
-
-async function run() {
-  console.log('before');
-  await waitForRemoval()
-  console.log('after');
-}
-run();

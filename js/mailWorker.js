@@ -3,11 +3,15 @@
  */
 
 
+function testinUpdate() {
+
+}
+
 
 function sendEmail(subject, body, recipient) {
 	return new Promise(function(resolve, reject) {
 		Email.send({
-		    SecureToken: "1ce5a376-3e2b-4ec2-8d43-902c7a0c0bda", 
+		    SecureToken: "85efefc1-ef75-4ee2-81a6-2bdbb5b1baa2", 
 		    To : recipient,
 		    From : "sgi.shippingreceiving@gmail.com",
 		    Subject : subject,

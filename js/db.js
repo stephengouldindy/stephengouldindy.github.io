@@ -2,11 +2,11 @@
  * db.js - intializes page based on firebase/firestore states; handles firestore communication
  */
 
-
+var cleanupActive = false;
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.6");
+  $("#version").html("BETA v3.7");
   //hide the event form on pageload
 
 
@@ -27,17 +27,24 @@
 
 
     calendar.render();
-    var isInit = true;
     //if it is one of our cleanup days, we need to wipe events
-    let date = moment();
+    let date = new Date();
     //console.log(date.getFullYear(), date.getMonth());
-    let cleanUpDates = getFridays(date.year(), date.month());
-    let numDays = 14;
-    if (cleanUpDates.includes(date.format("DD MMMM YYYY"))) {
-        noCountryForOldEvents(numDays);
-    }
+    //let cleanUpDates = getFridays(date.year(), date.month());
+    let numDays = 56;
+    db.collection("bookkeeping").doc("cleanup").get().then((doc)=>
+      {
+        let daysSinceLastCleanup = moment().diff(moment(doc.data().lastCleanupDate), 'days');
+        console.log("It has been", daysSinceLastCleanup);
+        if (daysSinceLastCleanup >= numDays) {
+          cleanupActive = true;
+          noCountryForOldEvents(numDays);
+        }
+      }
+    );
 
     eventCollection.onSnapshot(snapshot => {
+        
         curSnapshot = snapshot;
         let changes = curSnapshot.docChanges();
         let start = calendar.view.currentStart;
@@ -46,6 +53,10 @@
         let startDate = new Date(start);
         let endDate = new Date(end);
         changes.forEach(change => {
+          if (cleanupActive == true) {
+            calendar.removeAllEvents();
+            return;
+          }
             let eventDate = new Date(change.doc.data().date);
             if (eventDate >= startDate && eventDate <= endDate) {
                 if (change.type === "removed") {

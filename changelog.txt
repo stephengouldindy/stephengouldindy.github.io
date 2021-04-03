@@ -1,8 +1,8 @@
 //Here I will maintain documentation on version history so that you may read about new features and/or changes.
 Developed by Spencer Douglas for use by Stephen Gould Indianapolis
 
-
-
+BETA 3.7
+	-Maintenance of emailing system and event cleanup
 BETA 3.5,3.6
 	-old event/file cleanup optimizations: old events will be removed much more quickly and should not slow down your browser
 BETA 3.4
