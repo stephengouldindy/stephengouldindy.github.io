@@ -6,7 +6,7 @@ var cleanupActive = false;
  $(document).ready(function() {
   
   // $("#calendarApplet").hide();
-  $("#version").html("BETA v3.7");
+  $("#version").html("V1.0");
   //hide the event form on pageload
 
 
@@ -36,7 +36,7 @@ var cleanupActive = false;
       {
         let daysSinceLastCleanup = moment().diff(moment(doc.data().lastCleanupDate), 'days');
         console.log("It has been", daysSinceLastCleanup);
-        if (daysSinceLastCleanup >= numDays) {
+        if (daysSinceLastCleanup >= 7) {
           cleanupActive = true;
           noCountryForOldEvents(numDays);
         }

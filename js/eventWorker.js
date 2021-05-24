@@ -17,6 +17,17 @@ const isSameDay = (date1, date2) => {
 }
 
 
+/*
+ * @return a Date object containing the last Friday relative
+ * to the current date. Returns today if today is Friday.
+ */
+function getLastFriday(date) {
+    if (date == undefined)
+        date = moment();
+    var newDate = moment();
+    let lastFri = newDate.day(newDate.day() >= 5 ? 5 :-2);
+    return lastFri.toDate();
+}
 //mark events that are past their end time
 
 /*
@@ -231,8 +242,9 @@ async function noCountryForOldEvents(maxNumDays) {
         //the calculated minimum date will also see its events marked for cleanup
         alert('Hello There! Cleanup on old trucks must occur. All trucks may momentarily disappear. Please confirm and wait patiently while I clean up...');
         let dayDiff = 1000*60*60*24;
+        let lastFriday = getLastFriday();
         let now = new Date();
-        let minimumDate = new Date(now.getTime() - (maxNumDays * dayDiff));
+        let minimumDate = new Date(lastFriday.getTime() - (maxNumDays * dayDiff));
         var results = {successes: 0, fails: 0, total: 0};
         let numEvents = events.size; // number of events in the collection
         var index = 0;
@@ -252,7 +264,6 @@ async function noCountryForOldEvents(maxNumDays) {
             }
             
         })
-        console.log(results.successes, results.fails, results.total, "that's them")
         await waitForRemoval(results);
         calendar.removeAllEvents();
         cleanupActive = false;
@@ -260,7 +271,7 @@ async function noCountryForOldEvents(maxNumDays) {
         if (results.total) {
             alert(`Cleanup of old events complete! Removed ${results.successes} of ${numEvents} trucks. You may resume your activity!`);
             db.collection("bookkeeping").doc("cleanup").set({
-                lastCleanupDate: new Date().toDateString()
+                lastCleanupDate: lastFriday.toDateString()
             });
         }
         else {
